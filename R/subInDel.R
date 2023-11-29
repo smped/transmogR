@@ -1,0 +1,198 @@
+#' @title Incorporate InDels into one or more sequences
+#'
+#' @description
+#' Modify one or more sequences to include Insertions or Deletions
+#'
+#' @details
+#' Takes an [Biostrings::XString] or [Biostrings::XStringSet] object and moddfies
+#' the sequence to incorporate InDels.
+#' The expected types of data determine the behaviour, with the following
+#' expectations describing how the function will incorporate data
+#'
+#' | Input Data Type | Exons Required | Use Case | Returned |
+#' | --------------- | -------------- | -------- | -------- |
+#' | XString         | Y | Modify a Reference Transcriptome | XString    |
+#' | XStringSet      | Y | Modify a Reference Transcriptome | XStringSet |
+#' | DNAStringSet    | N | Modify a Reference Genome | DNAStringSet |
+#' | BSgenome        | N | Modify a Reference Genome | DNAStringSet |
+#'
+#'
+#' @param x Sequence of class XString
+#' @param exons GRanges object containing exon structure for `x`
+#' @param indels GRanges object with InDel locations and the alternate allele
+#' @param alt_col Column containing the alternate allele
+#' @param BPPARAM [BiocParallel::BiocParallelParam] instance
+#' @param ... Not used
+#'
+#'
+#' @export
+#' @name subInDel
+#' @rdname subInDel-methods
+setGeneric(
+  "subInDel", function(x, indels, exons, ...){standardGeneric("subInDel")}
+  ## Alternate names: rosalInDel, calvInDel, subsieDelkIns?
+)
+#'
+#'
+#' @import Biostrings
+#' @importClassesFrom GenomicRanges GRanges
+#' @importFrom methods is as
+#' @importFrom IRanges subsetByOverlaps findOverlaps
+#' @importFrom S4Vectors mcols 'mcols<-' queryHits subjectHits DataFrame
+#' @importFrom GenomicRanges strand 'strand<-' GPos
+#' @importFrom tidyr chop
+#' @rdname subInDel-methods
+#' @aliases subInDel
+#' @export
+setMethod(
+  "subInDel",
+  signature = signature(x = "XString", indels = "GRanges", exons = "GRanges"),
+  function(x, indels, exons, alt_col = "ALT", ...) {
+
+    ## Check classes (Not needed for S4)
+    cl <- class((x))
+
+    ## Get the variants matching the exons
+    indels <- subsetByOverlaps(indels, exons)
+    strand(indels) <- "*"
+    if (length(indels) == 0) return(x)
+
+    ## Check the sequence matches the exons
+    n <- length(x)
+    stopifnot(n == sum(width(exons)))
+
+    ## Add the ID column to the variants & check the alt column
+    alt_col <- match.arg(alt_col, colnames(mcols(indels)))
+    indels$ID <- paste0("V", seq_along(indels))
+    mcols(indels) <- mcols(indels)[c("ID", alt_col)]
+
+    ## Now set the sequence order & strandedness
+    neg_stranded <- any(strand(exons) == "-")
+    i <- seq_len(n)
+    if (neg_stranded) i <- rev(i)
+
+    ## Form a GPos object with positional information and overlapping variants
+    gpos <- GPos(sort(exons, ignore.strand = TRUE))
+    mcols(gpos) <- DataFrame(i = i, ID = "")
+    ol <- findOverlaps(gpos, indels)
+    gpos$ID[queryHits(ol)] <- indels$ID[subjectHits(ol)]
+    ## Figure out where a variant starts & ends
+    gpos$group <- cumsum(c(FALSE, gpos$ID[-1] != gpos$ID[-n]))
+
+    ## Setup as a df then place each run of 'i' as a list column
+    ## Testing using Views takes about 130% of the time
+    df <- as.data.frame(gpos)[c("i", "ID", "group")]
+    df <- df[order(df$i),]
+    df <- chop(df, i)
+    ## Start with the ref alleles
+    df$alt <- lapply(df$i, \(i) as.character(x[i]))
+    ## Where we have a variant, insert the alternate allele
+    df$alt[grepl("^V", df$ID)] <- lapply(
+      setdiff(df$ID, ""), # This should keep ordering intact
+      function(id) {
+        alt <- mcols(subset(indels, ID == id))[[alt_col]]
+        if (neg_stranded) alt <- reverseComplement(as(alt, cl))
+        as.character(alt)
+      }
+    )
+
+    ## Set as an XStringSet, the unlist to return with the original class
+    new_cl <- paste0(cl, "Set")
+    new_seq <- as(lapply(df$alt, as, cl), new_cl)
+    unlist(new_seq)
+
+  }
+)
+#' @importClassesFrom GenomicRanges GRanges
+#' @importFrom methods as
+#' @rdname subInDel-methods
+#' @aliases subInDel
+#' @export
+setMethod(
+  "subInDel",
+  signature = signature(x = "XStringSet", indels = "GRanges", exons = "GRanges"),
+  function(x, indels, exons, alt_col = "ALT", ...) {
+    cl <- class(x)
+    x <- unlist(x) ## Coerce to an XString object
+    out <- subInDel(x, indels, exons, alt_col, ...)
+    as(out, cl)
+  }
+)
+#'
+#' @import Biostrings
+#' @importClassesFrom GenomicRanges GRanges
+#' @importFrom GenomeInfoDb seqnames seqinfo
+#' @importFrom S4Vectors splitAsList mcols 'mcols<-'
+#' @importFrom GenomicRanges GRanges
+#' @importFrom IRanges width Views start end
+#' @importFrom BiocParallel bplapply SerialParam
+#' @rdname subInDel-methods
+#' @aliases subInDel
+#' @export
+setMethod(
+  "subInDel",
+  signature(x = "DNAStringSet", indels = "GRanges", exons = "missing"),
+  function(x, indels, exons, alt_col = "ALT", ..., BPPARAM = SerialParam()) {
+    ## Still can't run an entire genome on the laptop in parallel.
+    ## Takes 3 mins using SerialParam() which is pretty good
+    # subInDel(hg38_mod[1:2], indel = gr_indel, BPPARAM = MulticoreParam(2))
+    sq <- seqinfo(x)
+    seq2_mod <- unique(as.character(seqnames(indels)))
+    seq2_mod <- intersect(seq2_mod, seqnames(sq))
+    if (length(seq2_mod) == 0) return(x)
+    gr <- subset(GRanges(sq), seqnames %in% seq2_mod)
+    grl <- splitAsList(gr, seqlevelsInUse(gr))
+
+    alt_col <- match.arg(alt_col, colnames(mcols(indels)))
+    indels$deletion <- width(indels) > nchar(mcols(indels)[[alt_col]])
+    indels$insertion <- width(indels) < nchar(mcols(indels)[[alt_col]])
+    stopifnot(all(width(indels)[indels$insertion] == 1))
+    stopifnot(all(width(indels)[indels$deletion] > 1))
+    indels <- subset(indels, deletion | insertion) # remove any SNPs
+    mcols(indels) <- mcols(indels)[c(alt_col, "deletion", "insertion")]
+    indels <- splitAsList(indels, f = as.character(seqnames(indels)))
+    x[seq2_mod] <- bplapply(
+      seq2_mod,
+      function(i){
+        message(
+          "Updating ", i, "; Original length: ", length(x[[i]]),
+          appendLF = FALSE
+        )
+        unch <- setdiff(grl[[i]], indels[[i]])
+        unch$deletion <- FALSE
+        unch$insertion <- FALSE
+        all_rng <- sort(c(indels[[i]], unch))
+        seq_views <- Views(x[[i]], start(all_rng), end(all_rng))
+        ## Deletions
+        width(seq_views)[all_rng$deletion] <- 1
+        ## Insertions
+        alts <- mcols(subset(all_rng, insertion))[[alt_col]]
+        width(seq_views)[all_rng$insertion] <- nchar(alts)
+        new_seq <- vector("list", length(all_rng))
+        not_ins <- !all_rng$insertion
+        new_seq[not_ins] <- as.list(DNAStringSet(seq_views)[not_ins])
+        new_seq[!not_ins] <- as.list(DNAStringSet(alts))
+        out <- unlist(DNAStringSet(new_seq))
+        message("; Updated length: ", length(out))
+        out
+      },
+      BPPARAM = BPPARAM
+    )
+    x
+  }
+)
+#' @import Biostrings
+#' @importClassesFrom GenomicRanges GRanges
+#' @importClassesFrom BSgenome BSgenome
+#' @importFrom BiocParallel SerialParam
+#' @rdname subInDel-methods
+#' @aliases subInDel
+#' @export
+setMethod(
+  "subInDel",
+  signature(x = "BSgenome", indels = "GRanges", exons = "missing"),
+  function(x, indels, exons, alt_col = "ALT", ..., BPPARAM = SerialParam()) {
+    seq <- getSeq(x)
+    subInDel(seq, indels, exons, alt_col, ..., BPPARAM = BPPARAM)
+  }
+)
