@@ -18,6 +18,7 @@
 #' inserted at the supplied positions
 #'
 #' @examples
+#' library(GenomicRanges)
 #' seq <- DNAStringSet(c(chr1 = "AAGC"))
 #' snps <- GRanges("chr1:2")
 #' snps$ALT <- "G"
@@ -26,7 +27,7 @@
 #' @import Biostrings
 #' @importFrom S4Vectors mcols
 #' @importFrom methods is
-#' @importFrom GenomeInfoDb seqinfo 'seqinfo<-' seqlevels seqnames
+#' @importFrom GenomeInfoDb seqinfo 'seqinfo<-' seqlevels seqnames 'seqlevels<-'
 #' @importFrom BSgenome getSeq
 #'
 #' @export

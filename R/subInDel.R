@@ -87,6 +87,7 @@ setMethod(
     ## Start with the ref alleles
     df$alt <- lapply(df$i, \(i) as.character(x[i]))
     ## Where we have a variant, insert the alternate allele
+    ID <- c() ## R CMD check
     df$alt[grepl("^V", df$ID)] <- lapply(
       setdiff(df$ID, ""), # This should keep ordering intact
       function(id) {
@@ -121,10 +122,10 @@ setMethod(
 #'
 #' @import Biostrings
 #' @importClassesFrom GenomicRanges GRanges
-#' @importFrom GenomeInfoDb seqnames seqinfo
+#' @importFrom GenomeInfoDb seqnames seqinfo seqlevelsInUse
 #' @importFrom S4Vectors splitAsList mcols 'mcols<-'
 #' @importFrom GenomicRanges GRanges
-#' @importFrom IRanges width Views start end
+#' @importFrom IRanges width Views start end 'width<-'
 #' @importFrom BiocParallel bplapply SerialParam
 #' @rdname subInDel-methods
 #' @aliases subInDel
