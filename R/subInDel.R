@@ -30,7 +30,6 @@
 #' @rdname subInDel-methods
 setGeneric(
   "subInDel", function(x, indels, exons, ...){standardGeneric("subInDel")}
-  ## Alternate names: rosalInDel, calvInDel, subsieDelkIns?
 )
 #'
 #'
@@ -85,22 +84,21 @@ setMethod(
     df <- df[order(df$i),]
     df <- chop(df, i)
     ## Start with the ref alleles
-    df$alt <- lapply(df$i, \(i) as.character(x[i]))
-    ## Where we have a variant, insert the alternate allele
-    ID <- c() ## R CMD check
-    df$alt[grepl("^V", df$ID)] <- lapply(
-      setdiff(df$ID, ""), # This should keep ordering intact
-      function(id) {
-        alt <- mcols(subset(indels, ID == id))[[alt_col]]
-        if (neg_stranded) alt <- reverseComplement(as(alt, cl))
-        as.character(alt)
-      }
-    )
+    df$seq <- lapply(df$i, \(i) as.character(x[i]))
+    ## Now define the alternates
+    df$alt <- df$seq
+    alt <- mcols(indels)[[alt_col]]
+    names(alt) <- indels$ID
+    if (neg_stranded) {
+        new_cl <- paste0(cl, "Set")
+        alt <- as.character(reverseComplement(as(alt, new_cl)))
+    }
 
-    ## Set as an XStringSet, the unlist to return with the original class
-    new_cl <- paste0(cl, "Set")
-    new_seq <- as(lapply(df$alt, as, cl), new_cl)
-    unlist(new_seq)
+    stopifnot(all(sort(setdiff(df$ID, "") ) == sort(names(alt))))
+    rows2sub <- df$ID != ""
+    df$alt[rows2sub] <- alt[df$ID[rows2sub]]
+    new_seq <- as(paste(df$alt, collapse = ""), cl)
+    new_seq
 
   }
 )
@@ -113,6 +111,9 @@ setMethod(
   "subInDel",
   signature = signature(x = "XStringSet", indels = "GRanges", exons = "GRanges"),
   function(x, indels, exons, alt_col = "ALT", ...) {
+    cmn_seq <- intersect(seqnames(x), seqnames(indels))
+    cmn_seq <- intersect(cmn_seq, seqnames(exons))
+    if (length(cmn_seq) == 0) stop("No shared sequences found")
     cl <- class(x)
     x <- unlist(x) ## Coerce to an XString object
     out <- subInDel(x, indels, exons, alt_col, ...)
@@ -140,7 +141,10 @@ setMethod(
     sq <- seqinfo(x)
     seq2_mod <- unique(as.character(seqnames(indels)))
     seq2_mod <- intersect(seq2_mod, seqnames(sq))
-    if (length(seq2_mod) == 0) return(x)
+    if (length(seq2_mod) == 0) {
+      message("No InDels match the reference DNAStringSet")
+      return(x)
+    }
     gr <- subset(GRanges(sq), seqnames %in% seq2_mod)
     grl <- splitAsList(gr, seqlevelsInUse(gr))
 
@@ -174,7 +178,7 @@ setMethod(
         new_seq[not_ins] <- as.list(DNAStringSet(seq_views)[not_ins])
         new_seq[!not_ins] <- as.list(DNAStringSet(alts))
         out <- unlist(DNAStringSet(new_seq))
-        message("; Updated length: ", length(out))
+        message("; Updated length: ", length(out), appendLF = FALSE)
         out
       },
       BPPARAM = BPPARAM

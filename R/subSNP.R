@@ -22,7 +22,7 @@
 #' seq <- DNAStringSet(c(chr1 = "AAGC"))
 #' snps <- GRanges("chr1:2")
 #' snps$ALT <- "G"
-#' putSNPsIntoSeq(seq, snps)
+#' subSNP(seq, snps)
 #'
 #' @import Biostrings
 #' @importFrom S4Vectors mcols
@@ -31,7 +31,7 @@
 #' @importFrom BSgenome getSeq
 #'
 #' @export
-putSNPsIntoSeq <- function(seq, snps, alt_col = "ALT", ...) {
+subSNP <- function(seq, snps, alt_col = "ALT", ...) {
 
   ## Internal comment: Maybe this could be called "owl" for OverWriteLetters?
   ## Calvin was also turned into an owl by the transmogrifier
