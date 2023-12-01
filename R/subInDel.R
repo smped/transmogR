@@ -178,7 +178,7 @@ setMethod(
         new_seq[not_ins] <- as.list(DNAStringSet(seq_views)[not_ins])
         new_seq[!not_ins] <- as.list(DNAStringSet(alts))
         out <- unlist(DNAStringSet(new_seq))
-        message("; Updated length: ", length(out), appendLF = FALSE)
+        message("; Updated length: ", length(out))
         out
       },
       BPPARAM = BPPARAM
