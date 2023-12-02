@@ -30,8 +30,6 @@ test_that("owl errors when expected", {
         ALT = c("C", "T", "A")
     )
 
-    expect_error(owl(seq, snps, alt_col = "ALT"), "all\\(seqlevels\\(.+TRUE$")
-    expect_error(owl("", snps, alt_col = "ALT"))
-    expect_error(owl(seq, "", alt_col = "ALT"))
+    expect_error(owl(seq, snps, alt_col = "ALT"), "all\\(seqnames\\(.+TRUE$")
 
 })

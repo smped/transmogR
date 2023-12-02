@@ -21,7 +21,8 @@
 #' @param exons GRanges object containing exon structure for `x`
 #' @param indels GRanges object with InDel locations and the alternate allele
 #' @param alt_col Column containing the alternate allele
-#' @param BPPARAM [BiocParallel::BiocParallelParam] instance
+#' @param mc_cores Number of cores to use when calling [parallel::mclapply]
+#' internally
 #' @param ... Not used
 #'
 #'
@@ -128,14 +129,14 @@ setMethod(
 #' @importFrom S4Vectors splitAsList mcols 'mcols<-'
 #' @importFrom GenomicRanges GRanges
 #' @importFrom IRanges width Views start end 'width<-'
-#' @importFrom BiocParallel bplapply SerialParam
+#' @importFrom parallel mclapply
 #' @rdname armIndello-methods
 #' @aliases armIndello
 #' @export
 setMethod(
   "armIndello",
   signature(x = "DNAStringSet", indels = "GRanges", exons = "missing"),
-  function(x, indels, exons, alt_col = "ALT", ..., BPPARAM = SerialParam()) {
+  function(x, indels, exons, alt_col = "ALT", mc_cores = 1, ...) {
     ## Still can't run an entire genome on the laptop in parallel.
     ## Takes 3 mins using SerialParam() which is pretty good
     # armIndello(hg38_mod[1:2], indel = gr_indel, BPPARAM = MulticoreParam(2))
@@ -157,7 +158,7 @@ setMethod(
     indels <- subset(indels, deletion | insertion) # remove any SNPs
     mcols(indels) <- mcols(indels)[c(alt_col, "deletion", "insertion")]
     indels <- splitAsList(indels, f = as.character(seqnames(indels)))
-    x[seq2_mod] <- bplapply(
+    x[seq2_mod] <- mclapply(
       seq2_mod,
       function(i){
         message(
@@ -181,8 +182,7 @@ setMethod(
         out <- unlist(DNAStringSet(new_seq))
         message("; Updated length: ", length(out))
         out
-      },
-      BPPARAM = BPPARAM
+      }, mc.cores = mc_cores
     )
     x
   }
@@ -190,15 +190,14 @@ setMethod(
 #' @import Biostrings
 #' @importClassesFrom GenomicRanges GRanges
 #' @importClassesFrom BSgenome BSgenome
-#' @importFrom BiocParallel SerialParam
 #' @rdname armIndello-methods
 #' @aliases armIndello
 #' @export
 setMethod(
   "armIndello",
   signature(x = "BSgenome", indels = "GRanges", exons = "missing"),
-  function(x, indels, exons, alt_col = "ALT", ..., BPPARAM = SerialParam()) {
+  function(x, indels, exons, alt_col = "ALT", mc_cores = 1, ...) {
     seq <- getSeq(x)
-    armIndello(seq, indels, exons, alt_col, ..., BPPARAM = BPPARAM)
+    armIndello(seq, indels, exons, alt_col, mc_cores, ...)
   }
 )

@@ -27,7 +27,7 @@
 #' @export
 parYdactyl <- function(x, ...){
 
-    # Original name was parYFromSeqinfo
+    # Original name was parFromSeqinfo
 
     ## Retain the seqnames but estimate the genome build.
     stopifnot(is(x, "Seqinfo"))

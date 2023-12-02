@@ -14,9 +14,9 @@ armIndello(x, indels, exons, ...)
 
 \S4method{armIndello}{XStringSet,GRanges,GRanges}(x, indels, exons, alt_col = "ALT", ...)
 
-\S4method{armIndello}{DNAStringSet,GRanges,missing}(x, indels, exons, alt_col = "ALT", ..., BPPARAM = SerialParam())
+\S4method{armIndello}{DNAStringSet,GRanges,missing}(x, indels, exons, alt_col = "ALT", mc_cores = 1, ...)
 
-\S4method{armIndello}{BSgenome,GRanges,missing}(x, indels, exons, alt_col = "ALT", ..., BPPARAM = SerialParam())
+\S4method{armIndello}{BSgenome,GRanges,missing}(x, indels, exons, alt_col = "ALT", mc_cores = 1, ...)
 }
 \arguments{
 \item{x}{Sequence of class XString}
@@ -29,7 +29,8 @@ armIndello(x, indels, exons, ...)
 
 \item{alt_col}{Column containing the alternate allele}
 
-\item{BPPARAM}{\link[BiocParallel:BiocParallelParam-class]{BiocParallel::BiocParallelParam} instance}
+\item{mc_cores}{Number of cores to use when calling \link[parallel:mclapply]{parallel::mclapply}
+internally}
 }
 \description{
 Modify one or more sequences to include Insertions or Deletions

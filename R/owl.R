@@ -60,7 +60,7 @@ setMethod(
     ## Check compatible seqinfo
     seq_sq <- seqinfo(seq)
     snp_sq <- seqinfo(snps)
-    stopifnot(all(seqlevels(snp_sq) %in% seqlevels(seq_sq))) # seqlevels
+    stopifnot(all(seqnames(snp_sq) %in% seqlevels(seq_sq))) # seqlevels
     seqlevels(snps) <- seqlevels(seq_sq)
     seqinfo(snps) <- seq_sq
 
