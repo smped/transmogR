@@ -8,6 +8,7 @@
 #' the alternate allele
 #' @param alt_col Column name in the mcols element of `snps` containing the
 #' alternate allele
+#' @param names Sequence names to operate on
 #' @param ... Passed to [Biostrings::replaceLetterAt()]
 #'
 #' @details
@@ -89,11 +90,12 @@ setMethod(
 setMethod(
   "owl",
   signature = signature(seq = "BSgenome", snps = "GRanges"),
-  function(seq, snps, alt_col = "ALT", ...) {
+  function(seq, snps, alt_col = "ALT", names, ...) {
 
     ## Setup the sequence info
     message("Extracting sequences as a DNAStringSet...", appendLF = FALSE)
-    seq <- getSeq(seq)
+    seq <- as(getSeq(seq, names), "DNAStringSet")
+    if (!missing(names)) names(seq) <- names
     message("done")
     owl(seq, snps, alt_col = alt_col, ...)
   }

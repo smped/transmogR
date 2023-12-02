@@ -17,6 +17,16 @@ test_that("owl substitutes SNPs correctly", {
     expect_equal(
         as.character(result), c(seq1 = "ACCG", seq2 = "TATC", seq3 = "CGAA")
     )
+
+    if (requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE)) {
+        hg19 <- BSgenome.Hsapiens.UCSC.hg19::BSgenome.Hsapiens.UCSC.hg19
+        snps <- GRanges("chrM:1")
+        snps$ALT <- "A" # Normally a G
+        new <- owl(hg19, snps, names = "chrM")
+        expect_true(strsplit(as.character(new), "")[[1]][1] == "A")
+    }
+
+
 })
 
 test_that("owl errors when expected", {

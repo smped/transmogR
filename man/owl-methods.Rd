@@ -10,7 +10,7 @@ owl(seq, snps, ...)
 
 \S4method{owl}{XStringSet,GRanges}(seq, snps, alt_col = "ALT", ...)
 
-\S4method{owl}{BSgenome,GRanges}(seq, snps, alt_col = "ALT", ...)
+\S4method{owl}{BSgenome,GRanges}(seq, snps, alt_col = "ALT", names, ...)
 }
 \arguments{
 \item{seq}{A BSgenome, DNAStringSet, RNAStringSet or other XStringSet.}
@@ -22,6 +22,8 @@ the alternate allele}
 
 \item{alt_col}{Column name in the mcols element of \code{snps} containing the
 alternate allele}
+
+\item{names}{Sequence names to operate on}
 }
 \value{
 An object of the same class as the original object, but with SNPs

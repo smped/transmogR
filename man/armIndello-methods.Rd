@@ -16,7 +16,7 @@ armIndello(x, indels, exons, ...)
 
 \S4method{armIndello}{DNAStringSet,GRanges,missing}(x, indels, exons, alt_col = "ALT", mc_cores = 1, ...)
 
-\S4method{armIndello}{BSgenome,GRanges,missing}(x, indels, exons, alt_col = "ALT", mc_cores = 1, ...)
+\S4method{armIndello}{BSgenome,GRanges,missing}(x, indels, exons, alt_col = "ALT", mc_cores = 1, names, ...)
 }
 \arguments{
 \item{x}{Sequence of class XString}
@@ -31,6 +31,8 @@ armIndello(x, indels, exons, ...)
 
 \item{mc_cores}{Number of cores to use when calling \link[parallel:mclapply]{parallel::mclapply}
 internally}
+
+\item{names}{passed to \link[BSgenome:getSeq-methods]{BSgenome::getSeq} when x is a BSgenome object}
 }
 \description{
 Modify one or more sequences to include Insertions or Deletions

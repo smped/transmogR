@@ -23,6 +23,7 @@
 #' @param alt_col Column containing the alternate allele
 #' @param mc_cores Number of cores to use when calling [parallel::mclapply]
 #' internally
+#' @param names passed to [BSgenome::getSeq] when x is a BSgenome object
 #' @param ... Not used
 #'
 #'
@@ -196,8 +197,8 @@ setMethod(
 setMethod(
   "armIndello",
   signature(x = "BSgenome", indels = "GRanges", exons = "missing"),
-  function(x, indels, exons, alt_col = "ALT", mc_cores = 1, ...) {
-    seq <- getSeq(x)
+  function(x, indels, exons, alt_col = "ALT", mc_cores = 1, names, ...) {
+    seq <- getSeq(x, names)
     armIndello(seq, indels, exons, alt_col, mc_cores, ...)
   }
 )

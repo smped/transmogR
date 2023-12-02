@@ -27,7 +27,7 @@ Imports:
     S4Vectors,
     tidyr
 Suggests:
-    BSgenome.Hsapiens.NCBI.GRCh38,
+    BSgenome.Hsapiens.UCSC.hg19,
     knitr,
     rtracklayer,
     testthat (>= 3.0.0)
