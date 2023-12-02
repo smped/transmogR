@@ -33,6 +33,8 @@ library(GenomicRanges)
 seq <- DNAStringSet(c(chr1 = "AAGC"))
 snps <- GRanges("chr1:2")
 snps$ALT <- "G"
+snps
+seq
 subSNP(seq, snps)
 
 }
