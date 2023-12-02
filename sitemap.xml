@@ -19,18 +19,18 @@
     <loc>/reference/armIndello-methods.html</loc>
   </url>
   <url>
-    <loc>/reference/genoMog-methods.html</loc>
+    <loc>/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>/reference/mogrifyGenome-methods.html</loc>
+  </url>
+  <url>
+    <loc>/reference/mogrifyTranscriptome-methods.html</loc>
   </url>
   <url>
     <loc>/reference/owl-methods.html</loc>
   </url>
   <url>
     <loc>/reference/parYdactyl.html</loc>
-  </url>
-  <url>
-    <loc>/reference/transMog-methods.html</loc>
   </url>
 </urlset>
