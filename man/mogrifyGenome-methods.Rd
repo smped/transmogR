@@ -24,6 +24,7 @@ mogrifyGenome(x, var, ...)
   x,
   var,
   alt_col = "ALT",
+  names,
   tag = NULL,
   sep = "_",
   var_tags = FALSE,
@@ -49,6 +50,8 @@ incorporated, with 's', 'i' and 'd' represeenting SNPs, Insertions and
 Deletions respectively}
 
 \item{var_sep}{Separator between any previous tags and variant tags}
+
+\item{names}{Sequence names to be mogrified}
 }
 \value{
 XStringSet with variant modified sequences

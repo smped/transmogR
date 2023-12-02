@@ -5,6 +5,7 @@
 #' @param x A DNAStringSet or BSgenome
 #' @param var GRanges object containing the variants
 #' @param alt_col The name of the column with `var` containing alternate bases
+#' @param names Sequence names to be mogrified
 #' @param tag Optional tag to add to all sequence names which were modified
 #' @param sep Separator to place between seqnames names & tag
 #' @param var_tags logical(1) Add tags indicating which type of variant were
@@ -53,13 +54,8 @@ setMethod(
         ## 5. Optionally tag sequence names
         ##    - Use a common tag + specific tags for SNPs/Insertions/Deletions
 
-        ## Checks, then subset x
-        alt_col <- match.arg(alt_col, colnames(mcols(var)))
-
-        ## Deal with any NA values
-        is_na <- is.na(mcols(var)[[alt_col]])
-        if (any(is_na)) message("NA values found in alt_col. Skipping these.")
-        var <- var[!is_na]
+        ## Check the variants are valid
+        var <- .checkAlts(var, alt_col)
         ## Separate into snps & indels
         var <- subset(var, seqnames %in% seqlevels(x))
         if (length(var) == 0) return(x)
@@ -101,12 +97,12 @@ setMethod(
     "mogrifyGenome",
     signature = signature(x = "BSgenome", var = "GRanges"),
     function(
-        x, var, alt_col = "ALT", tag = NULL, sep = "_",
+        x, var, alt_col = "ALT", names, tag = NULL, sep = "_",
         var_tags = FALSE, var_sep = "_", ...
     ) {
         ## Setup the sequence info
         message("Extracting sequences as a DNAStringSet...", appendLF = FALSE)
-        x <- getSeq(x)
+        x <- getSeq(x, names)
         message("done")
         mogrifyGenome(x, var, alt_col, tag, sep, var_tags = FALSE, var_sep = "_", ...)
     }

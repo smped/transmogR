@@ -53,9 +53,9 @@ setMethod(
 
     ## Check the SNPs
     stopifnot(is(snps, "GenomicRanges"))
+    snps <- .checkAlts(snps, alt_col)
     stopifnot(all(width(snps) == 1)) # Must be single positions
-    alt_col <- match.arg(alt_col, colnames(mcols(snps)))
-    stopifnot(all(nchar(mcols(snps)[[alt_col]]) == 1))
+    stopifnot(all(nchar(mcols(snps)[[alt_col]]) == 1)) # Mus be SNPs
 
     ## Check compatible seqinfo
     seq_sq <- seqinfo(seq)

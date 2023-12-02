@@ -63,7 +63,7 @@ setMethod(
     stopifnot(n == sum(width(exons)))
 
     ## Add the ID column to the variants & check the alt column
-    alt_col <- match.arg(alt_col, colnames(mcols(indels)))
+    indels <- .checkAlts(indels, alt_col)
     indels$ID <- paste0("V", seq_along(indels))
     mcols(indels) <- mcols(indels)[c("ID", alt_col)]
 
@@ -150,7 +150,7 @@ setMethod(
     gr <- subset(GRanges(sq), seqnames %in% seq2_mod)
     grl <- splitAsList(gr, seqlevelsInUse(gr))
 
-    alt_col <- match.arg(alt_col, colnames(mcols(indels)))
+    indels <- .checkAlts(indels, alt_col)
     indels$deletion <- width(indels) > nchar(mcols(indels)[[alt_col]])
     indels$insertion <- width(indels) < nchar(mcols(indels)[[alt_col]])
     stopifnot(all(width(indels)[indels$insertion] == 1))

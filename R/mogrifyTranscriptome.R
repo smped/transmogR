@@ -97,14 +97,10 @@ setMethod(
         ## 6. Optionally tag sequence names
         ##    - Use a common tag + specific tags for SNPs/Insertions/Deletions
 
-        ## Checks, then subset x
-        alt_col <- match.arg(alt_col, colnames(mcols(var)))
+        ## Checks
         trans_col <- match.arg(trans_col, colnames(mcols(exons)))
+        var <- .checkAlts(var, alt_col)
 
-        ## Deal with any NA values
-        is_na <- is.na(mcols(var)[[alt_col]])
-        if (any(is_na)) message("NA values found in alt_col. Skipping these.")
-        var <- var[!is_na]
         ## Separate into snps & indels
         var <- subset(var, seqnames %in% seqlevels(x))
         if (length(var) == 0) return(x)
