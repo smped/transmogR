@@ -62,10 +62,10 @@
 <span><span class="fu">armIndello</span><span class="op">(</span><span class="va">x</span>, <span class="va">indels</span>, <span class="va">exons</span>, alt_col <span class="op">=</span> <span class="st">"ALT"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for DNAStringSet,GRanges,missing</span></span>
-<span><span class="fu">armIndello</span><span class="op">(</span><span class="va">x</span>, <span class="va">indels</span>, <span class="va">exons</span>, alt_col <span class="op">=</span> <span class="st">"ALT"</span>, <span class="va">...</span>, BPPARAM <span class="op">=</span> <span class="fu">SerialParam</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">armIndello</span><span class="op">(</span><span class="va">x</span>, <span class="va">indels</span>, <span class="va">exons</span>, alt_col <span class="op">=</span> <span class="st">"ALT"</span>, mc_cores <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for BSgenome,GRanges,missing</span></span>
-<span><span class="fu">armIndello</span><span class="op">(</span><span class="va">x</span>, <span class="va">indels</span>, <span class="va">exons</span>, alt_col <span class="op">=</span> <span class="st">"ALT"</span>, <span class="va">...</span>, BPPARAM <span class="op">=</span> <span class="fu">SerialParam</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">armIndello</span><span class="op">(</span><span class="va">x</span>, <span class="va">indels</span>, <span class="va">exons</span>, alt_col <span class="op">=</span> <span class="st">"ALT"</span>, mc_cores <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -90,8 +90,9 @@
 <dd><p>Column containing the alternate allele</p></dd>
 
 
-<dt>BPPARAM</dt>
-<dd><p><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">BiocParallel::BiocParallelParam</a> instance</p></dd>
+<dt>mc_cores</dt>
+<dd><p>Number of cores to use when calling <a href="https://rdrr.io/r/parallel/mclapply.html" class="external-link">parallel::mclapply</a>
+internally</p></dd>
 
 </dl></div>
     <div id="details">
