@@ -74,7 +74,10 @@ setMethod(
       }
     )
     names(new_seq) <- seqs_wth_snps
+    seq_len <- vapply(seq, length, integer(1))
     seq[seqs_wth_snps] <- new_seq
+    ## Check lengths aren't messed up then return
+    stopifnot(all(seq_len == vapply(seq, length, integer(1))))
     seq
 
   }

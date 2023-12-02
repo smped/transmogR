@@ -13,6 +13,7 @@ reference:
     - armIndello
     - owl
     - parYdactyl
+    - ends_with("Mog")
 
 navbar:
   type: default
