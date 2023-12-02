@@ -1,4 +1,23 @@
-usethiurl: ~
 template:
-  bootstrap: 5
+  params:
+    bootswatch: simplex
 
+authors:
+  Stevie Pederson:
+    href: https://github.com/smped
+
+reference:
+
+- title: Modifying a Reference
+  contents:
+    - starts_with("sub")
+    - parFromSeqinfo
+
+navbar:
+  type: default
+  left:
+  - text: Reference
+    href: reference/index.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/smped/transmogR
