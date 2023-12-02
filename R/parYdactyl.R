@@ -19,13 +19,15 @@
 #' sq <- Seqinfo(
 #'   seqnames = "chrY", seqlengths = 59373566, genome = "hg19_only_chrY"
 #' )
-#' parFromSeqinfo(sq)
+#' parYdactyl(sq)
 #'
 #'
 #' @importFrom GenomeInfoDb seqnames
 #' @importFrom GenomicRanges GRanges
 #' @export
-parFromSeqinfo <- function(x, ...){
+parYdactyl <- function(x, ...){
+
+    # Original name was parYFromSeqinfo
 
     ## Retain the seqnames but estimate the genome build.
     stopifnot(is(x, "Seqinfo"))

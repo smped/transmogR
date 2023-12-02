@@ -10,7 +10,8 @@ reference:
 
 - title: Modifying a Reference
   contents:
-    - starts_with("sub")
+    - armIndello
+    - owl
     - parFromSeqinfo
 
 navbar:

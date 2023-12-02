@@ -1,4 +1,4 @@
-#' @title Incorporate InDels into one or more sequences
+#' @title Substitute InDels into one or more sequences
 #'
 #' @description
 #' Modify one or more sequences to include Insertions or Deletions
@@ -26,10 +26,11 @@
 #'
 #'
 #' @export
-#' @name subInDel
-#' @rdname subInDel-methods
+#' @name armIndello
+#' @rdname armIndello-methods
 setGeneric(
-  "subInDel", function(x, indels, exons, ...){standardGeneric("subInDel")}
+  "armIndello", function(x, indels, exons, ...){standardGeneric("armIndello")}
+  # Originally subInDel
 )
 #'
 #'
@@ -40,11 +41,11 @@ setGeneric(
 #' @importFrom S4Vectors mcols 'mcols<-' queryHits subjectHits DataFrame
 #' @importFrom GenomicRanges strand 'strand<-' GPos
 #' @importFrom tidyr chop
-#' @rdname subInDel-methods
-#' @aliases subInDel
+#' @rdname armIndello-methods
+#' @aliases armIndello
 #' @export
 setMethod(
-  "subInDel",
+  "armIndello",
   signature = signature(x = "XString", indels = "GRanges", exons = "GRanges"),
   function(x, indels, exons, alt_col = "ALT", ...) {
 
@@ -104,11 +105,11 @@ setMethod(
 )
 #' @importClassesFrom GenomicRanges GRanges
 #' @importFrom methods as
-#' @rdname subInDel-methods
-#' @aliases subInDel
+#' @rdname armIndello-methods
+#' @aliases armIndello
 #' @export
 setMethod(
-  "subInDel",
+  "armIndello",
   signature = signature(x = "XStringSet", indels = "GRanges", exons = "GRanges"),
   function(x, indels, exons, alt_col = "ALT", ...) {
     cmn_seq <- intersect(seqnames(x), seqnames(indels))
@@ -116,7 +117,7 @@ setMethod(
     if (length(cmn_seq) == 0) stop("No shared sequences found")
     cl <- class(x)
     x <- unlist(x) ## Coerce to an XString object
-    out <- subInDel(x, indels, exons, alt_col, ...)
+    out <- armIndello(x, indels, exons, alt_col, ...)
     as(out, cl)
   }
 )
@@ -128,16 +129,16 @@ setMethod(
 #' @importFrom GenomicRanges GRanges
 #' @importFrom IRanges width Views start end 'width<-'
 #' @importFrom BiocParallel bplapply SerialParam
-#' @rdname subInDel-methods
-#' @aliases subInDel
+#' @rdname armIndello-methods
+#' @aliases armIndello
 #' @export
 setMethod(
-  "subInDel",
+  "armIndello",
   signature(x = "DNAStringSet", indels = "GRanges", exons = "missing"),
   function(x, indels, exons, alt_col = "ALT", ..., BPPARAM = SerialParam()) {
     ## Still can't run an entire genome on the laptop in parallel.
     ## Takes 3 mins using SerialParam() which is pretty good
-    # subInDel(hg38_mod[1:2], indel = gr_indel, BPPARAM = MulticoreParam(2))
+    # armIndello(hg38_mod[1:2], indel = gr_indel, BPPARAM = MulticoreParam(2))
     sq <- seqinfo(x)
     seq2_mod <- unique(as.character(seqnames(indels)))
     seq2_mod <- intersect(seq2_mod, seqnames(sq))
@@ -190,14 +191,14 @@ setMethod(
 #' @importClassesFrom GenomicRanges GRanges
 #' @importClassesFrom BSgenome BSgenome
 #' @importFrom BiocParallel SerialParam
-#' @rdname subInDel-methods
-#' @aliases subInDel
+#' @rdname armIndello-methods
+#' @aliases armIndello
 #' @export
 setMethod(
-  "subInDel",
+  "armIndello",
   signature(x = "BSgenome", indels = "GRanges", exons = "missing"),
   function(x, indels, exons, alt_col = "ALT", ..., BPPARAM = SerialParam()) {
     seq <- getSeq(x)
-    subInDel(seq, indels, exons, alt_col, ..., BPPARAM = BPPARAM)
+    armIndello(seq, indels, exons, alt_col, ..., BPPARAM = BPPARAM)
   }
 )
