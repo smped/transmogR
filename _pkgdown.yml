@@ -12,7 +12,7 @@ reference:
   contents:
     - armIndello
     - owl
-    - parFromSeqinfo
+    - parYdactyl
 
 navbar:
   type: default
