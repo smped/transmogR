@@ -2,30 +2,27 @@
 % Please edit documentation in R/armIndello.R
 \name{armIndello}
 \alias{armIndello}
-\alias{armIndello,XString,GRanges,GRanges-method}
-\alias{armIndello,XStringSet,GRanges,GRanges-method}
-\alias{armIndello,DNAStringSet,GRanges,missing-method}
-\alias{armIndello,BSgenome,GRanges,missing-method}
+\alias{armIndello,XString,GRanges-method}
+\alias{armIndello,DNAStringSet,GRanges-method}
+\alias{armIndello,BSgenome,GRanges-method}
 \title{Substitute InDels into one or more sequences}
 \usage{
-armIndello(x, indels, exons, ...)
+armIndello(x, indels, ...)
 
-\S4method{armIndello}{XString,GRanges,GRanges}(x, indels, exons, alt_col = "ALT", ...)
+\S4method{armIndello}{XString,GRanges}(x, indels, exons, alt_col = "ALT", ...)
 
-\S4method{armIndello}{XStringSet,GRanges,GRanges}(x, indels, exons, alt_col = "ALT", ...)
+\S4method{armIndello}{DNAStringSet,GRanges}(x, indels, alt_col = "ALT", mc_cores = 1, ...)
 
-\S4method{armIndello}{DNAStringSet,GRanges,missing}(x, indels, exons, alt_col = "ALT", mc_cores = 1, ...)
-
-\S4method{armIndello}{BSgenome,GRanges,missing}(x, indels, exons, alt_col = "ALT", mc_cores = 1, names, ...)
+\S4method{armIndello}{BSgenome,GRanges}(x, indels, alt_col = "ALT", mc_cores = 1, names, ...)
 }
 \arguments{
 \item{x}{Sequence of class XString}
 
 \item{indels}{GRanges object with InDel locations and the alternate allele}
 
-\item{exons}{GRanges object containing exon structure for \code{x}}
-
 \item{...}{Not used}
+
+\item{exons}{GRanges object containing exon structure for \code{x}}
 
 \item{alt_col}{Column containing the alternate allele}
 
@@ -44,7 +41,6 @@ The expected types of data determine the behaviour, with the following
 expectations describing how the function will incorporate data\tabular{llll}{
    Input Data Type \tab Exons Required \tab Use Case \tab Returned \cr
    XString \tab Y \tab Modify a Reference Transcriptome \tab XString \cr
-   XStringSet \tab Y \tab Modify a Reference Transcriptome \tab XStringSet \cr
    DNAStringSet \tab N \tab Modify a Reference Genome \tab DNAStringSet \cr
    BSgenome \tab N \tab Modify a Reference Genome \tab DNAStringSet \cr
 }

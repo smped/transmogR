@@ -12,7 +12,6 @@
 #' | Input Data Type | Exons Required | Use Case | Returned |
 #' | --------------- | -------------- | -------- | -------- |
 #' | XString         | Y | Modify a Reference Transcriptome | XString    |
-#' | XStringSet      | Y | Modify a Reference Transcriptome | XStringSet |
 #' | DNAStringSet    | N | Modify a Reference Genome | DNAStringSet |
 #' | BSgenome        | N | Modify a Reference Genome | DNAStringSet |
 #'
@@ -31,7 +30,7 @@
 #' @name armIndello
 #' @rdname armIndello-methods
 setGeneric(
-  "armIndello", function(x, indels, exons, ...){standardGeneric("armIndello")}
+  "armIndello", function(x, indels, ...){standardGeneric("armIndello")}
   # Originally subInDel
 )
 #'
@@ -48,7 +47,7 @@ setGeneric(
 #' @export
 setMethod(
   "armIndello",
-  signature = signature(x = "XString", indels = "GRanges", exons = "GRanges"),
+  signature = signature(x = "XString", indels = "GRanges"),
   function(x, indels, exons, alt_col = "ALT", ...) {
 
     ## Check classes (Not needed for S4)
@@ -105,24 +104,6 @@ setMethod(
 
   }
 )
-#' @importClassesFrom GenomicRanges GRanges
-#' @importFrom methods as
-#' @rdname armIndello-methods
-#' @aliases armIndello
-#' @export
-setMethod(
-  "armIndello",
-  signature = signature(x = "XStringSet", indels = "GRanges", exons = "GRanges"),
-  function(x, indels, exons, alt_col = "ALT", ...) {
-    cmn_seq <- intersect(seqnames(x), seqnames(indels))
-    cmn_seq <- intersect(cmn_seq, seqnames(exons))
-    if (length(cmn_seq) == 0) stop("No shared sequences found")
-    cl <- class(x)
-    x <- unlist(x) ## Coerce to an XString object
-    out <- armIndello(x, indels, exons, alt_col, ...)
-    as(out, cl)
-  }
-)
 #'
 #' @import Biostrings
 #' @importClassesFrom GenomicRanges GRanges
@@ -136,8 +117,8 @@ setMethod(
 #' @export
 setMethod(
   "armIndello",
-  signature(x = "DNAStringSet", indels = "GRanges", exons = "missing"),
-  function(x, indels, exons, alt_col = "ALT", mc_cores = 1, ...) {
+  signature(x = "DNAStringSet", indels = "GRanges"),
+  function(x, indels, alt_col = "ALT", mc_cores = 1, ...) {
     ## Still can't run an entire genome on the laptop in parallel.
     ## Takes 3 mins using SerialParam() which is pretty good
     # armIndello(hg38_mod[1:2], indel = gr_indel, BPPARAM = MulticoreParam(2))
@@ -157,7 +138,8 @@ setMethod(
     stopifnot(all(width(indels)[indels$insertion] == 1))
     stopifnot(all(width(indels)[indels$deletion] > 1))
     indels <- subset(indels, deletion | insertion) # remove any SNPs
-    mcols(indels) <- mcols(indels)[c(alt_col, "deletion", "insertion")]
+    mcols(indels)$indel <- TRUE
+    mcols(indels) <- mcols(indels)[c(alt_col, "indel")]
     indels <- splitAsList(indels, f = as.character(seqnames(indels)))
     x[seq2_mod] <- mclapply(
       seq2_mod,
@@ -167,19 +149,16 @@ setMethod(
           appendLF = FALSE
         )
         unch <- setdiff(grl[[i]], indels[[i]])
-        unch$deletion <- FALSE
-        unch$insertion <- FALSE
+        unch$indel <- FALSE
         all_rng <- sort(c(indels[[i]], unch))
         seq_views <- Views(x[[i]], start(all_rng), end(all_rng))
-        ## Deletions
-        width(seq_views)[all_rng$deletion] <- 1
-        ## Insertions
-        alts <- mcols(subset(all_rng, insertion))[[alt_col]]
-        width(seq_views)[all_rng$insertion] <- nchar(alts)
+        ## Indels
+        alts <- mcols(subset(all_rng, indel))[[alt_col]]
+        width(seq_views)[all_rng$indel] <- nchar(alts)
         new_seq <- vector("list", length(all_rng))
-        not_ins <- !all_rng$insertion
-        new_seq[not_ins] <- as.list(DNAStringSet(seq_views)[not_ins])
-        new_seq[!not_ins] <- as.list(DNAStringSet(alts))
+        not_indel <- !all_rng$indel
+        new_seq[not_indel] <- as.list(DNAStringSet(seq_views)[not_indel])
+        new_seq[!not_indel] <- as.list(DNAStringSet(alts))
         out <- unlist(DNAStringSet(new_seq))
         message("; Updated length: ", length(out))
         out
@@ -196,9 +175,10 @@ setMethod(
 #' @export
 setMethod(
   "armIndello",
-  signature(x = "BSgenome", indels = "GRanges", exons = "missing"),
-  function(x, indels, exons, alt_col = "ALT", mc_cores = 1, names, ...) {
-    seq <- getSeq(x, names)
-    armIndello(seq, indels, exons, alt_col, mc_cores, ...)
+  signature(x = "BSgenome", indels = "GRanges"),
+  function(x, indels, alt_col = "ALT", mc_cores = 1, names, ...) {
+    seq <- as(getSeq(x, names), "DNAStringSet")
+    if (!missing(names)) names(seq) <- names
+    armIndello(seq, indels, alt_col, mc_cores, ...)
   }
 )

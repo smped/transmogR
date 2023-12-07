@@ -102,8 +102,11 @@ setMethod(
     ) {
         ## Setup the sequence info
         message("Extracting sequences as a DNAStringSet...", appendLF = FALSE)
-        x <- getSeq(x, names)
+        seq <- as(getSeq(x, names), "DNAStringSet")
+        if (!missing(names)) names(seq) <- names
         message("done")
-        mogrifyGenome(x, var, alt_col, tag, sep, var_tags = FALSE, var_sep = "_", ...)
+        mogrifyGenome(
+            seq, var, alt_col, tag, sep, var_tags = FALSE, var_sep = "_", ...
+        )
     }
 )

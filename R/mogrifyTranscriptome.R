@@ -196,7 +196,7 @@ setMethod(
             "Extracting ", length(seq_to_get),
             " sequences as a DNAStringSet...", appendLF = FALSE
         )
-        x <- getSeq(x, seq_to_get)
+        x <- as(getSeq(x, seq_to_get), "DNAStringSet")
         if (verbose) message("done")
         mogrifyTranscriptome(
             x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,
