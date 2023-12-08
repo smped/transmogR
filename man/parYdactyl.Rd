@@ -15,9 +15,11 @@ parYdactyl(x, ...)
 Define the Pseudo-Autosomal Regions from a Seqinfo Object
 }
 \details{
-Using a seqinfo object based on either hg38, hg19 or their variations,
-create a GRanges object with the Pseudo-Autosomal Regions from the Y
-chromosome for that build.
+Using a seqinfo object based on either hg38, hg19, CHM13.v2 or their
+variations, create a GRanges object with the Pseudo-Autosomal Regions from
+the Y chromosome for that build.
+The length of the Y chromosome on the seqinfo object is used to determine
+the correct genome build
 
 An additional mcols column called PAR will indicate PAR1 and PAR2
 }

@@ -106,7 +106,7 @@ setMethod(
         if (!missing(names)) names(seq) <- names
         message("done")
         mogrifyGenome(
-            seq, var, alt_col, tag, sep, var_tags = FALSE, var_sep = "_", ...
+            seq, var, alt_col, tag, sep, var_tags = var_tags, var_sep = "_", ...
         )
     }
 )

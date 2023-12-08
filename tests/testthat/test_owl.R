@@ -22,7 +22,9 @@ test_that("owl substitutes SNPs correctly", {
         hg19 <- BSgenome.Hsapiens.UCSC.hg19::BSgenome.Hsapiens.UCSC.hg19
         snps <- GRanges("chrM:1")
         snps$ALT <- "A" # Normally a G
-        new <- owl(hg19, snps, names = "chrM")
+        new <- suppressMessages(
+            owl(hg19, snps, names = "chrM")
+        )
         expect_true(strsplit(as.character(new), "")[[1]][1] == "A")
     }
 
@@ -40,6 +42,6 @@ test_that("owl errors when expected", {
         ALT = c("C", "T", "A")
     )
 
-    expect_error(owl(seq, snps, alt_col = "ALT"), "all\\(seqnames\\(.+TRUE$")
+    expect_error(owl(seq, snps, alt_col = "ALT"), "^all\\(snp.+is not TRUE$")
 
 })

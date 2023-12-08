@@ -5,3 +5,4 @@
 ^docs$
 ^pkgdown$
 ^TODO\.md$
+^data-raw$
