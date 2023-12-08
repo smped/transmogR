@@ -48,3 +48,24 @@ expectations describing how the function will incorporate data\tabular{llll}{
    BSgenome \tab N \tab Modify a Reference Genome \tab DNAStringSet \cr
 }
 }
+\examples{
+## Start with a DNAStringSet
+library(GenomicRanges)
+seq <- DNAStringSet(c(seq1 = "AATCTGCGC"))
+## Define an Insertion
+var <- GRanges("seq1:1")
+var$ALT <- "AAA"
+seq
+armIndello(seq, var)
+
+## To modify a single transcript
+library(GenomicFeatures)
+ex <- GRanges(c("seq1:1-3:+", "seq1:7-9:+"))
+orig <- extractTranscriptSeqs(seq, GRangesList(tx1 = ex))[["tx1"]]
+orig
+armIndello(orig, var, exons = ex)
+
+}
+\seealso{
+\code{\link[=mogrifyTranscriptome]{mogrifyTranscriptome()}}
+}

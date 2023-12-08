@@ -33,5 +33,11 @@ sq <- Seqinfo(
 )
 parYdactyl(sq)
 
+## PAR regions for CHM13 are also available
+sq <- Seqinfo(
+  seqnames = "chrY", seqlengths = 62460029, genome = "CHM13"
+)
+parYdactyl(sq)
+
 
 }
