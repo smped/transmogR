@@ -103,7 +103,6 @@ setMethod(
 
         ## Separate into snps & indels
         var <- subset(var, seqnames %in% seqlevels(x))
-        if (length(var) == 0) return(x)
         is_snp <- width(var) == 1 & nchar(mcols(var)[[alt_col]]) == 1
         snps <- var[is_snp]
         indels <- var[!is_snp]
@@ -136,6 +135,7 @@ setMethod(
         new_ref <- owl(x, snps, alt_col = alt_col)
         ex_by_trans <- splitAsList(exons, mcols(exons)[[trans_col]])
         all_seq <- extractTranscriptSeqs(new_ref, ex_by_trans)
+        if (length(var) == 0) return(all_seq)
 
         ## Now modify the transcripts with InDels
         cl <- class(all_seq)
@@ -197,6 +197,7 @@ setMethod(
             " sequences as a DNAStringSet...", appendLF = FALSE
         )
         x <- as(getSeq(x, seq_to_get), "DNAStringSet")
+        names(x) <- seq_to_get
         if (verbose) message("done")
         mogrifyTranscriptome(
             x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,

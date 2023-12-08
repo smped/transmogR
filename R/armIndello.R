@@ -15,6 +15,7 @@
 #' | DNAStringSet    | N | Modify a Reference Genome | DNAStringSet |
 #' | BSgenome        | N | Modify a Reference Genome | DNAStringSet |
 #'
+#' @return A DNAStringSet or XString object (See Details)
 #'
 #' @param x Sequence of class XString
 #' @param exons GRanges object containing exon structure for `x`
@@ -92,8 +93,8 @@ setMethod(
     alt <- mcols(indels)[[alt_col]]
     names(alt) <- indels$ID
     if (neg_stranded) {
-        new_cl <- paste0(cl, "Set")
-        alt <- as.character(reverseComplement(as(alt, new_cl)))
+      new_cl <- paste0(cl, "Set")
+      alt <- as.character(reverseComplement(as(alt, new_cl)))
     }
 
     stopifnot(all(sort(setdiff(df$ID, "") ) == sort(names(alt))))

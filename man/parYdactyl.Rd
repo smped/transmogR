@@ -11,6 +11,9 @@ parYdactyl(x, ...)
 
 \item{...}{Not used}
 }
+\value{
+A GenomicRanges object
+}
 \description{
 Define the Pseudo-Autosomal Regions from a Seqinfo Object
 }
@@ -31,7 +34,4 @@ sq <- Seqinfo(
 parYdactyl(sq)
 
 
-}
-\references{
-GenomicRanges object
 }

@@ -31,6 +31,9 @@ internally}
 
 \item{names}{passed to \link[BSgenome:getSeq-methods]{BSgenome::getSeq} when x is a BSgenome object}
 }
+\value{
+A DNAStringSet or XString object (See Details)
+}
 \description{
 Modify one or more sequences to include Insertions or Deletions
 }

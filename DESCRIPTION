@@ -9,13 +9,16 @@ Authors@R: person("Stevie", "Pederson",
     )
 Description: transmogR provides the tools needed to crate a new reference
     genome or reference transcriptome, using a set of variants. Variants can 
-    be any combination of SNPs, Insertions and Deletions.
+    be any combination of SNPs, Insertions and Deletions. The intended 
+    use0case is to enable creation of variant-modified reference 
+    transcriptomes for incorporation into transcriptomic pseudo-alignment 
+    workflows, such as salmon.
 License: GPL-3
 Encoding: UTF-8
 URL: https://github.com/smped/transmogR
 BugReports: https://github.com/smped/transmogR/issues
 Depends:
-    Biostrings,
+    Biostrings
 Imports:
     BSgenome,
     GenomeInfoDb,
@@ -24,6 +27,7 @@ Imports:
     IRanges,
     methods,
     parallel,
+    stats,
     S4Vectors,
     tidyr
 Suggests:
@@ -31,6 +35,8 @@ Suggests:
     knitr,
     rtracklayer,
     testthat (>= 3.0.0)
+biocViews: Alignment, GenomicVariation, Sequencing, TranscriptomeVariant
+BiocType: Software
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)  
 RoxygenNote: 7.2.3

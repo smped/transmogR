@@ -2,7 +2,7 @@
 #'
 #' @description Define the Pseudo-Autosomal Regions from a Seqinfo Object
 #'
-#' @references GenomicRanges object
+#' @return A GenomicRanges object
 #'
 #' @details
 #' Using a seqinfo object based on either hg38, hg19, CHM13.v2 or their
@@ -42,7 +42,7 @@ parYdactyl <- function(x, ...){
         build = c("hg19", "hg38", "chm13v2.0"),
         length = c(59373566, 57227415, 62460029),
         par1 = c("10001-2781479", "10001-2781479", "0-2458320"),
-        par2 = c( "59034050-59363566", "56887903-57217415", "62122809-62460029")
+        par2 = c("59034050-59363566", "56887903-57217415", "62122809-62460029")
     )
     par_df <- subset(par_df, length == len)
     if (nrow(par_df) == 0) stop("Invalid length for ", y)

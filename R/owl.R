@@ -37,7 +37,7 @@
 #' @name owl
 #' @rdname owl-methods
 setGeneric(
-  "owl", function(seq, snps, ...){standardGeneric("owl")}
+    "owl", function(seq, snps, ...){standardGeneric("owl")}
     ## A more boring name might be subSNP...
 )
 #' @import Biostrings
@@ -48,55 +48,57 @@ setGeneric(
 #' @aliases owl
 #' @export
 setMethod(
-  "owl",
-  signature = signature(seq = "XStringSet", snps = "GRanges"),
-  function(seq, snps, alt_col = "ALT", ...) {
+    "owl",
+    signature = signature(seq = "XStringSet", snps = "GRanges"),
+    function(seq, snps, alt_col = "ALT", ...) {
 
-    ## Check the SNPs
-    stopifnot(is(snps, "GenomicRanges"))
-    snps <- .checkAlts(snps, alt_col)
-    stopifnot(all(width(snps) == 1)) # Must be single positions
-    stopifnot(all(nchar(mcols(snps)[[alt_col]]) == 1)) # Mus be SNPs
+        ## Check the SNPs
+        stopifnot(is(snps, "GenomicRanges"))
+        snps <- .checkAlts(snps, alt_col)
+        stopifnot(all(width(snps) == 1)) # Must be single positions
+        stopifnot(all(nchar(mcols(snps)[[alt_col]]) == 1)) # Mus be SNPs
 
-    ## Check compatible seqinfo
-    seq_sq <- seqinfo(seq)
-    snp_sq <- as.character(seqnames(snps))
-    stopifnot(all(snp_sq %in% seqlevels(seq_sq))) # seqlevels
-    seqlevels(snps) <- seqlevels(seq_sq)
-    seqinfo(snps) <- seq_sq
+        ## Check compatible seqinfo
+        seq_sq <- seqinfo(seq)
+        snp_sq <- as.character(seqnames(snps))
+        stopifnot(all(snp_sq %in% seqlevels(seq_sq))) # seqlevels
+        seqlevels(snps) <- seqlevels(seq_sq)
+        seqinfo(snps) <- seq_sq
 
-    ## Find sequences with SNPs
-    seqs_wth_snps <- as.character(unique(seqnames(snps)))
-    new_seq <- lapply(
-      seqs_wth_snps,
-      function(x) {
-        temp <- subset(snps, seqnames == x)
-        replaceLetterAt(seq[[x]], at = start(temp), mcols(temp)[[alt_col]], ...)
-      }
-    )
-    names(new_seq) <- seqs_wth_snps
-    seq_len <- vapply(seq, length, integer(1))
-    seq[seqs_wth_snps] <- new_seq
-    ## Check lengths aren't messed up then return
-    stopifnot(all(seq_len == vapply(seq, length, integer(1))))
-    seq
+        ## Find sequences with SNPs
+        seqs_wth_snps <- as.character(unique(seqnames(snps)))
+        new_seq <- lapply(
+            seqs_wth_snps,
+            function(x) {
+                temp <- subset(snps, seqnames == x)
+                replaceLetterAt(
+                    seq[[x]], at = start(temp), mcols(temp)[[alt_col]], ...
+                )
+            }
+        )
+        names(new_seq) <- seqs_wth_snps
+        seq_len <- vapply(seq, length, integer(1))
+        seq[seqs_wth_snps] <- new_seq
+        ## Check lengths aren't messed up then return
+        stopifnot(all(seq_len == vapply(seq, length, integer(1))))
+        seq
 
-  }
+    }
 )
 #' @importFrom BSgenome getSeq
 #' @rdname owl-methods
 #' @aliases owl
 #' @export
 setMethod(
-  "owl",
-  signature = signature(seq = "BSgenome", snps = "GRanges"),
-  function(seq, snps, alt_col = "ALT", names, ...) {
+    "owl",
+    signature = signature(seq = "BSgenome", snps = "GRanges"),
+    function(seq, snps, alt_col = "ALT", names, ...) {
 
-    ## Setup the sequence info
-    message("Extracting sequences as a DNAStringSet...", appendLF = FALSE)
-    seq <- as(getSeq(seq, names), "DNAStringSet")
-    if (!missing(names)) names(seq) <- names
-    message("done")
-    owl(seq, snps, alt_col = alt_col, ...)
-  }
+        ## Setup the sequence info
+        message("Extracting sequences as a DNAStringSet...", appendLF = FALSE)
+        seq <- as(getSeq(seq, names), "DNAStringSet")
+        if (!missing(names)) names(seq) <- names
+        message("done")
+        owl(seq, snps, alt_col = alt_col, ...)
+    }
 )
