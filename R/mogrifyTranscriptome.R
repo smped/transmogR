@@ -205,3 +205,61 @@ setMethod(
         )
     }
 )
+#' @importClassesFrom VariantAnnotation VcfFile
+#' @importFrom Biostrings getSeq
+#' @importFrom GenomicRanges granges GRanges
+#' @importFrom GenomeInfoDb seqinfo
+#' @export
+#' @rdname mogrifyTranscriptome-methods
+#' @aliases mogrifyTranscriptome-methods
+setMethod(
+    "mogrifyTranscriptome",
+    signature = signature(x = "BSgenome", var = "VcfFile", exons = "GRanges"),
+    function(
+        x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
+        omit_ranges = NULL, tag = NULL, sep = "_",
+        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc_cores = 1, ...
+    ) {
+        ## Setup the sequence info, only extracting those with a transcript
+        all_gr <- sort(c(granges(var), granges(exons)))
+        seq_to_get <- unique(seqnames(all_gr))
+        if (verbose) message(
+            "Extracting ", length(seq_to_get),
+            " sequences as a DNAStringSet...", appendLF = FALSE
+        )
+        x <- as(getSeq(x, seq_to_get), "DNAStringSet")
+        names(x) <- seq_to_get
+        sq <- seqinfo(x)
+        if (verbose) message("done")
+        if (verbose) message("Loading variants from ", var, appendLF = FALSE)
+        var <- .parseVariants(var, alt_col, which = GRanges(sq))
+        if (verbose) message("done")
+        if (verbose) message("Loaded ", length(var), " variants")
+        mogrifyTranscriptome(
+            x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,
+            var_sep, verbose, mc_cores, ...
+        )
+    }
+)
+#' @importClassesFrom VariantAnnotation VcfFile
+#' @importFrom GenomeInfoDb seqinfo
+#'
+#' @export
+#' @rdname mogrifyTranscriptome-methods
+#' @aliases mogrifyTranscriptome-methods
+setMethod(
+    "mogrifyTranscriptome",
+    signature = signature(x = "XStringSet", var = "VcfFile", exons = "GRanges"),
+    function(
+        x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
+        omit_ranges = NULL, tag = NULL, sep = "_",
+        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc_cores = 1, ...
+    ) {
+        sq <- seqinfo(x)
+        var <- .parseVariants(var, alt_col, which = GRanges(sq))
+        mogrifyTranscriptome(
+            x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,
+            var_sep, verbose, mc_cores, ...
+        )
+    }
+)

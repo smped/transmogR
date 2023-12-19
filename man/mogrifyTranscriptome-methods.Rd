@@ -5,6 +5,8 @@
 \alias{mogrifyTranscriptome,XStringSet,GRanges,GRanges-method}
 \alias{mogrifyTranscriptome-methods}
 \alias{mogrifyTranscriptome,BSgenome,GRanges,GRanges-method}
+\alias{mogrifyTranscriptome,BSgenome,VcfFile,GRanges-method}
+\alias{mogrifyTranscriptome,XStringSet,VcfFile,GRanges-method}
 \title{Mogrify a transcriptome using a set of variants}
 \usage{
 mogrifyTranscriptome(x, var, exons, ...)
@@ -26,6 +28,38 @@ mogrifyTranscriptome(x, var, exons, ...)
 )
 
 \S4method{mogrifyTranscriptome}{BSgenome,GRanges,GRanges}(
+  x,
+  var,
+  exons,
+  alt_col = "ALT",
+  trans_col = "transcript_id",
+  omit_ranges = NULL,
+  tag = NULL,
+  sep = "_",
+  var_tags = FALSE,
+  var_sep = "_",
+  verbose = TRUE,
+  mc_cores = 1,
+  ...
+)
+
+\S4method{mogrifyTranscriptome}{BSgenome,VcfFile,GRanges}(
+  x,
+  var,
+  exons,
+  alt_col = "ALT",
+  trans_col = "transcript_id",
+  omit_ranges = NULL,
+  tag = NULL,
+  sep = "_",
+  var_tags = FALSE,
+  var_sep = "_",
+  verbose = TRUE,
+  mc_cores = 1,
+  ...
+)
+
+\S4method{mogrifyTranscriptome}{XStringSet,VcfFile,GRanges}(
   x,
   var,
   exons,

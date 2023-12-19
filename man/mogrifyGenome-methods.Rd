@@ -5,6 +5,8 @@
 \alias{mogrifyGenome,XStringSet,GRanges-method}
 \alias{mogrifyGenome-methods}
 \alias{mogrifyGenome,BSgenome,GRanges-method}
+\alias{mogrifyGenome,BSgenome,VcfFile-method}
+\alias{mogrifyGenome,XStringSet,VcfFile-method}
 \title{Mogrify a genome using a set of variants}
 \usage{
 mogrifyGenome(x, var, ...)
@@ -31,11 +33,35 @@ mogrifyGenome(x, var, ...)
   var_sep = "_",
   ...
 )
+
+\S4method{mogrifyGenome}{BSgenome,VcfFile}(
+  x,
+  var,
+  alt_col = "ALT",
+  names,
+  tag = NULL,
+  sep = "_",
+  var_tags = FALSE,
+  var_sep = "_",
+  ...
+)
+
+\S4method{mogrifyGenome}{XStringSet,VcfFile}(
+  x,
+  var,
+  alt_col = "ALT",
+  tag = NULL,
+  sep = "_",
+  var_tags = FALSE,
+  var_sep = "_",
+  ...
+)
 }
 \arguments{
 \item{x}{A DNAStringSet or BSgenome}
 
-\item{var}{GRanges object containing the variants}
+\item{var}{GRanges object containing the variants, or a
+\link[VariantAnnotation:VcfFile-class]{VariantAnnotation::VcfFile}}
 
 \item{...}{Passed to armIndello}
 

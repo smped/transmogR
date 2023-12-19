@@ -1,7 +1,7 @@
 Package: transmogR
 Type: Package
 Title: Modify a set of reference sequences using a set of variants
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: person("Stevie", "Pederson", 
     email = "stephen.pederson.au@gmail.com", 
     role = c("aut", "cre"),
@@ -29,7 +29,9 @@ Imports:
     parallel,
     stats,
     S4Vectors,
-    tidyr
+    SummarizedExperiment,
+    tidyr,
+    VariantAnnotation
 Suggests:
     BSgenome.Hsapiens.UCSC.hg19,
     knitr,

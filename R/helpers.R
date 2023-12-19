@@ -17,3 +17,23 @@
     if (any(alt_error)) stop("Non-IUPAC alleles detected")
     var
 }
+
+#' @keywords internal
+#' @importClassesFrom VariantAnnotation ScanVcfParam
+#' @importFrom VariantAnnotation readVcf ScanVcfParam
+#' @importFrom S4Vectors mcols 'mcols<-'
+#' @importFrom SummarizedExperiment rowRanges
+.parseVariants <- function(f, alt_col, which, ...){
+    param <- ScanVcfParam(fixed = alt_col, info = NA, which = which, ...)
+    vcf <-  readVcf(f, param = param)
+    gr <- rowRanges(vcf)
+    mc_names <- c("REF", alt_col)
+    mcols(gr) <- mcols(gr)[mc_names]
+    mcols(gr) <- lapply(
+        mcols(gr), \(x) {
+            if (is(x, "XStringSetList")) x <- unlist(x)
+            as.character(x)
+        }
+    )
+    gr
+}

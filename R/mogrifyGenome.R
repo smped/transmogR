@@ -3,7 +3,8 @@
 #' Use a set of SNPS, insertions and deletions to modify a reference genome
 #'
 #' @param x A DNAStringSet or BSgenome
-#' @param var GRanges object containing the variants
+#' @param var GRanges object containing the variants, or a
+#' [VariantAnnotation::VcfFile]
 #' @param alt_col The name of the column with `var` containing alternate bases
 #' @param names Sequence names to be mogrified
 #' @param tag Optional tag to add to all sequence names which were modified
@@ -105,6 +106,53 @@ setMethod(
         seq <- as(getSeq(x, names), "DNAStringSet")
         if (!missing(names)) names(seq) <- names
         message("done")
+        mogrifyGenome(
+            seq, var, alt_col, tag, sep, var_tags = var_tags, var_sep = "_", ...
+        )
+    }
+)
+#' @importClassesFrom VariantAnnotation VcfFile
+#' @importFrom Biostrings getSeq
+#' @importFrom GenomeInfoDb seqinfo
+#' @importFrom GenomicRanges GRanges
+#' @export
+#' @rdname mogrifyGenome-methods
+#' @aliases mogrifyGenome-methods
+setMethod(
+    "mogrifyGenome",
+    signature = signature(x = "BSgenome", var = "VcfFile"),
+    function(
+        x, var, alt_col = "ALT", names, tag = NULL, sep = "_",
+        var_tags = FALSE, var_sep = "_", ...
+    ) {
+        ## Setup the sequence info
+        message("Extracting sequences as a DNAStringSet...", appendLF = FALSE)
+        seq <- as(getSeq(x, names), "DNAStringSet")
+        if (!missing(names)) names(seq) <- names
+        message("done")
+        ## Performing the above step first means parsing of the VCF can be limited
+        sq <- seqinfo(seq)
+        var <- .parseVariants(var, alt_col, which = GRanges(sq))
+        mogrifyGenome(
+            seq, var, alt_col, tag, sep, var_tags = var_tags, var_sep = "_", ...
+        )
+    }
+)
+#' @importClassesFrom VariantAnnotation VcfFile
+#' @importFrom GenomeInfoDb seqinfo
+#' @importFrom GenomicRanges GRanges
+#' @export
+#' @rdname mogrifyGenome-methods
+#' @aliases mogrifyGenome-methods
+setMethod(
+    "mogrifyGenome",
+    signature = signature(x = "XStringSet", var = "VcfFile"),
+    function(
+        x, var, alt_col = "ALT", tag = NULL, sep = "_",
+        var_tags = FALSE, var_sep = "_", ...
+    ) {
+        sq <- seqinfo(x)
+        var <- .parseVariants(var, alt_col, which = GRanges(sq))
         mogrifyGenome(
             seq, var, alt_col, tag, sep, var_tags = var_tags, var_sep = "_", ...
         )
