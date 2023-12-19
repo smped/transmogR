@@ -13,6 +13,10 @@ reference:
     - armIndello
     - owl
     - starts_with("mogrify")
+
+- title: Additional Functions
+  contents:
+    - calvInDel
     - parYdactyl
 
 navbar:
