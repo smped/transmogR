@@ -20,12 +20,23 @@ test_that("mogrifyTranscriptome works as expected",{
         )
         var$ALT <- c("G", "A") # SNP, Deletion at 1st & last positions
         new <- suppressMessages(
-            mogrifyTranscriptome(hg19,var = var, exons = ex, tag = "test", var_tags = TRUE)
+            mogrifyTranscriptome(
+                hg19, var = var, exons = ex, tag = "test", var_tags = TRUE
+            )
         )
         expect_true(names(new) == paste0(id, "_test_sd"))
         expect_true(as.character(new[[1]][1]) == "C")
         expect_true(length(new[[1]]) == 333)
         expect_true(as.character(new[[1]][seq(330, 333)]) == "GGAT")
+
+        ## Check that omit_ranges filters unwanted regions
+        empty <- suppressMessages(
+            mogrifyTranscriptome(
+                hg19, var = var, exons = ex, tag = "test", var_tags = TRUE,
+                omit_ranges = range(ex)
+            )
+        )
+        expect_true(length(empty) == 0)
 
         ## Check for an unaltered sequence if no variants
         new <- suppressMessages(
@@ -40,3 +51,5 @@ test_that("mogrifyTranscriptome works as expected",{
         )
     }
 })
+
+
