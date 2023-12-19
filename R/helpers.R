@@ -20,11 +20,18 @@
 
 #' @keywords internal
 #' @importClassesFrom VariantAnnotation ScanVcfParam
-#' @importFrom VariantAnnotation readVcf ScanVcfParam
+#' @importFrom VariantAnnotation readVcf ScanVcfParam 'vcfWhich<-'
 #' @importFrom S4Vectors mcols 'mcols<-'
 #' @importFrom SummarizedExperiment rowRanges
+#' @importFrom GenomicRanges GRanges
+#' @importFrom GenomeInfoDb seqinfo
+#' @importFrom methods is
 .parseVariants <- function(f, alt_col, which, ...){
-    param <- ScanVcfParam(fixed = alt_col, info = NA, which = which, ...)
+    param <- ScanVcfParam(fixed = alt_col, info = NA, ...)
+    if (!missing(which)) {
+        stopifnot(is(which, "GRanges"))
+        vcfWhich(param) <- which
+    }
     vcf <-  readVcf(f, param = param)
     gr <- rowRanges(vcf)
     mc_names <- c("REF", alt_col)

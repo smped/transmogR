@@ -9,3 +9,4 @@
 # transmogR 0.1.2
 
 * Added support for working directly from VCF files
+* Added SNV, Insertion & Deletion calling (`calvInDel`)

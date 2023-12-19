@@ -152,6 +152,8 @@ setMethod(
         var_tags = FALSE, var_sep = "_", ...
     ) {
         sq <- seqinfo(x)
+        ## This may prove problematic if no variants are on a chromosome
+        ## as the tabix file won't include them
         var <- .parseVariants(var, alt_col, which = GRanges(sq))
         mogrifyGenome(
             seq, var, alt_col, tag, sep, var_tags = var_tags, var_sep = "_", ...
