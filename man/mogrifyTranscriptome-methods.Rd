@@ -56,6 +56,7 @@ mogrifyTranscriptome(x, var, exons, ...)
   var_sep = "_",
   verbose = TRUE,
   mc_cores = 1,
+  which,
   ...
 )
 
@@ -72,6 +73,7 @@ mogrifyTranscriptome(x, var, exons, ...)
   var_sep = "_",
   verbose = TRUE,
   mc_cores = 1,
+  which,
   ...
 )
 }
@@ -105,6 +107,9 @@ Deletions respectively}
 
 \item{mc_cores}{Number of cores to be used when multi-threading via
 \link[parallel:mclapply]{parallel::mclapply}}
+
+\item{which}{GRanges object passed to \link[VariantAnnotation:ScanVcfParam-class]{VariantAnnotation::ScanVcfParam} if
+using a VCF directly}
 }
 \value{
 An XStringSet

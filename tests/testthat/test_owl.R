@@ -18,12 +18,12 @@ test_that("owl substitutes SNPs correctly", {
         as.character(result), c(seq1 = "ACCG", seq2 = "TATC", seq3 = "CGAA")
     )
 
-    if (requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE)) {
-        hg19 <- BSgenome.Hsapiens.UCSC.hg19::BSgenome.Hsapiens.UCSC.hg19
+    if (requireNamespace("BSgenome.Hsapiens.UCSC.hg38", quietly = TRUE)) {
+        hg38 <- BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38
         snps <- GRanges("chrM:1")
         snps$ALT <- "A" # Normally a G
         new <- suppressMessages(
-            owl(hg19, snps, names = "chrM")
+            owl(hg38, snps, names = "chrM")
         )
         expect_true(strsplit(as.character(new), "")[[1]][1] == "A")
     }

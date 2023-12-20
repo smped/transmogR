@@ -31,6 +31,7 @@ mogrifyGenome(x, var, ...)
   sep = "_",
   var_tags = FALSE,
   var_sep = "_",
+  verbose = TRUE,
   ...
 )
 
@@ -43,6 +44,8 @@ mogrifyGenome(x, var, ...)
   sep = "_",
   var_tags = FALSE,
   var_sep = "_",
+  which,
+  verbose = TRUE,
   ...
 )
 
@@ -54,6 +57,8 @@ mogrifyGenome(x, var, ...)
   sep = "_",
   var_tags = FALSE,
   var_sep = "_",
+  which,
+  verbose = TRUE,
   ...
 )
 }
@@ -78,6 +83,11 @@ Deletions respectively}
 \item{var_sep}{Separator between any previous tags and variant tags}
 
 \item{names}{Sequence names to be mogrified}
+
+\item{verbose}{logical(1) Print progress messages while running}
+
+\item{which}{GRanges object passed to \link[VariantAnnotation:ScanVcfParam-class]{VariantAnnotation::ScanVcfParam} if
+using a VCF directly}
 }
 \value{
 XStringSet with variant modified sequences

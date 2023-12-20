@@ -29,13 +29,13 @@ An additional mcols column called PAR will indicate PAR1 and PAR2
 \examples{
 library(GenomeInfoDb)
 sq <- Seqinfo(
-  seqnames = "chrY", seqlengths = 59373566, genome = "hg19_only_chrY"
+    seqnames = "chrY", seqlengths = 59373566, genome = "hg19_only_chrY"
 )
 parYdactyl(sq)
 
 ## PAR regions for CHM13 are also available
 sq <- Seqinfo(
-  seqnames = "chrY", seqlengths = 62460029, genome = "CHM13"
+    seqnames = "chrY", seqlengths = 62460029, genome = "CHM13"
 )
 parYdactyl(sq)
 

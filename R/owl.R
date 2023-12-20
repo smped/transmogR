@@ -38,7 +38,6 @@
 #' @rdname owl-methods
 setGeneric(
     "owl", function(seq, snps, ...){standardGeneric("owl")}
-    ## A more boring name might be subSNP...
 )
 #' @import Biostrings
 #' @importFrom S4Vectors mcols

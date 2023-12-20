@@ -13,6 +13,9 @@
 #' incorporated, with 's', 'i' and 'd' represeenting SNPs, Insertions and
 #' Deletions respectively
 #' @param var_sep Separator between any previous tags and variant tags
+#' @param which GRanges object passed to [VariantAnnotation::ScanVcfParam] if
+#' using a VCF directly
+#' @param verbose logical(1) Print progress messages while running
 #' @param ... Passed to armIndello
 #'
 #' @return XStringSet with variant modified sequences
@@ -60,9 +63,9 @@ setMethod(
         ## Separate into snps & indels
         var <- subset(var, seqnames %in% seqlevels(x))
         if (length(var) == 0) return(x)
-        is_snp <- width(var) == 1 & nchar(mcols(var)[[alt_col]]) == 1
-        snps <- var[is_snp]
-        indels <- var[!is_snp]
+        type <- calvInDel(var, alt_col)
+        snps <- var[type == "SNV"]
+        indels <- var[type != "SNV"]
 
         ## Overwrite SNPs
         new_seq <- owl(x, snps, alt_col)
@@ -99,22 +102,22 @@ setMethod(
     signature = signature(x = "BSgenome", var = "GRanges"),
     function(
         x, var, alt_col = "ALT", names, tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", ...
+        var_tags = FALSE, var_sep = "_", verbose = TRUE, ...
     ) {
         ## Setup the sequence info
-        message("Extracting sequences as a DNAStringSet...", appendLF = FALSE)
+        if (verbose) message(
+            "Extracting sequences as a DNAStringSet...", appendLF = FALSE
+        )
         seq <- as(getSeq(x, names), "DNAStringSet")
         if (!missing(names)) names(seq) <- names
-        message("done")
+        if (verbose) message("done")
         mogrifyGenome(
-            seq, var, alt_col, tag, sep, var_tags = var_tags, var_sep = "_", ...
+            seq, var, alt_col, tag, sep, var_tags = var_tags, var_sep = "_",
+            verbose = verbose, ...
         )
     }
 )
 #' @importClassesFrom VariantAnnotation VcfFile
-#' @importFrom Biostrings getSeq
-#' @importFrom GenomeInfoDb seqinfo
-#' @importFrom GenomicRanges GRanges
 #' @export
 #' @rdname mogrifyGenome-methods
 #' @aliases mogrifyGenome-methods
@@ -123,24 +126,16 @@ setMethod(
     signature = signature(x = "BSgenome", var = "VcfFile"),
     function(
         x, var, alt_col = "ALT", names, tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", ...
+        var_tags = FALSE, var_sep = "_", which, verbose = TRUE, ...
     ) {
-        ## Setup the sequence info
-        message("Extracting sequences as a DNAStringSet...", appendLF = FALSE)
-        seq <- as(getSeq(x, names), "DNAStringSet")
-        if (!missing(names)) names(seq) <- names
-        message("done")
-        ## Performing the above step first means parsing of the VCF can be limited
-        sq <- seqinfo(seq)
-        var <- .parseVariants(var, alt_col, which = GRanges(sq))
+        var <- .parseVariants(var, alt_col, which)
         mogrifyGenome(
-            seq, var, alt_col, tag, sep, var_tags = var_tags, var_sep = "_", ...
+            x, var, alt_col, names, tag, sep, var_tags = var_tags,
+            var_sep = "_", verbose = verbose,  ...
         )
     }
 )
 #' @importClassesFrom VariantAnnotation VcfFile
-#' @importFrom GenomeInfoDb seqinfo
-#' @importFrom GenomicRanges GRanges
 #' @export
 #' @rdname mogrifyGenome-methods
 #' @aliases mogrifyGenome-methods
@@ -149,14 +144,12 @@ setMethod(
     signature = signature(x = "XStringSet", var = "VcfFile"),
     function(
         x, var, alt_col = "ALT", tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", ...
+        var_tags = FALSE, var_sep = "_", which, verbose = TRUE, ...
     ) {
-        sq <- seqinfo(x)
-        ## This may prove problematic if no variants are on a chromosome
-        ## as the tabix file won't include them
-        var <- .parseVariants(var, alt_col, which = GRanges(sq))
+        var <- .parseVariants(var, alt_col, which)
         mogrifyGenome(
-            seq, var, alt_col, tag, sep, var_tags = var_tags, var_sep = "_", ...
+            x, var, alt_col, tag, sep, var_tags = var_tags, var_sep = "_",
+            verbose = verbose, ...
         )
     }
 )

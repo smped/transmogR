@@ -11,7 +11,7 @@ armIndello(x, indels, ...)
 
 \S4method{armIndello}{XString,GRanges}(x, indels, exons, alt_col = "ALT", ...)
 
-\S4method{armIndello}{DNAStringSet,GRanges}(x, indels, alt_col = "ALT", mc_cores = 1, ...)
+\S4method{armIndello}{DNAStringSet,GRanges}(x, indels, alt_col = "ALT", mc_cores = 1, verbose = TRUE, ...)
 
 \S4method{armIndello}{BSgenome,GRanges}(x, indels, alt_col = "ALT", mc_cores = 1, names, ...)
 }
@@ -28,6 +28,8 @@ armIndello(x, indels, ...)
 
 \item{mc_cores}{Number of cores to use when calling \link[parallel:mclapply]{parallel::mclapply}
 internally}
+
+\item{verbose}{logical(1) Print all messages}
 
 \item{names}{passed to \link[BSgenome:getSeq-methods]{BSgenome::getSeq} when x is a BSgenome object}
 }

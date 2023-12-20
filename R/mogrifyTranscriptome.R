@@ -35,6 +35,8 @@
 #' @param verbose logical(1) Include informative messages, or operate silently
 #' @param mc_cores Number of cores to be used when multi-threading via
 #' [parallel::mclapply]
+#' @param which GRanges object passed to [VariantAnnotation::ScanVcfParam] if
+#' using a VCF directly
 #' @param ... Not used
 #'
 #' @return An XStringSet
@@ -103,9 +105,9 @@ setMethod(
 
         ## Separate into snps & indels
         var <- subset(var, seqnames %in% seqlevels(x))
-        is_snp <- width(var) == 1 & nchar(mcols(var)[[alt_col]]) == 1
-        snps <- var[is_snp]
-        indels <- var[!is_snp]
+        type <- calvInDel(var, alt_col)
+        snps <- var[type == "SNV"]
+        indels <- var[type != "SNV"]
 
         ## Remove any unwanted transcripts
         if (!is.null(omit_ranges)) {
@@ -190,8 +192,7 @@ setMethod(
         var_tags = FALSE, var_sep = "_", verbose = TRUE, mc_cores = 1, ...
     ) {
         ## Setup the sequence info, only extracting those with a transcript
-        all_gr <- sort(c(granges(var), granges(exons)))
-        seq_to_get <- unique(seqnames(all_gr))
+        seq_to_get <- unique(seqnames(exons))
         if (verbose) message(
             "Extracting ", length(seq_to_get),
             " sequences as a DNAStringSet...", appendLF = FALSE
@@ -207,8 +208,7 @@ setMethod(
 )
 #' @importClassesFrom VariantAnnotation VcfFile
 #' @importFrom Biostrings getSeq
-#' @importFrom GenomicRanges granges GRanges
-#' @importFrom GenomeInfoDb seqinfo
+#' @importFrom GenomeInfoDb seqnames
 #' @export
 #' @rdname mogrifyTranscriptome-methods
 #' @aliases mogrifyTranscriptome-methods
@@ -218,22 +218,10 @@ setMethod(
     function(
         x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
         omit_ranges = NULL, tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc_cores = 1, ...
+        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc_cores = 1, which,
+        ...
     ) {
-        ## Setup the sequence info, only extracting those with a transcript
-        all_gr <- sort(c(granges(var), granges(exons)))
-        seq_to_get <- unique(seqnames(all_gr))
-        if (verbose) message(
-            "Extracting ", length(seq_to_get),
-            " sequences as a DNAStringSet...", appendLF = FALSE
-        )
-        x <- as(getSeq(x, seq_to_get), "DNAStringSet")
-        names(x) <- seq_to_get
-        sq <- seqinfo(x)
-        if (verbose) message("done")
-        if (verbose) message("Loading variants from ", var, appendLF = FALSE)
-        var <- .parseVariants(var, alt_col, which = GRanges(sq))
-        if (verbose) message("done")
+        var <- .parseVariants(var, alt_col, which)
         if (verbose) message("Loaded ", length(var), " variants")
         mogrifyTranscriptome(
             x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,
@@ -242,7 +230,6 @@ setMethod(
     }
 )
 #' @importClassesFrom VariantAnnotation VcfFile
-#' @importFrom GenomeInfoDb seqinfo
 #'
 #' @export
 #' @rdname mogrifyTranscriptome-methods
@@ -253,10 +240,10 @@ setMethod(
     function(
         x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
         omit_ranges = NULL, tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc_cores = 1, ...
+        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc_cores = 1, which,
+        ...
     ) {
-        sq <- seqinfo(x)
-        var <- .parseVariants(var, alt_col, which = GRanges(sq))
+        var <- .parseVariants(var, alt_col, which)
         mogrifyTranscriptome(
             x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,
             var_sep, verbose, mc_cores, ...

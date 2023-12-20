@@ -33,7 +33,7 @@ Imports:
     tidyr,
     VariantAnnotation
 Suggests:
-    BSgenome.Hsapiens.UCSC.hg19,
+    BSgenome.Hsapiens.UCSC.hg38,
     knitr,
     rtracklayer,
     testthat (>= 3.0.0)

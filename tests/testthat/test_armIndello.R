@@ -49,15 +49,15 @@ test_that("armIndello replaces Indels for a DNAStringSet", {
 })
 
 test_that("armIndello replaces InDels for BSgenome", {
-    run_test <- requireNamespace("BSgenome.Hsapiens.UCSC.hg19", quietly = TRUE)
+    run_test <- requireNamespace("BSgenome.Hsapiens.UCSC.hg38", quietly = TRUE)
     if (run_test) {
-        bs <- BSgenome.Hsapiens.UCSC.hg19::BSgenome.Hsapiens.UCSC.hg19
+        bs <- BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38
         indels <- GRanges("chrM:1-3", seqinfo = seqinfo(bs))
         indels$ALT <- "G"
         result <- suppressMessages(
             armIndello(bs, indels, names = "chrM", alt_col = "ALT")
         )
-        expect_true(length(result[["chrM"]]) == 16569)
+        expect_true(length(result[["chrM"]]) == 16567)
         expect_equal(as.character(result[["chrM"]][1:3]), "GCA")
 
     }
