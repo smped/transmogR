@@ -44,3 +44,16 @@
     )
     gr
 }
+
+#' @keywords internal
+#' @importFrom ComplexUpset intersection_size
+.makeIntersectionArgs <- function(x){
+    stopifnot(is(x, "list"))
+    args <- as.list(formals(intersection_size))
+    args <- args[names(args) != "..."]
+    cmn <- intersect(names(x), names(args))
+    novel <- setdiff(names(x), names(args))
+    if (length(cmn) > 0) args[cmn] <- x[cmn]
+    if (length(novel) > 0) args <- c(args, x[novel])
+    args
+}
