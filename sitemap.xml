@@ -16,10 +16,7 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/armIndello-methods.html</loc>
-  </url>
-  <url>
-    <loc>/reference/calvInDel.html</loc>
+    <loc>/reference/indelcator-methods.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
@@ -37,9 +34,12 @@
     <loc>/reference/owl-methods.html</loc>
   </url>
   <url>
-    <loc>/reference/parYdactyl.html</loc>
+    <loc>/reference/parY.html</loc>
   </url>
   <url>
     <loc>/reference/upsetVarByCol.html</loc>
+  </url>
+  <url>
+    <loc>/reference/varTypes.html</loc>
   </url>
 </urlset>
