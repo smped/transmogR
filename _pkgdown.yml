@@ -18,6 +18,7 @@ reference:
   contents:
     - calvInDel
     - parYdactyl
+    - contains("By")
 
 navbar:
   type: default
