@@ -31,9 +31,15 @@
     <loc>/reference/mogrifyTranscriptome-methods.html</loc>
   </url>
   <url>
+    <loc>/reference/overlapsByVar.html</loc>
+  </url>
+  <url>
     <loc>/reference/owl-methods.html</loc>
   </url>
   <url>
     <loc>/reference/parYdactyl.html</loc>
+  </url>
+  <url>
+    <loc>/reference/upsetVarByCol.html</loc>
   </url>
 </urlset>
