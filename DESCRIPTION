@@ -34,7 +34,6 @@ Imports:
     stats,
     S4Vectors,
     SummarizedExperiment,
-    tidyr,
     VariantAnnotation
 Suggests:
     BSgenome.Hsapiens.UCSC.hg38,

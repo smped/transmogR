@@ -60,7 +60,7 @@ setGeneric(
 #' @importFrom IRanges subsetByOverlaps findOverlaps
 #' @importFrom S4Vectors mcols 'mcols<-' queryHits subjectHits DataFrame
 #' @importFrom GenomicRanges strand 'strand<-' GPos
-#' @importFrom tidyr chop
+#' @importFrom stats aggregate
 #' @rdname armIndello-methods
 #' @aliases armIndello
 #' @export
@@ -103,7 +103,13 @@ setMethod(
         ## Testing using Views takes about 130% of the time
         df <- as.data.frame(gpos)[c("i", "ID", "group")]
         df <- df[order(df$i),]
-        df <- chop(df, i) # Is there a base version of this?
+        # df <- chop(df, i) # Is there a base version of this?
+        df$ID <- factor(df$ID, levels = unique(df$ID))
+        df$group <- factor(df$group, levels = unique(df$group))
+        fm <- as.formula("i ~ ID + group")
+        df <- aggregate(fm, data = df, FUN = list)
+        df$ID <- as.character(df$ID)
+        df$group <- as.integer(as.character(df$group))
         ## Start with the ref alleles
         df$seq <- lapply(df$i, \(i) as.character(x[i]))
         ## Now define the alternates
