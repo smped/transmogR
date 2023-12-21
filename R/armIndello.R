@@ -103,7 +103,7 @@ setMethod(
         ## Testing using Views takes about 130% of the time
         df <- as.data.frame(gpos)[c("i", "ID", "group")]
         df <- df[order(df$i),]
-        df <- chop(df, i)
+        df <- chop(df, i) # Is there a base version of this?
         ## Start with the ref alleles
         df$seq <- lapply(df$i, \(i) as.character(x[i]))
         ## Now define the alternates
