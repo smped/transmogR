@@ -68,7 +68,7 @@ mogrifyGenome(x, var, ...)
 \item{var}{GRanges object containing the variants, or a
 \link[VariantAnnotation:VcfFile-class]{VariantAnnotation::VcfFile}}
 
-\item{...}{Passed to armIndello}
+\item{...}{Passed to indelcator}
 
 \item{alt_col}{The name of the column with \code{var} containing alternate bases}
 

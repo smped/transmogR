@@ -16,7 +16,7 @@
 #' @param which GRanges object passed to [VariantAnnotation::ScanVcfParam] if
 #' using a VCF directly
 #' @param verbose logical(1) Print progress messages while running
-#' @param ... Passed to armIndello
+#' @param ... Passed to indelcator
 #'
 #' @return XStringSet with variant modified sequences
 #'
@@ -63,14 +63,14 @@ setMethod(
         ## Separate into snps & indels
         var <- subset(var, seqnames %in% seqlevels(x))
         if (length(var) == 0) return(x)
-        type <- calvInDel(var, alt_col)
+        type <- varTypes(var, alt_col)
         snps <- var[type == "SNV"]
         indels <- var[type != "SNV"]
 
         ## Overwrite SNPs
         new_seq <- owl(x, snps, alt_col)
         ## Arm with Insertions/Deletions
-        new_seq <- armIndello(new_seq, indels, ...)
+        new_seq <- indelcator(new_seq, indels, ...)
 
         ## Sort out tags for sequence names which were modified
         if (!is.null(tag)) {

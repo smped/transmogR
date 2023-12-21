@@ -33,7 +33,7 @@ overlapsByVar <- function(x, var, alt_col = "ALT", ...) {
     stopifnot(is(x, "GRangesList"))
     stopifnot(is(var, "GRanges"))
     alt_col <- match.arg(alt_col, colnames(mcols(var)))
-    type <- calvInDel(var, alt_col)
+    type <- varTypes(var, alt_col)
     var_list <- splitAsList(var, type)
     df_list <- lapply(
         x,

@@ -37,20 +37,20 @@
 #' var <- GRanges("seq1:1")
 #' var$ALT <- "AAA"
 #' seq
-#' armIndello(seq, var)
+#' indelcator(seq, var)
 #'
 #' ## To modify a single transcript
 #' library(GenomicFeatures)
 #' ex <- GRanges(c("seq1:1-3:+", "seq1:7-9:+"))
 #' orig <- extractTranscriptSeqs(seq, GRangesList(tx1 = ex))[["tx1"]]
 #' orig
-#' armIndello(orig, var, exons = ex)
+#' indelcator(orig, var, exons = ex)
 #'
 #' @export
-#' @name armIndello
-#' @rdname armIndello-methods
+#' @name indelcator
+#' @rdname indelcator-methods
 setGeneric(
-    "armIndello", function(x, indels, ...){standardGeneric("armIndello")}
+    "indelcator", function(x, indels, ...){standardGeneric("indelcator")}
 )
 #'
 #'
@@ -61,11 +61,11 @@ setGeneric(
 #' @importFrom S4Vectors mcols 'mcols<-' queryHits subjectHits DataFrame
 #' @importFrom GenomicRanges strand 'strand<-' GPos
 #' @importFrom stats aggregate
-#' @rdname armIndello-methods
-#' @aliases armIndello
+#' @rdname indelcator-methods
+#' @aliases indelcator
 #' @export
 setMethod(
-    "armIndello",
+    "indelcator",
     signature = signature(x = "XString", indels = "GRanges"),
     function(x, indels, exons, alt_col = "ALT", ...) {
 
@@ -137,11 +137,11 @@ setMethod(
 #' @importFrom GenomicRanges GRanges
 #' @importFrom IRanges width Views start end 'width<-'
 #' @importFrom parallel mclapply
-#' @rdname armIndello-methods
-#' @aliases armIndello
+#' @rdname indelcator-methods
+#' @aliases indelcator
 #' @export
 setMethod(
-    "armIndello",
+    "indelcator",
     signature(x = "DNAStringSet", indels = "GRanges"),
     function(x, indels, alt_col = "ALT", mc_cores = 1, verbose = TRUE, ...) {
 
@@ -193,15 +193,15 @@ setMethod(
 #' @import Biostrings
 #' @importClassesFrom GenomicRanges GRanges
 #' @importClassesFrom BSgenome BSgenome
-#' @rdname armIndello-methods
-#' @aliases armIndello
+#' @rdname indelcator-methods
+#' @aliases indelcator
 #' @export
 setMethod(
-    "armIndello",
+    "indelcator",
     signature(x = "BSgenome", indels = "GRanges"),
     function(x, indels, alt_col = "ALT", mc_cores = 1, names, ...) {
         seq <- as(getSeq(x, names), "DNAStringSet")
         if (!missing(names)) names(seq) <- names
-        armIndello(seq, indels, alt_col, mc_cores, ...)
+        indelcator(seq, indels, alt_col, mc_cores, ...)
     }
 )

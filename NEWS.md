@@ -15,3 +15,7 @@
 
 * Added UpSet plot for showing variants by gene/transcript
 * Added overlapsByVar
+
+# transmogR 0.1.4
+
+* Changed function names

@@ -3,8 +3,8 @@ f <- system.file("extdata/1000GP_subset.vcf.gz", package = "transmogR")
 vcf <- readVcf(f)
 gr <- rowRanges(vcf)
 
-test_that("calvInDel calls variants correctly",{
-    type <- calvInDel(gr)
+test_that("varTypes calls variants correctly",{
+    type <- varTypes(gr)
     tb <- table(type)
     tb_true <- structure(
         c(Deletion = 6L, Insertion = 1L, SNV = 93L), dim = 3L,
@@ -14,10 +14,10 @@ test_that("calvInDel calls variants correctly",{
     expect_equal(tb, tb_true)
 })
 
-test_that("calvInDel errors as expected", {
-    type <- calvInDel(gr)
+test_that("varTypes errors as expected", {
+    type <- varTypes(gr)
     width(gr)[type == "Insertion"] <- 2
-    expect_error(calvInDel(gr), "Some variants.+")
+    expect_error(varTypes(gr), "Some variants.+")
     gr$ALT <- 1
-    expect_error(calvInDel(gr), ".+is not TRUE")
+    expect_error(varTypes(gr), ".+is not TRUE")
 })

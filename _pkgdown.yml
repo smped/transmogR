@@ -10,15 +10,14 @@ reference:
 
 - title: Modify a Reference
   contents:
-    - armIndello
+    - indelcator
     - owl
     - starts_with("mogrify")
 
 - title: Additional Functions
   contents:
-    - calvInDel
-    - parYdactyl
-    - contains("By")
+    - parY
+    - contains("Var")
 
 navbar:
   type: default

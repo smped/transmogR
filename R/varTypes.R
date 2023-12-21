@@ -26,7 +26,7 @@
 #' f <- system.file("extdata/1000GP_subset.vcf.gz", package = "transmogR")
 #' vcf <- readVcf(f)
 #' gr <- rowRanges(vcf)
-#' type <- calvInDel(gr)
+#' type <- varTypes(gr)
 #' table(type)
 #' gr[type != "SNV"]
 #'
@@ -36,7 +36,7 @@
 #' @importFrom methods is
 #' @importFrom IRanges width
 #' @export
-calvInDel <- function(x, alt_col = "ALT", ...){
+varTypes <- function(x, alt_col = "ALT", ...){
     ## x should be a GRanges object with variants
     stopifnot(is(x, "GRanges"))
     stopifnot(alt_col %in% colnames(mcols(x)))

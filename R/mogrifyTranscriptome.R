@@ -105,7 +105,7 @@ setMethod(
 
         ## Separate into snps & indels
         var <- subset(var, seqnames %in% seqlevels(x))
-        type <- calvInDel(var, alt_col)
+        type <- varTypes(var, alt_col)
         snps <- var[type == "SNV"]
         indels <- var[type != "SNV"]
 
@@ -144,7 +144,7 @@ setMethod(
         new_trans_seq <- mclapply(
             trans_with_indel,
             function(id) {
-                armIndello(
+                indelcator(
                     all_seq[[id]], indels, ex_by_trans[[id]], alt_col
                 )
             }, mc.cores = mc_cores

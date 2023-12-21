@@ -21,19 +21,19 @@
 #' sq <- Seqinfo(
 #'     seqnames = "chrY", seqlengths = 59373566, genome = "hg19_only_chrY"
 #' )
-#' parYdactyl(sq)
+#' parY(sq)
 #'
 #' ## PAR regions for CHM13 are also available
 #' sq <- Seqinfo(
 #'     seqnames = "chrY", seqlengths = 62460029, genome = "CHM13"
 #' )
-#' parYdactyl(sq)
+#' parY(sq)
 #'
 #'
 #' @importFrom GenomeInfoDb seqnames
 #' @importFrom GenomicRanges GRanges
 #' @export
-parYdactyl <- function(x, ...){
+parY <- function(x, ...){
 
     ## Retain the seqnames but estimate the genome build.
     stopifnot(is(x, "Seqinfo"))

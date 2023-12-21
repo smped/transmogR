@@ -60,7 +60,7 @@ upsetVarByCol <- function(
 
     stopifnot(is(var, "GRanges"))
     alt_col <- match.arg(alt_col, colnames(mcols(var)))
-    var$type <- calvInDel(var, alt_col)
+    var$type <- varTypes(var, alt_col)
     var_list <- splitAsList(var, var$type)
 
     ids <- unique(mcols(gr)[[mcol]])
