@@ -17,7 +17,7 @@ reference:
 - title: Additional Functions
   contents:
     - parY
-    - contains("Var")
+    - matches("[Vv]ar")
 
 navbar:
   type: default
