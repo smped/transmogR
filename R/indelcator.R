@@ -55,11 +55,10 @@ setGeneric(
 #'
 #'
 #' @import Biostrings
-#' @importClassesFrom GenomicRanges GRanges
+#' @import GenomicRanges
 #' @importFrom methods is as
 #' @importFrom IRanges subsetByOverlaps findOverlaps
 #' @importFrom S4Vectors mcols 'mcols<-' queryHits subjectHits DataFrame
-#' @importFrom GenomicRanges strand 'strand<-' GPos
 #' @importFrom stats aggregate
 #' @rdname indelcator-methods
 #' @aliases indelcator
@@ -131,10 +130,9 @@ setMethod(
 )
 #'
 #' @import Biostrings
-#' @importClassesFrom GenomicRanges GRanges
+#' @import GenomicRanges
 #' @importFrom GenomeInfoDb seqnames seqinfo seqlevelsInUse
 #' @importFrom S4Vectors splitAsList mcols 'mcols<-'
-#' @importFrom GenomicRanges GRanges
 #' @importFrom IRanges width Views start end 'width<-'
 #' @importFrom parallel mclapply
 #' @rdname indelcator-methods
@@ -191,7 +189,7 @@ setMethod(
     }
 )
 #' @import Biostrings
-#' @importClassesFrom GenomicRanges GRanges
+#' @import GenomicRanges
 #' @importClassesFrom BSgenome BSgenome
 #' @rdname indelcator-methods
 #' @aliases indelcator

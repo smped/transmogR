@@ -177,9 +177,9 @@ setMethod(
 
     }
 )
+#' @import GenomicRanges
 #' @importFrom Biostrings getSeq
 #' @importFrom GenomeInfoDb seqnames
-#' @importFrom GenomicRanges granges
 #' @export
 #' @rdname mogrifyTranscriptome-methods
 #' @aliases mogrifyTranscriptome-methods

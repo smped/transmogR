@@ -12,6 +12,9 @@ vcf <- VcfFile(
 )
 gr <- transmogR:::.parseVariants(vcf, "ALT")
 gtf <- import.gff("gencode.v44.primary_assembly.annotation.gtf.gz")
+mc <- c("type", "score", "gene_id", "gene_type", "gene_name", 
+"transcript_id", "transcript_type", "transcript_name", "exon_number")
+mcols(gtf) <- mcols(gtf)[mc]
 ids <- unique(subsetByOverlaps(gtf, gr)$gene_id)
 subset(gtf, gene_id %in% ids) %>%
   export.gff("inst/extdata/gencode.v44.subset.gtf", format = "gtf")

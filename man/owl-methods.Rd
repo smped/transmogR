@@ -37,7 +37,6 @@ If providing a BSgenome object, this will first be coerced to a DNAStringSet
 which can be time consuming
 }
 \examples{
-library(GenomicRanges)
 seq <- DNAStringSet(c(chr1 = "AAGC"))
 snps <- GRanges("chr1:2")
 snps$ALT <- "G"

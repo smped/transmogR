@@ -30,8 +30,8 @@
 #' parY(sq)
 #'
 #'
+#' @import GenomicRanges
 #' @importFrom GenomeInfoDb seqnames
-#' @importFrom GenomicRanges GRanges
 #' @export
 parY <- function(x, ...){
 

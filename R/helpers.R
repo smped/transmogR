@@ -19,11 +19,11 @@
 }
 
 #' @keywords internal
+#' @import GenomicRanges
 #' @importClassesFrom VariantAnnotation ScanVcfParam
 #' @importFrom VariantAnnotation readVcf ScanVcfParam 'vcfWhich<-'
 #' @importFrom S4Vectors mcols 'mcols<-'
 #' @importFrom SummarizedExperiment rowRanges
-#' @importFrom GenomicRanges GRanges
 #' @importFrom GenomeInfoDb seqinfo
 #' @importFrom methods is
 .parseVariants <- function(f, alt_col, which, ...){

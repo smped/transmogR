@@ -19,3 +19,4 @@
 # transmogR 0.1.4
 
 * Changed function names
+* Added sjFromExons
