@@ -126,7 +126,7 @@ donor and acceptor sites. Branch sites are not identified.</p>
 <span class="r-in"><span>   feature.type <span class="op">=</span> <span class="st">"exon"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">sjFromExons</span><span class="op">(</span><span class="va">gtf</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 196 ranges and 20 metadata columns:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 196 ranges and 12 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         seqnames        ranges strand |        site</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     [1]     chr1 182745-182752      + |       donor</span>
@@ -140,19 +140,19 @@ donor and acceptor sites. Branch sites are not identified.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [194]     chr1 810170-810174      - |    acceptor</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [195]     chr1 817367-817374      - |       donor</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [196]     chr1 827664-827671      - |       donor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                               transcript_id        source     type     score</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                             &lt;CharacterList&gt;  &lt;FactorList&gt; &lt;factor&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]                   ENST00000624431.2        HAVANA     exon        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]                   ENST00000624431.2        HAVANA     exon        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]                   ENST00000624431.2        HAVANA     exon        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]                   ENST00000624431.2        HAVANA     exon        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]                   ENST00000624431.2        HAVANA     exon        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ...                                 ...           ...      ...       ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [192] ENST00000447500.4,ENST00000590817.3 HAVANA,HAVANA     exon        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [193] ENST00000447500.4,ENST00000590817.3 HAVANA,HAVANA     exon        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [194]                   ENST00000447500.4        HAVANA     exon        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [195]                   ENST00000447500.4        HAVANA     exon        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [196] ENST00000635509.2,ENST00000634337.2 HAVANA,HAVANA     exon        NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                               transcript_id      source     type     score</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                             &lt;CharacterList&gt;    &lt;factor&gt; &lt;factor&gt; &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]                   ENST00000624431.2 rtracklayer     exon        NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]                   ENST00000624431.2 rtracklayer     exon        NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]                   ENST00000624431.2 rtracklayer     exon        NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]                   ENST00000624431.2 rtracklayer     exon        NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]                   ENST00000624431.2 rtracklayer     exon        NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ...                                 ...         ...      ...       ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [192] ENST00000447500.4,ENST00000590817.3 rtracklayer     exon        NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [193] ENST00000447500.4,ENST00000590817.3 rtracklayer     exon        NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [194]                   ENST00000447500.4 rtracklayer     exon        NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [195]                   ENST00000447500.4 rtracklayer     exon        NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [196] ENST00000635509.2,ENST00000634337.2 rtracklayer     exon        NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             phase                               gene_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;integer&gt;                       &lt;CharacterList&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     [1]      &lt;NA&gt;                     ENSG00000279928.2</span>
@@ -179,32 +179,19 @@ donor and acceptor sites. Branch sites are not identified.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [194]                                        lncRNA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [195]                                        lncRNA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [196] transcribed_processe..,transcribed_processe..</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                               gene_name           level</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                         &lt;CharacterList&gt; &lt;CharacterList&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]                        DDX11L17               2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]                        DDX11L17               2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]                        DDX11L17               2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]                        DDX11L17               2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]                        DDX11L17               2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ...                             ...             ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [192] ENSG00000290784,ENSG00000230092             2,2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [193] ENSG00000290784,ENSG00000230092             2,2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [194]                 ENSG00000290784               2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [195]                 ENSG00000290784               2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [196] ENSG00000230021,ENSG00000230021             2,2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                         tag</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                             &lt;CharacterList&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]                   Ensembl_canonical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]                   Ensembl_canonical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]                   Ensembl_canonical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]                   Ensembl_canonical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]                   Ensembl_canonical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ...                                 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [192] Ensembl_canonical,Ensembl_canonical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [193] Ensembl_canonical,Ensembl_canonical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [194]                   Ensembl_canonical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [195]                   Ensembl_canonical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [196]        RNA_Seq_supported_only,basic</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                               gene_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         &lt;CharacterList&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]                        DDX11L17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]                        DDX11L17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]                        DDX11L17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]                        DDX11L17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]                        DDX11L17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ...                             ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [192] ENSG00000290784,ENSG00000230092</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [193] ENSG00000290784,ENSG00000230092</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [194]                 ENSG00000290784</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [195]                 ENSG00000290784</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [196] ENSG00000230021,ENSG00000230021</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                   transcript_type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                   &lt;CharacterList&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     [1]                    unprocessed_pseudogene</span>
@@ -218,71 +205,19 @@ donor and acceptor sites. Branch sites are not identified.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [194]                                    lncRNA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [195]                                    lncRNA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [196] processed_transcript,processed_transcript</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                         transcript_name transcript_support_level</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                         &lt;CharacterList&gt;          &lt;CharacterList&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]                    DDX11L17-201                       NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]                    DDX11L17-201                       NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]                    DDX11L17-201                       NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]                    DDX11L17-201                       NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]                    DDX11L17-201                       NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ...                             ...                      ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [192] ENST00000447500,ENST00000590817                     5,NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [193] ENST00000447500,ENST00000590817                     5,NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [194]                 ENST00000447500                        5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [195]                 ENST00000447500                        5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [196] ENST00000635509,ENST00000634337                      5,5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                 havana_transcript</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                   &lt;CharacterList&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]                      OTTHUMT00000491420.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]                      OTTHUMT00000491420.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]                      OTTHUMT00000491420.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]                      OTTHUMT00000491420.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]                      OTTHUMT00000491420.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ...                                       ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [192] OTTHUMT00000448550.2,OTTHUMT00000006886.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [193] OTTHUMT00000448550.2,OTTHUMT00000006886.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [194]                      OTTHUMT00000448550.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [195]                      OTTHUMT00000448550.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [196] OTTHUMT00000488653.2,OTTHUMT00000488647.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                     exon_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                             &lt;CharacterList&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]                   ENSE00003759020.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]                   ENSE00003759581.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]                   ENSE00003759581.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]                   ENSE00003804405.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]                   ENSE00003804405.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ...                                 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [192] ENSE00004015917.1,ENSE00001782999.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [193] ENSE00001674926.2,ENSE00001651951.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [194]                   ENSE00001674926.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [195]                   ENSE00001746491.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [196] ENSE00003786980.2,ENSE00003786823.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                       havana_gene     hgnc_id             ont</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                   &lt;CharacterList&gt; &lt;character&gt; &lt;CharacterList&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]                      OTTHUMG00000191962.1  HGNC:55080     PGO:0000005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]                      OTTHUMG00000191962.1  HGNC:55080     PGO:0000005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]                      OTTHUMG00000191962.1  HGNC:55080     PGO:0000005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]                      OTTHUMG00000191962.1  HGNC:55080     PGO:0000005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]                      OTTHUMG00000191962.1  HGNC:55080     PGO:0000005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ...                                       ...         ...             ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [192]                   NA,OTTHUMG00000002403.3        &lt;NA&gt;  NA,PGO:0000019</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [193]                   NA,OTTHUMG00000002403.3        &lt;NA&gt;  NA,PGO:0000019</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [194]                                      &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [195]                                      &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [196] OTTHUMG00000191652.4,OTTHUMG00000191652.4        &lt;NA&gt;           NA,NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             exon_number</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;CharacterList&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]               1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]               2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]               2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]               3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]               3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ...             ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [192]             3,2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [193]             2,1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [194]               2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [195]               1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [196]             1,1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         transcript_name     exon_number</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         &lt;CharacterList&gt; &lt;CharacterList&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]                    DDX11L17-201               1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]                    DDX11L17-201               2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]                    DDX11L17-201               2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]                    DDX11L17-201               3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]                    DDX11L17-201               3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ...                             ...             ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [192] ENST00000447500,ENST00000590817             3,2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [193] ENST00000447500,ENST00000590817             2,1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [194]                 ENST00000447500               2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [195]                 ENST00000447500               1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [196] ENST00000635509,ENST00000634337             1,1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
 <span class="r-in"><span></span></span>
