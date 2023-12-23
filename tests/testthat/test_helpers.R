@@ -1,4 +1,4 @@
-test_that(".checkAlts functions correctly", {
+test_that(".checkAlts behaves correctly", {
     gr <- GenomicRanges::GRanges("chr1:1")
     gr$ALT <- ""
     expect_error(.checkAlts(gr, "ALT"), "Non-IUPAC.+")
@@ -10,7 +10,7 @@ test_that(".checkAlts functions correctly", {
     expect_equal(gr, .checkAlts(gr, "ALT"))
 })
 
-test_that(".pasreVariants functions correctly",{
+test_that(".parseVariants behaves correctly",{
     library(VariantAnnotation)
     f <- VcfFile(
         system.file("extdata/1000GP_subset.vcf.gz", package = "transmogR")
@@ -21,4 +21,18 @@ test_that(".pasreVariants functions correctly",{
     expect_true(is(gr$REF, "character"))
     expect_true(is(gr$ALT, "character"))
 
+})
+
+test_that(".makeIntersectionArgs behaves correctly",{
+    new <- .makeIntersectionArgs(list(bar_number_threshold = 1, fill = "blue"))
+    expect_true(is(new, "list"))
+    types <- c(
+        mapping = "call", counts = "logical", bar_number_threshold = "numeric",
+        text_colors = "call", text = "call", text_mapping = "call", mode = "character",
+        position = "call", fill = "character"
+    )
+    expect_equal(vapply(new, \(x) is(x)[[1]], character(1)), types)
+    expect_true(new$bar_number_threshold == 1)
+    expect_true(new$fill == "blue")
+    expect_error(.makeIntersectionArgs(NULL))
 })
