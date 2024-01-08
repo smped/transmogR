@@ -11,22 +11,22 @@ indelcator(x, indels, ...)
 
 \S4method{indelcator}{XString,GRanges}(x, indels, exons, alt_col = "ALT", ...)
 
-\S4method{indelcator}{DNAStringSet,GRanges}(x, indels, alt_col = "ALT", mc_cores = 1, verbose = TRUE, ...)
+\S4method{indelcator}{DNAStringSet,GRanges}(x, indels, alt_col = "ALT", mc.cores = 1, verbose = TRUE, ...)
 
-\S4method{indelcator}{BSgenome,GRanges}(x, indels, alt_col = "ALT", mc_cores = 1, names, ...)
+\S4method{indelcator}{BSgenome,GRanges}(x, indels, alt_col = "ALT", mc.cores = 1, names, ...)
 }
 \arguments{
 \item{x}{Sequence of class XString}
 
 \item{indels}{GRanges object with InDel locations and the alternate allele}
 
-\item{...}{Not used}
+\item{...}{Passed to \link[parallel:mclapply]{parallel::mclapply}}
 
 \item{exons}{GRanges object containing exon structure for \code{x}}
 
 \item{alt_col}{Column containing the alternate allele}
 
-\item{mc_cores}{Number of cores to use when calling \link[parallel:mclapply]{parallel::mclapply}
+\item{mc.cores}{Number of cores to use when calling \link[parallel:mclapply]{parallel::mclapply}
 internally}
 
 \item{verbose}{logical(1) Print all messages}

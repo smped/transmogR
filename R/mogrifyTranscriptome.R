@@ -33,11 +33,11 @@
 #' Deletions respectively
 #' @param var_sep Separator between any previous tags and variant tags
 #' @param verbose logical(1) Include informative messages, or operate silently
-#' @param mc_cores Number of cores to be used when multi-threading via
+#' @param mc.cores Number of cores to be used when multi-threading via
 #' [parallel::mclapply]
 #' @param which GRanges object passed to [VariantAnnotation::ScanVcfParam] if
 #' using a VCF directly
-#' @param ... Not used
+#' @param ... Passed to [parallel::mclapply]
 #'
 #' @return An XStringSet
 #'
@@ -88,7 +88,7 @@ setMethod(
     function(
         x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
         omit_ranges = NULL, tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc_cores = 1, ...
+        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc.cores = 1, ...
     ) {
 
         ## 1. Identify SNPs within 'var'
@@ -147,7 +147,7 @@ setMethod(
                 indelcator(
                     all_seq[[id]], indels, ex_by_trans[[id]], alt_col
                 )
-            }, mc.cores = mc_cores
+            }, mc.cores = mc.cores, ...
         )
         names(new_trans_seq) <- trans_with_indel
         new_trans_seq <- as(new_trans_seq, cl)
@@ -168,9 +168,12 @@ setMethod(
                 subsetByOverlaps(ex_by_trans, subset(indels, width > 1))
             )
             suff[names(ex_by_trans) %in% trans_with_any] <- var_sep
-            suff[names(ex_by_trans) %in% trans_with_snp] <- paste0(suff, "s")
-            suff[names(ex_by_trans) %in% trans_with_ins] <- paste0(suff, "i")
-            suff[names(ex_by_trans) %in% trans_with_del] <- paste0(suff, "d")
+            s <- names(ex_by_trans) %in% trans_with_snp
+            suff[s] <- paste0(suff[s], "s")
+            i <- names(ex_by_trans) %in% trans_with_ins
+            suff[i] <- paste0(suff[i], "i")
+            d <- names(ex_by_trans) %in% trans_with_del
+            suff[d] <- paste0(suff[d], "d")
             names(all_seq) <- paste0(names(all_seq), suff)
         }
         all_seq
@@ -189,7 +192,7 @@ setMethod(
     function(
         x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
         omit_ranges = NULL, tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc_cores = 1, ...
+        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc.cores = 1, ...
     ) {
         ## Setup the sequence info, only extracting those with a transcript
         seq_to_get <- unique(seqnames(exons))
@@ -202,7 +205,7 @@ setMethod(
         if (verbose) message("done")
         mogrifyTranscriptome(
             x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,
-            var_sep, verbose, mc_cores, ...
+            var_sep, verbose, mc.cores, ...
         )
     }
 )
@@ -218,14 +221,14 @@ setMethod(
     function(
         x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
         omit_ranges = NULL, tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc_cores = 1, which,
+        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc.cores = 1, which,
         ...
     ) {
         var <- .parseVariants(var, alt_col, which)
         if (verbose) message("Loaded ", length(var), " variants")
         mogrifyTranscriptome(
             x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,
-            var_sep, verbose, mc_cores, ...
+            var_sep, verbose, mc.cores, ...
         )
     }
 )
@@ -240,13 +243,13 @@ setMethod(
     function(
         x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
         omit_ranges = NULL, tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc_cores = 1, which,
+        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc.cores = 1, which,
         ...
     ) {
         var <- .parseVariants(var, alt_col, which)
         mogrifyTranscriptome(
             x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,
-            var_sep, verbose, mc_cores, ...
+            var_sep, verbose, mc.cores, ...
         )
     }
 )

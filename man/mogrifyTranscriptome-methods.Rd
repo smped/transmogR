@@ -23,7 +23,7 @@ mogrifyTranscriptome(x, var, exons, ...)
   var_tags = FALSE,
   var_sep = "_",
   verbose = TRUE,
-  mc_cores = 1,
+  mc.cores = 1,
   ...
 )
 
@@ -39,7 +39,7 @@ mogrifyTranscriptome(x, var, exons, ...)
   var_tags = FALSE,
   var_sep = "_",
   verbose = TRUE,
-  mc_cores = 1,
+  mc.cores = 1,
   ...
 )
 
@@ -55,7 +55,7 @@ mogrifyTranscriptome(x, var, exons, ...)
   var_tags = FALSE,
   var_sep = "_",
   verbose = TRUE,
-  mc_cores = 1,
+  mc.cores = 1,
   which,
   ...
 )
@@ -72,7 +72,7 @@ mogrifyTranscriptome(x, var, exons, ...)
   var_tags = FALSE,
   var_sep = "_",
   verbose = TRUE,
-  mc_cores = 1,
+  mc.cores = 1,
   which,
   ...
 )
@@ -84,7 +84,7 @@ mogrifyTranscriptome(x, var, exons, ...)
 
 \item{exons}{GRanges object with ranges representing exons}
 
-\item{...}{Not used}
+\item{...}{Passed to \link[parallel:mclapply]{parallel::mclapply}}
 
 \item{alt_col}{Column from \code{var} containing alternate bases}
 
@@ -105,7 +105,7 @@ Deletions respectively}
 
 \item{verbose}{logical(1) Include informative messages, or operate silently}
 
-\item{mc_cores}{Number of cores to be used when multi-threading via
+\item{mc.cores}{Number of cores to be used when multi-threading via
 \link[parallel:mclapply]{parallel::mclapply}}
 
 \item{which}{GRanges object passed to \link[VariantAnnotation:ScanVcfParam-class]{VariantAnnotation::ScanVcfParam} if

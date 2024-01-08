@@ -21,11 +21,11 @@
 #' @param exons GRanges object containing exon structure for `x`
 #' @param indels GRanges object with InDel locations and the alternate allele
 #' @param alt_col Column containing the alternate allele
-#' @param mc_cores Number of cores to use when calling [parallel::mclapply]
+#' @param mc.cores Number of cores to use when calling [parallel::mclapply]
 #' internally
 #' @param verbose logical(1) Print all messages
 #' @param names passed to [BSgenome::getSeq] when x is a BSgenome object
-#' @param ... Not used
+#' @param ... Passed to [parallel::mclapply]
 #'
 #' @seealso [mogrifyTranscriptome()]
 #'
@@ -141,7 +141,7 @@ setMethod(
 setMethod(
     "indelcator",
     signature(x = "DNAStringSet", indels = "GRanges"),
-    function(x, indels, alt_col = "ALT", mc_cores = 1, verbose = TRUE, ...) {
+    function(x, indels, alt_col = "ALT", mc.cores = 1, verbose = TRUE, ...) {
 
         sq <- seqinfo(x)
         seq2_mod <- unique(as.character(seqnames(indels)))
@@ -183,7 +183,7 @@ setMethod(
                 out <- unlist(DNAStringSet(new_seq))
                 if (verbose) message("; Updated length: ", length(out))
                 out
-            }, mc.cores = mc_cores
+            }, mc.cores = mc.cores, ...
         )
         x
     }
@@ -197,9 +197,9 @@ setMethod(
 setMethod(
     "indelcator",
     signature(x = "BSgenome", indels = "GRanges"),
-    function(x, indels, alt_col = "ALT", mc_cores = 1, names, ...) {
+    function(x, indels, alt_col = "ALT", mc.cores = 1, names, ...) {
         seq <- as(getSeq(x, names), "DNAStringSet")
         if (!missing(names)) names(seq) <- names
-        indelcator(seq, indels, alt_col, mc_cores, ...)
+        indelcator(seq, indels, alt_col, mc.cores, ...)
     }
 )
