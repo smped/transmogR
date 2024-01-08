@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">transmogR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.5</span>
       </span>
     </div>
 
@@ -60,7 +60,6 @@
 <span>  extra_cols <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  don_len <span class="op">=</span> <span class="fl">8</span>,</span>
 <span>  acc_len <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  chop <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -90,13 +89,8 @@ and tx_col. By default all columns are returned (extra_cols = "all").</p></dd>
 <dd><p>Length of donor and acceptor sites respectively</p></dd>
 
 
-<dt>chop</dt>
-<dd><p>logical(1) Apply <a href="https://rdrr.io/pkg/extraChIPs/man/chopMC.html" class="external-link">extraChIPs::chopMC</a> to the output to only
-return unique ranges, with all mcols collapsed.</p></dd>
-
-
 <dt>...</dt>
-<dd><p>Passed to <a href="https://rdrr.io/pkg/extraChIPs/man/chopMC.html" class="external-link">extraChIPs::chopMC</a></p></dd>
+<dd><p>Not used</p></dd>
 
 </dl></div>
     <div id="value">
@@ -125,7 +119,67 @@ donor and acceptor sites. Branch sites are not identified.</p>
 <span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/gencode.v44.subset.gtf.gz"</span>, package <span class="op">=</span> <span class="st">"transmogR"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>   feature.type <span class="op">=</span> <span class="st">"exon"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">sjFromExons</span><span class="op">(</span><span class="va">gtf</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sj</span> <span class="op">&lt;-</span> <span class="fu">sjFromExons</span><span class="op">(</span><span class="va">gtf</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sj</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 730 ranges and 12 metadata columns:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         seqnames        ranges strand |        site     transcript_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;       &lt;character&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]     chr1 182745-182752      + |       donor ENST00000624431.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]     chr1 183128-183132      + |    acceptor ENST00000624431.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]     chr1 183215-183222      + |       donor ENST00000624431.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]     chr1 183490-183494      + |    acceptor ENST00000624431.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]     chr1 183570-183577      + |       donor ENST00000624431.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ...      ...           ...    ... .         ...               ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [726]     chr1 810061-810068      - |       donor ENST00000590817.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [727]     chr1 810170-810174      - |    acceptor ENST00000447500.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [728]     chr1 817367-817374      - |       donor ENST00000447500.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [729]     chr1 827664-827671      - |       donor ENST00000635509.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [730]     chr1 827664-827671      - |       donor ENST00000634337.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              source     type     score     phase            gene_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;factor&gt; &lt;factor&gt; &lt;numeric&gt; &lt;integer&gt;        &lt;character&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [1] rtracklayer     exon        NA      &lt;NA&gt;  ENSG00000279928.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [2] rtracklayer     exon        NA      &lt;NA&gt;  ENSG00000279928.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [3] rtracklayer     exon        NA      &lt;NA&gt;  ENSG00000279928.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [4] rtracklayer     exon        NA      &lt;NA&gt;  ENSG00000279928.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [5] rtracklayer     exon        NA      &lt;NA&gt;  ENSG00000279928.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ...         ...      ...       ...       ...                ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [726] rtracklayer     exon        NA      &lt;NA&gt;  ENSG00000230092.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [727] rtracklayer     exon        NA      &lt;NA&gt;  ENSG00000290784.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [728] rtracklayer     exon        NA      &lt;NA&gt;  ENSG00000290784.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [729] rtracklayer     exon        NA      &lt;NA&gt; ENSG00000230021.10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [730] rtracklayer     exon        NA      &lt;NA&gt; ENSG00000230021.10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                      gene_type       gene_name        transcript_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    &lt;character&gt;     &lt;character&gt;            &lt;character&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [1] unprocessed_pseudogene        DDX11L17 unprocessed_pseudogene</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [2] unprocessed_pseudogene        DDX11L17 unprocessed_pseudogene</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [3] unprocessed_pseudogene        DDX11L17 unprocessed_pseudogene</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [4] unprocessed_pseudogene        DDX11L17 unprocessed_pseudogene</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [5] unprocessed_pseudogene        DDX11L17 unprocessed_pseudogene</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ...                    ...             ...                    ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [726] transcribed_unproces.. ENSG00000230092 transcribed_unproces..</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [727]                 lncRNA ENSG00000290784                 lncRNA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [728]                 lncRNA ENSG00000290784                 lncRNA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [729] transcribed_processe.. ENSG00000230021   processed_transcript</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [730] transcribed_processe.. ENSG00000230021   processed_transcript</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         transcript_name exon_number</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;character&gt; &lt;character&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]    DDX11L17-201           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]    DDX11L17-201           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]    DDX11L17-201           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]    DDX11L17-201           3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]    DDX11L17-201           3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ...             ...         ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [726] ENST00000590817           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [727] ENST00000447500           2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [728] ENST00000447500           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [729] ENST00000635509           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [730] ENST00000634337           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Or to simplify shared splice junctions across multiple transcripts</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smped/extraChIPs" class="external-link">extraChIPs</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/extraChIPs/man/chopMC.html" class="external-link">chopMC</a></span><span class="op">(</span><span class="va">sj</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 196 ranges and 12 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         seqnames        ranges strand |        site</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span>
