@@ -26,3 +26,4 @@
 * Major Bugfix in mogrifyTranscriptome when adding var_labels
 * Passed ... to `mclapply()` where relevant
 * Moved extraChIPs to Suggests & stopped chopping the output from `sjFromExons()`
+* Allowed `sjFromExons()` to return a `GInteractions` object

@@ -6,6 +6,10 @@ test_that("sjFromExons behaves correctly", {
     expect_true(is(gr$transcript_id, "character"))
     expect_equal(length(gr), 730)
 
+    gi <- sjFromExons(ex, as = "GI")
+    expect_true(is(gi, "GInteractions"))
+    expect_true("sj" %in% colnames(mcols(gi)))
+
     ## Errors
     expect_error(sjFromExons(NULL))
     expect_error(sjFromExons(ex, rank_col = ""))

@@ -26,6 +26,7 @@ Imports:
     GenomeInfoDb,
     GenomicFeatures,
     ggplot2,
+    InteractionSet,
     IRanges,
     methods,
     parallel,

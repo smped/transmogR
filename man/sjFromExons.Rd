@@ -2,7 +2,7 @@
 % Please edit documentation in R/sjFromExons.R
 \name{sjFromExons}
 \alias{sjFromExons}
-\title{Obtain Splice-Juntions from Exons and Transcripts}
+\title{Obtain Splice-Junctions from Exons and Transcripts}
 \usage{
 sjFromExons(
   x,
@@ -11,6 +11,7 @@ sjFromExons(
   extra_cols = "all",
   don_len = 8,
   acc_len = 5,
+  as = c("GRanges", "GInteractions"),
   ...
 )
 }
@@ -28,11 +29,18 @@ and tx_col. By default all columns are returned (extra_cols = "all").}
 
 \item{don_len, acc_len}{Length of donor and acceptor sites respectively}
 
+\item{as}{Return as a set of GenomicRanges, or with each splice junction
+annotated as a GenomicInteraction}
+
 \item{...}{Not used}
 }
 \value{
 A GRanges object with requested columns, and an additional column, 'site',
 annotating each region as a donor or acceptor site.
+
+Alternatively, by specifying as = "GInteractions", the junctions can be
+returned with each splice junction annotated as a GenomicInteraction.
+This can make the set of junctions easier to interpret for a given transcript.
 }
 \description{
 Using GRanges defining exons and transcripts, find the splice-junctions
@@ -50,16 +58,23 @@ donor and acceptor sites. Branch sites are not identified.
 }
 \examples{
 library(rtracklayer)
+gtf_cols <- c(
+  "transcript_id", "transcript_name", "gene_id", "gene_name", "exon_number"
+)
 gtf <- import.gff(
    system.file("extdata/gencode.v44.subset.gtf.gz", package = "transmogR"),
-   feature.type = "exon"
+   feature.type = "exon", colnames = gtf_cols
 )
 sj <- sjFromExons(gtf)
 sj
 
 ## Or to simplify shared splice junctions across multiple transcripts
-library(extraChIPs)
+library(extraChIPs, quietly = TRUE)
 chopMC(sj)
+
+## Splice Junctions can also be returned as a GInteractions object with
+## anchorOne as the donor & anchorTwo as the acceptor sites
+sjFromExons(gtf, as = "GInteractions")
 
 
 }

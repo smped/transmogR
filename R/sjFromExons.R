@@ -1,4 +1,4 @@
-#' @title Obtain Splice-Juntions from Exons and Transcripts
+#' @title Obtain Splice-Junctions from Exons and Transcripts
 #'
 #' @description
 #' Using GRanges defining exons and transcripts, find the splice-junctions
@@ -18,6 +18,10 @@
 #' A GRanges object with requested columns, and an additional column, 'site',
 #' annotating each region as a donor or acceptor site.
 #'
+#' Alternatively, by specifying as = "GInteractions", the junctions can be
+#' returned with each splice junction annotated as a GenomicInteraction.
+#' This can make the set of junctions easier to interpret for a given transcript.
+#'
 #' @param x GRanges object with exons and transcripts. A column indicating the
 #' position (or rank) of each exon within the transcript must be included.
 #' @param rank_col The column containing the position of each exons within the
@@ -26,20 +30,29 @@
 #' @param extra_cols Can be a vector of column names to return beyond rank_col
 #' and tx_col. By default all columns are returned (extra_cols = "all").
 #' @param don_len,acc_len Length of donor and acceptor sites respectively
+#' @param as Return as a set of GenomicRanges, or with each splice junction
+#' annotated as a GenomicInteraction
 #' @param ... Not used
 #'
 #' @examples
 #' library(rtracklayer)
+#' gtf_cols <- c(
+#'   "transcript_id", "transcript_name", "gene_id", "gene_name", "exon_number"
+#' )
 #' gtf <- import.gff(
 #'    system.file("extdata/gencode.v44.subset.gtf.gz", package = "transmogR"),
-#'    feature.type = "exon"
+#'    feature.type = "exon", colnames = gtf_cols
 #' )
 #' sj <- sjFromExons(gtf)
 #' sj
 #'
 #' ## Or to simplify shared splice junctions across multiple transcripts
-#' library(extraChIPs)
+#' library(extraChIPs, quietly = TRUE)
 #' chopMC(sj)
+#'
+#' ## Splice Junctions can also be returned as a GInteractions object with
+#' ## anchorOne as the donor & anchorTwo as the acceptor sites
+#' sjFromExons(gtf, as = "GInteractions")
 #'
 #'
 #' @importFrom S4Vectors mcols 'mcols<-'
@@ -49,9 +62,10 @@
 sjFromExons <- function(
         x, rank_col = c("exon_number", "exon_rank"),
         tx_col = c("transcript_id", "tx_id"), extra_cols = "all",
-        don_len = 8, acc_len = 5, ...
+        don_len = 8, acc_len = 5, as = c("GRanges", "GInteractions"), ...
 ){
     stopifnot(is(x, "GRanges"))
+    as <- match.arg(as)
     mc <- mcols(x)
     rank_col <- intersect(rank_col, colnames(mc))
     stopifnot(length(rank_col) == 1)
@@ -67,6 +81,7 @@ sjFromExons <- function(
 
     ## Donor sites can't be the final exon
     df <- data.frame(i = seq_along(x), tx = mc[[tx_col]], ex = mc[[rank_col]])
+    df$ex <- as.integer(df$ex)
     fm <- as.formula("ex ~ tx")
     max_ex <- aggregate(fm, data = df, FUN = max)
     omit_tx_ex <- paste(max_ex$tx, max_ex$ex, sep = "_")
@@ -93,7 +108,10 @@ sjFromExons <- function(
 
     sj <- sort(c(dnr, acc))
     return_cols <- unique(c("site", tx_col, extra_cols, rank_col))
+    mcols(sj)[[rank_col]] <- as.integer(mcols(sj)[[rank_col]])
     mcols(sj) <- mcols(sj)[return_cols]
+    if (as == "GInteractions") sj <- .giFromSj(sj, tx_col, rank_col)
     sj
 
 }
+
