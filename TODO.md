@@ -1,5 +1,4 @@
 # TODO
 
-- Any visualisation functions???
-- Add verbose option to most functions
-
+- Return SJ output as a GenomicInteractions object
+    + Move the chopMC output to be optional so that extraChIPs goes to Suggests

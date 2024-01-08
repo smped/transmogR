@@ -20,3 +20,9 @@
 
 * Changed function names
 * Added sjFromExons
+
+# transmogR 0.1.5
+
+* Major Bugfix in mogrifyTranscriptome when adding var_labels
+* Passed ... to `mclapply()` where relevant
+* Moved extraChIPs to Suggests & stopped chopping the output from `sjFromExons()`

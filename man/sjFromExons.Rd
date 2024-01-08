@@ -11,7 +11,6 @@ sjFromExons(
   extra_cols = "all",
   don_len = 8,
   acc_len = 5,
-  chop = TRUE,
   ...
 )
 }
@@ -29,10 +28,7 @@ and tx_col. By default all columns are returned (extra_cols = "all").}
 
 \item{don_len, acc_len}{Length of donor and acceptor sites respectively}
 
-\item{chop}{logical(1) Apply \link[extraChIPs:chopMC]{extraChIPs::chopMC} to the output to only
-return unique ranges, with all mcols collapsed.}
-
-\item{...}{Passed to \link[extraChIPs:chopMC]{extraChIPs::chopMC}}
+\item{...}{Not used}
 }
 \value{
 A GRanges object with requested columns, and an additional column, 'site',
@@ -58,7 +54,12 @@ gtf <- import.gff(
    system.file("extdata/gencode.v44.subset.gtf.gz", package = "transmogR"),
    feature.type = "exon"
 )
-sjFromExons(gtf)
+sj <- sjFromExons(gtf)
+sj
+
+## Or to simplify shared splice junctions across multiple transcripts
+library(extraChIPs)
+chopMC(sj)
 
 
 }

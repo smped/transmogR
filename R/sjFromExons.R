@@ -26,9 +26,7 @@
 #' @param extra_cols Can be a vector of column names to return beyond rank_col
 #' and tx_col. By default all columns are returned (extra_cols = "all").
 #' @param don_len,acc_len Length of donor and acceptor sites respectively
-#' @param chop logical(1) Apply [extraChIPs::chopMC] to the output to only
-#' return unique ranges, with all mcols collapsed.
-#' @param ... Passed to [extraChIPs::chopMC]
+#' @param ... Not used
 #'
 #' @examples
 #' library(rtracklayer)
@@ -36,18 +34,22 @@
 #'    system.file("extdata/gencode.v44.subset.gtf.gz", package = "transmogR"),
 #'    feature.type = "exon"
 #' )
-#' sjFromExons(gtf)
+#' sj <- sjFromExons(gtf)
+#' sj
+#'
+#' ## Or to simplify shared splice junctions across multiple transcripts
+#' library(extraChIPs)
+#' chopMC(sj)
 #'
 #'
 #' @importFrom S4Vectors mcols 'mcols<-'
 #' @importFrom methods is
 #' @importFrom stats aggregate
-#' @importFrom extraChIPs chopMC
 #' @export
 sjFromExons <- function(
         x, rank_col = c("exon_number", "exon_rank"),
         tx_col = c("transcript_id", "tx_id"), extra_cols = "all",
-        don_len = 8, acc_len = 5, chop = TRUE, ...
+        don_len = 8, acc_len = 5, ...
 ){
     stopifnot(is(x, "GRanges"))
     mc <- mcols(x)
@@ -92,7 +94,6 @@ sjFromExons <- function(
     sj <- sort(c(dnr, acc))
     return_cols <- unique(c("site", tx_col, extra_cols, rank_col))
     mcols(sj) <- mcols(sj)[return_cols]
-    if (chop) sj <- chopMC(sj, ...)
     sj
 
 }

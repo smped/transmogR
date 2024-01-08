@@ -1,7 +1,7 @@
 Package: transmogR
 Type: Package
 Title: Modify a set of reference sequences using a set of variants
-Version: 0.1.4
+Version: 0.1.5
 Authors@R: person("Stevie", "Pederson", 
     email = "stephen.pederson.au@gmail.com", 
     role = c("aut", "cre"),
@@ -22,7 +22,6 @@ Depends:
     GenomicRanges
 Imports:
     BSgenome,
-    extraChIPs,
     ComplexUpset,
     GenomeInfoDb,
     GenomicFeatures,
@@ -38,6 +37,7 @@ Imports:
     VariantAnnotation
 Suggests:
     BSgenome.Hsapiens.UCSC.hg38,
+    extraChIPs,
     knitr,
     rtracklayer,
     testthat (>= 3.0.0)
