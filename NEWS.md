@@ -27,3 +27,7 @@
 * Passed ... to `mclapply()` where relevant
 * Moved extraChIPs to Suggests & stopped chopping the output from `sjFromExons()`
 * Allowed `sjFromExons()` to return a `GInteractions` object
+
+# transmogR 0.1.6
+
+* Added vignette

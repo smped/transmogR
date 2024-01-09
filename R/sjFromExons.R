@@ -20,7 +20,8 @@
 #'
 #' Alternatively, by specifying as = "GInteractions", the junctions can be
 #' returned with each splice junction annotated as a GenomicInteraction.
-#' This can make the set of junctions easier to interpret for a given transcript.
+#' This can make the set of junctions easier to interpret for a given
+#' transcript.
 #'
 #' @param x GRanges object with exons and transcripts. A column indicating the
 #' position (or rank) of each exon within the transcript must be included.

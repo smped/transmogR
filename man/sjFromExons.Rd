@@ -40,7 +40,8 @@ annotating each region as a donor or acceptor site.
 
 Alternatively, by specifying as = "GInteractions", the junctions can be
 returned with each splice junction annotated as a GenomicInteraction.
-This can make the set of junctions easier to interpret for a given transcript.
+This can make the set of junctions easier to interpret for a given
+transcript.
 }
 \description{
 Using GRanges defining exons and transcripts, find the splice-junctions

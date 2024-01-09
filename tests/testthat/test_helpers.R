@@ -4,7 +4,9 @@ test_that(".checkAlts behaves correctly", {
     expect_error(.checkAlts(gr, "ALT"), "Non-IUPAC.+")
 
     gr$ALT <- NA
-    expect_message(.checkAlts(gr, "ALT"), "NA values.+")
+    expect_error(
+        suppressMessages(.checkAlts(gr, "ALT")), "All NA values.+"
+    )
 
     gr$ALT <- "A"
     expect_equal(gr, .checkAlts(gr, "ALT"))

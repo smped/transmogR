@@ -4,8 +4,8 @@
 #' Modify one or more sequences to include Insertions or Deletions
 #'
 #' @details
-#' Takes an [Biostrings::XString] or [Biostrings::XStringSet] object and moddfies
-#' the sequence to incorporate InDels.
+#' Takes an [Biostrings::XString] or [Biostrings::XStringSet] object and
+#' modifies the sequence to incorporate InDels.
 #' The expected types of data determine the behaviour, with the following
 #' expectations describing how the function will incorporate data
 #'

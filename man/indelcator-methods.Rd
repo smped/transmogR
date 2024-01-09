@@ -40,8 +40,8 @@ A DNAStringSet or XString object (See Details)
 Modify one or more sequences to include Insertions or Deletions
 }
 \details{
-Takes an \link[Biostrings:XString-class]{Biostrings::XString} or \link[Biostrings:XStringSet-class]{Biostrings::XStringSet} object and moddfies
-the sequence to incorporate InDels.
+Takes an \link[Biostrings:XString-class]{Biostrings::XString} or \link[Biostrings:XStringSet-class]{Biostrings::XStringSet} object and
+modifies the sequence to incorporate InDels.
 The expected types of data determine the behaviour, with the following
 expectations describing how the function will incorporate data\tabular{llll}{
    Input Data Type \tab Exons Required \tab Use Case \tab Returned \cr

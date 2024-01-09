@@ -1,20 +1,24 @@
 #' @keywords internal
 #' @importFrom Biostrings IUPAC_CODE_MAP
-#' @importFrom S4Vectors mcols
+#' @importFrom S4Vectors mcols 'mcols<-'
 .checkAlts <- function(var, alt_col) {
 
     alt_col <- match.arg(alt_col, colnames(mcols(var)))
 
     ## Deal with NAs
-    is_na <- is.na(mcols(var)[[alt_col]])
+    alts <- mcols(var)[[alt_col]]
+    if (is(alts, "XStringSetList")) alts <- as.character(unlist(alts))
+    is_na <- is.na(alts)
     if (any(is_na)) message("NA values found in ", alt_col, ". Removing...")
     var <- var[!is_na]
+    if (all(is_na) & length(is_na) > 0) stop("All NA values in ", alt_col)
 
     ## Check Non-IUPAC alt alleles
     iupac <- paste(names(IUPAC_CODE_MAP), collapse = "")
     pat <- paste0("^[", iupac, "]+$")
-    alt_error <- !grepl(pat, mcols(var)[[alt_col]])
+    alt_error <- !grepl(pat, alts)
     if (any(alt_error)) stop("Non-IUPAC alleles detected")
+    mcols(var)[[alt_col]] <- alts[!is_na]
     var
 }
 

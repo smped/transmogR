@@ -1,7 +1,7 @@
 Package: transmogR
 Type: Package
 Title: Modify a set of reference sequences using a set of variants
-Version: 0.1.5
+Version: 0.1.6
 Authors@R: person("Stevie", "Pederson", 
     email = "stephen.pederson.au@gmail.com", 
     role = c("aut", "cre"),
@@ -10,7 +10,7 @@ Authors@R: person("Stevie", "Pederson",
 Description: transmogR provides the tools needed to crate a new reference
     genome or reference transcriptome, using a set of variants. Variants can 
     be any combination of SNPs, Insertions and Deletions. The intended 
-    use0case is to enable creation of variant-modified reference 
+    use-case is to enable creation of variant-modified reference 
     transcriptomes for incorporation into transcriptomic pseudo-alignment 
     workflows, such as salmon.
 License: GPL-3
