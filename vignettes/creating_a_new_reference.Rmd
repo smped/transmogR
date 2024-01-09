@@ -241,10 +241,11 @@ subset(sj, transcript_name == "DDX11L17-201")
 ```
 
 
-# References
 
 # Session info
 
 ```{r sessionInfo, echo=FALSE}
 sessionInfo()
 ```
+
+# References
