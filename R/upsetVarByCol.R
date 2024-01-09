@@ -67,6 +67,7 @@ upsetVarByCol <- function(
     ol <- lapply(var_list, \(x) mcols(subsetByOverlaps(gr, x))[[mcol]])
     ol <- lapply(ol, unique)
     ol_ids <- unique(unlist(ol))
+    if (length(ol_ids) == 0) stop("No variants overlap the supplied ranges")
     set_max <- max(vapply(ol, length, integer(1)))
 
     if (missing(title)) title <- paste0(

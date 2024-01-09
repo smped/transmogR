@@ -16,7 +16,7 @@
 #' @param which GRanges object passed to [VariantAnnotation::ScanVcfParam] if
 #' using a VCF directly
 #' @param verbose logical(1) Print progress messages while running
-#' @param ... Passed to indelcator
+#' @param ... Passed to [parallel::mclapply]
 #'
 #' @return XStringSet with variant modified sequences
 #'

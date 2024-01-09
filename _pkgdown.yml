@@ -25,6 +25,10 @@ navbar:
   left:
   - text: Reference
     href: reference/index.html
+  - text: Vignettes
+    menu:
+    - text: Creating a variant modified reference
+      href: articles/creating_a_new_reference.html
   - text: News
     href: news/index.html
   right:

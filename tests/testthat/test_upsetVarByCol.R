@@ -17,5 +17,6 @@ test_that("upsetVarByCol behaves correctly", {
     expect_error(upsetVarByCol(grl))
     expect_error(upsetVarByCol(grl$exon, ""))
     expect_error(upsetVarByCol(grl$exon, var, ""))
+    expect_error(upsetVarByCol(grl$exon, var[NULL]), "No variants overlap.+")
 
 })

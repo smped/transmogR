@@ -37,9 +37,11 @@ Imports:
     SummarizedExperiment,
     VariantAnnotation
 Suggests:
+    BiocStyle,
     BSgenome.Hsapiens.UCSC.hg38,
     extraChIPs,
     knitr,
+    rmarkdown,
     rtracklayer,
     testthat (>= 3.0.0)
 biocViews: Alignment, GenomicVariation, Sequencing, TranscriptomeVariant

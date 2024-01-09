@@ -1,0 +1,152 @@
+---
+title: "Creating a variant-modified reference"
+author:
+- name: Stevie Pederson
+  affiliation: BlackOcrhe Data Labs, Telethon Kid's Institute, Adelaide, Australia
+  email: stephen.pederson@teletohnkids.org.au
+package: transmogR
+bibliography: '`r system.file("references.bib", package = "transmogR")`'
+output:
+  BiocStyle::html_document
+abstract: |
+  The use of personalised or population-level variants opens the door to the 
+  possibility of creating a modified reference genome, or transcriptome.
+  The package transmogR allows the creation of both, with a focus on combining
+  both in order to created a custom reference transcriptome, along with decoy 
+  transcripts for use with the pseudo-aligner salmon.
+vignette: |
+  %\VignetteIndexEntry{Creating a variant-modified reference}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(message = FALSE, crop = NULL)
+```
+
+
+# Introduction
+
+The incorporation of personalised or population-level variants into a 
+*reference genome* has been shown to have a significant impact on subsequent 
+alignments [@Kaminow2022-dz].
+Whilst implemented for splice-aware alignment or RNA-Seq data using 
+*STARconsensus*, the package `transmogR` enables the creation of a 
+variant-modified *reference transcriptome* for use with pseudo aligners such as 
+*salmon* [@Srivastava2020-tm].
+In addition, multiple visualisation and summarisation methods are included for a
+cursory analysis of any custom variant sets being used.
+
+Whilst the subsequent code is demonstrated on a small genomic region, the 
+complete process for creating a modified a reference can run in under 20 minutes 
+if using 4 or more cores.
+
+# Setup
+
+## Installation
+
+In order to perform the operations in this vignette, the following packages 
+require installation.
+
+```r 
+if (!"BiocManager" %in% rownames(installed.packages()))
+  install.packages("BiocManager")
+pkg <- c(
+  "rtracklayer", "BSgenome.Hsapiens.UCSC.hg38", "extraChIPs", "smped/transmogR"
+)
+BiocManager::install(pkg, update = FALSE)
+```
+
+Once these packages are installed, we can load them easily
+
+```{r load-packages}
+library(VariantAnnotation)
+library(rtracklayer)
+library(extraChIPs)
+library(transmogR)
+library(BSgenome.Hsapiens.UCSC.hg38)
+# library(plyranges)
+```
+
+## Required Data
+
+In order to create a modified reference, three primary data objects are 
+required: 1) a reference genome; 2) a set of genomic variants; and 3) a set 
+of exon-level co-ordinates defining transcript structure.
+
+For this vignette, we'll use GRCh38 as our primary reference genome, but 
+restricting the sequences to *chr1* only.
+The package can take either a `DNAStringSet` or `BSgenome` object as the 
+reference genome.
+
+```{r}
+chr1 <- getSeq(BSgenome.Hsapiens.UCSC.hg38, "chr1")
+chr1 <- as(chr1, "DNAStringSet")
+names(chr1) <- "chr1"
+chr1
+```
+
+A small set of variants has been provided with the package.
+
+```{r}
+sq <- seqinfo(chr1)
+genome(sq) <- "GRCh38"
+vcf <- system.file("extdata/1000GP_subset.vcf.gz", package = "transmogR")
+vcf_param <- ScanVcfParam(fixed = "ALT", info = NA, which = GRanges(sq))
+var <- rowRanges(readVcf(vcf, param = vcf_param))
+seqinfo(var) <- sq
+var
+```
+
+An additional set of transcripts derived from Gencode v44^[https://www.gencodegenes.org/human/] has also been 
+provided.
+
+```{r}
+f <- system.file("extdata/gencode.v44.subset.gtf.gz", package = "transmogR")
+gtf <- import.gff(f, which = GRanges(sq))
+seqinfo(gtf) <- sq
+gtf
+```
+
+Splitting this gtf into feature types can also be very handy for downstream 
+processes.
+
+```{r gtf_split}
+gtf <- splitAsList(gtf, gtf$type)
+```
+
+# Inspecting the Variants
+
+Knowing where our variants lie, and how they relate to each other can be 
+informative, and as such, some simple visualisation and summarisation functions
+have been included.
+In the following, we can check to see how many exons directly overlap a variant,
+showing how many unique genes this summarises to.
+Any ids, which don't overlap a variants are also described in the plot title.
+
+```{r upset-var, fig.cap = "Included variants which overlap exonic sequences, summarised by unique gene ids"}
+upsetVarByCol(gtf$exon, var, mcol = "gene_id")
+```
+
+In addition, we can obtain a simple breakdown of overlapping regions using a 
+GRangesList.
+We can use the function `defineRegions()` from `extraChIPs` to define regions 
+based on gene & transcript locations.
+Given that some exonic regions will be classified as promoters in this function,
+we can just substitute in the values from our gtf.
+
+```{r}
+regions <- defineRegions(gtf$gene, gtf$transcript, gtf$exon, proximal = 0)
+regions$exon <- granges(gtf$exon)
+overlapsByVar(regions, var)
+```
+
+
+
+# References
+
+# Session info
+
+```{r sessionInfo, echo=FALSE}
+sessionInfo()
+```
