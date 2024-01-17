@@ -360,8 +360,9 @@ able to be called individually as shown in the help pages.</p>
 </h3>
 <p>Beyond these lower-level functions, PAR-Y regions for hg38, hg19 and
 CHM13 are able to obtained using <code><a href="../reference/parY.html">parY()</a></code> and passing the
-appropriate seqinfo object. This seqinfo object checks the length of the
-Y-chromosome and guesses which reference genome has been used.</p>
+appropriate <code>seqinfo</code> object. This <code>seqinfo</code>
+object checks the length of the Y-chromosome and guesses which reference
+genome has been used.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sq_hg38</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">BSgenome.Hsapiens.UCSC.hg38</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/parY.html">parY</a></span><span class="op">(</span><span class="va">sq_hg38</span><span class="op">)</span></span></code></pre></div>
@@ -378,7 +379,7 @@ which overlap the PAR-Y region will be excluded. Alternatively, passing
 the entire Y-chromosome to <code><a href="../reference/transmogrify-methods.html">transmogrify()</a></code> will exclude all
 transcripts in the Y-chromosome, as may be preferred for female-specific
 references.</p>
-<p>These regions can also be passed to <code>genomgrify()</code> as a
+<p>These regions can also be passed to <code><a href="../reference/genomogrify-methods.html">genomogrify()</a></code> as a
 mask, with all bases within the masked region being re-assigned as an
 N.</p>
 </div>
