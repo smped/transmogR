@@ -12,7 +12,7 @@ reference:
   contents:
     - indelcator
     - owl
-    - starts_with("mogrify")
+    - contains("mogrify")
 
 - title: Additional Functions
   contents:

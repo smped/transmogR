@@ -10,7 +10,7 @@
 #' @param tag Optional tag to add to all sequence names which were modified
 #' @param sep Separator to place between seqnames names & tag
 #' @param var_tags logical(1) Add tags indicating which type of variant were
-#' incorporated, with 's', 'i' and 'd' represeenting SNPs, Insertions and
+#' incorporated, with 's', 'i' and 'd' representing SNPs, Insertions and
 #' Deletions respectively
 #' @param var_sep Separator between any previous tags and variant tags
 #' @param which GRanges object passed to [VariantAnnotation::ScanVcfParam] if
@@ -26,25 +26,25 @@
 #' var <- GRanges(c("chr1:1", "chr1:3", "chr2:1-3"))
 #' var$ALT <- c("C", "GG", "A")
 #' dna
-#' mogrifyGenome(dna, var)
-#' mogrifyGenome(dna, var, tag = "mod")
-#' mogrifyGenome(dna, var, var_tags = TRUE)
+#' genomogrify(dna, var)
+#' genomogrify(dna, var, tag = "mod")
+#' genomogrify(dna, var, var_tags = TRUE)
 #'
 #'
 #' @export
-#' @name mogrifyGenome
-#' @rdname mogrifyGenome-methods
+#' @name genomogrify
+#' @rdname genomogrify-methods
 setGeneric(
-    "mogrifyGenome", function(x, var, ...){standardGeneric("mogrifyGenome")}
+    "genomogrify", function(x, var, ...){standardGeneric("genomogrify")}
 )
 #' @importFrom S4Vectors mcols
 #' @importFrom GenomeInfoDb seqlevels seqnames
 #' @importFrom IRanges width
 #' @export
-#' @rdname mogrifyGenome-methods
-#' @aliases mogrifyGenome-methods
+#' @rdname genomogrify-methods
+#' @aliases genomogrify-methods
 setMethod(
-    "mogrifyGenome",
+    "genomogrify",
     signature = signature(x = "XStringSet", var = "GRanges"),
     function(
         x, var, alt_col = "ALT", tag = NULL, sep = "_",
@@ -95,10 +95,10 @@ setMethod(
 )
 #' @importFrom Biostrings getSeq
 #' @export
-#' @rdname mogrifyGenome-methods
-#' @aliases mogrifyGenome-methods
+#' @rdname genomogrify-methods
+#' @aliases genomogrify-methods
 setMethod(
-    "mogrifyGenome",
+    "genomogrify",
     signature = signature(x = "BSgenome", var = "GRanges"),
     function(
         x, var, alt_col = "ALT", names, tag = NULL, sep = "_",
@@ -111,7 +111,7 @@ setMethod(
         seq <- as(getSeq(x, names), "DNAStringSet")
         if (!missing(names)) names(seq) <- names
         if (verbose) message("done")
-        mogrifyGenome(
+        genomogrify(
             seq, var, alt_col, tag, sep, var_tags = var_tags, var_sep = "_",
             verbose = verbose, ...
         )
@@ -119,17 +119,17 @@ setMethod(
 )
 #' @importClassesFrom VariantAnnotation VcfFile
 #' @export
-#' @rdname mogrifyGenome-methods
-#' @aliases mogrifyGenome-methods
+#' @rdname genomogrify-methods
+#' @aliases genomogrify-methods
 setMethod(
-    "mogrifyGenome",
+    "genomogrify",
     signature = signature(x = "BSgenome", var = "VcfFile"),
     function(
         x, var, alt_col = "ALT", names, tag = NULL, sep = "_",
         var_tags = FALSE, var_sep = "_", which, verbose = TRUE, ...
     ) {
         var <- .parseVariants(var, alt_col, which)
-        mogrifyGenome(
+        genomogrify(
             x, var, alt_col, names, tag, sep, var_tags = var_tags,
             var_sep = "_", verbose = verbose,  ...
         )
@@ -137,17 +137,17 @@ setMethod(
 )
 #' @importClassesFrom VariantAnnotation VcfFile
 #' @export
-#' @rdname mogrifyGenome-methods
-#' @aliases mogrifyGenome-methods
+#' @rdname genomogrify-methods
+#' @aliases genomogrify-methods
 setMethod(
-    "mogrifyGenome",
+    "genomogrify",
     signature = signature(x = "XStringSet", var = "VcfFile"),
     function(
         x, var, alt_col = "ALT", tag = NULL, sep = "_",
         var_tags = FALSE, var_sep = "_", which, verbose = TRUE, ...
     ) {
         var <- .parseVariants(var, alt_col, which)
-        mogrifyGenome(
+        genomogrify(
             x, var, alt_col, tag, sep, var_tags = var_tags, var_sep = "_",
             verbose = verbose, ...
         )

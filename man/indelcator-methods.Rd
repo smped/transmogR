@@ -69,5 +69,5 @@ indelcator(orig, var, exons = ex)
 
 }
 \seealso{
-\code{\link[=mogrifyTranscriptome]{mogrifyTranscriptome()}}
+\code{\link[=transmogrify]{transmogrify()}}
 }

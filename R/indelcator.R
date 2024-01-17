@@ -27,7 +27,7 @@
 #' @param names passed to [BSgenome::getSeq] when x is a BSgenome object
 #' @param ... Passed to [parallel::mclapply]
 #'
-#' @seealso [mogrifyTranscriptome()]
+#' @seealso [transmogrify()]
 #'
 #' @examples
 #' ## Start with a DNAStringSet

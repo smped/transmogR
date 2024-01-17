@@ -63,15 +63,15 @@
 #'
 #' # Include the variants adding tags to indicate a SNP and indel
 #' # The exons GRanges object will be split by transcript internally
-#' mogrifyTranscriptome(seq, var, exons, var_tags = TRUE)
+#' transmogrify(seq, var, exons, var_tags = TRUE)
 #'
 #'
 #' @export
-#' @name mogrifyTranscriptome
-#' @rdname mogrifyTranscriptome-methods
+#' @name transmogrify
+#' @rdname transmogrify-methods
 setGeneric(
-    "mogrifyTranscriptome",
-    function(x, var, exons, ...){standardGeneric("mogrifyTranscriptome")}
+    "transmogrify",
+    function(x, var, exons, ...){standardGeneric("transmogrify")}
 )
 #' @importFrom S4Vectors mcols splitAsList
 #' @importFrom GenomeInfoDb seqlevels seqnames
@@ -80,10 +80,10 @@ setGeneric(
 #' @importFrom parallel mclapply
 #' @importFrom stats as.formula
 #' @export
-#' @rdname mogrifyTranscriptome-methods
-#' @aliases mogrifyTranscriptome-methods
+#' @rdname transmogrify-methods
+#' @aliases transmogrify-methods
 setMethod(
-    "mogrifyTranscriptome",
+    "transmogrify",
     signature = signature(x = "XStringSet", var = "GRanges", exons = "GRanges"),
     function(
         x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
@@ -184,10 +184,10 @@ setMethod(
 #' @importFrom Biostrings getSeq
 #' @importFrom GenomeInfoDb seqnames
 #' @export
-#' @rdname mogrifyTranscriptome-methods
-#' @aliases mogrifyTranscriptome-methods
+#' @rdname transmogrify-methods
+#' @aliases transmogrify-methods
 setMethod(
-    "mogrifyTranscriptome",
+    "transmogrify",
     signature = signature(x = "BSgenome", var = "GRanges", exons = "GRanges"),
     function(
         x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
@@ -203,7 +203,7 @@ setMethod(
         x <- as(getSeq(x, seq_to_get), "DNAStringSet")
         names(x) <- seq_to_get
         if (verbose) message("done")
-        mogrifyTranscriptome(
+        transmogrify(
             x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,
             var_sep, verbose, mc.cores, ...
         )
@@ -213,10 +213,10 @@ setMethod(
 #' @importFrom Biostrings getSeq
 #' @importFrom GenomeInfoDb seqnames
 #' @export
-#' @rdname mogrifyTranscriptome-methods
-#' @aliases mogrifyTranscriptome-methods
+#' @rdname transmogrify-methods
+#' @aliases transmogrify-methods
 setMethod(
-    "mogrifyTranscriptome",
+    "transmogrify",
     signature = signature(x = "BSgenome", var = "VcfFile", exons = "GRanges"),
     function(
         x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
@@ -226,7 +226,7 @@ setMethod(
     ) {
         var <- .parseVariants(var, alt_col, which)
         if (verbose) message("Loaded ", length(var), " variants")
-        mogrifyTranscriptome(
+        transmogrify(
             x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,
             var_sep, verbose, mc.cores, ...
         )
@@ -235,10 +235,10 @@ setMethod(
 #' @importClassesFrom VariantAnnotation VcfFile
 #'
 #' @export
-#' @rdname mogrifyTranscriptome-methods
-#' @aliases mogrifyTranscriptome-methods
+#' @rdname transmogrify-methods
+#' @aliases transmogrify-methods
 setMethod(
-    "mogrifyTranscriptome",
+    "transmogrify",
     signature = signature(x = "XStringSet", var = "VcfFile", exons = "GRanges"),
     function(
         x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
@@ -247,7 +247,7 @@ setMethod(
         ...
     ) {
         var <- .parseVariants(var, alt_col, which)
-        mogrifyTranscriptome(
+        transmogrify(
             x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,
             var_sep, verbose, mc.cores, ...
         )

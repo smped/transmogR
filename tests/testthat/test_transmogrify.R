@@ -1,5 +1,5 @@
 library(GenomicRanges)
-test_that("mogrifyTranscriptome works as expected",{
+test_that("transmogrify works as expected",{
     if (requireNamespace("BSgenome.Hsapiens.UCSC.hg38", quietly = TRUE)) {
         hg38 <- BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38
         id <- "ENST00000684155.1"
@@ -19,7 +19,7 @@ test_that("mogrifyTranscriptome works as expected",{
         )
         var$ALT <- c("G", "A") # SNP, Deletion at 1st & last positions
         new <- suppressMessages(
-            mogrifyTranscriptome(
+            transmogrify(
                 hg38, var = var, exons = ex, tag = "test", var_tags = TRUE
             )
         )
@@ -30,7 +30,7 @@ test_that("mogrifyTranscriptome works as expected",{
 
         ## Check that omit_ranges filters unwanted regions
         empty <- suppressMessages(
-            mogrifyTranscriptome(
+            transmogrify(
                 hg38, var = var, exons = ex, tag = "test", var_tags = TRUE,
                 omit_ranges = range(ex)
             )
@@ -39,13 +39,13 @@ test_that("mogrifyTranscriptome works as expected",{
 
         ## Check for an unaltered sequence if no variants
         new <- suppressMessages(
-            mogrifyTranscriptome(hg38, var = var[NULL], exons = ex, tag = "test", var_tags = TRUE)
+            transmogrify(hg38, var = var[NULL], exons = ex, tag = "test", var_tags = TRUE)
         )
         expect_equal(new, orig)
 
         ## Check for incorrect exons
         expect_error(
-            suppressMessages(mogrifyTranscriptome(hg38,var = var[NULL], exons = unstrand(ex))),
+            suppressMessages(transmogrify(hg38,var = var[NULL], exons = unstrand(ex))),
             "Unstranded.+"
         )
 
@@ -57,7 +57,7 @@ test_that("mogrifyTranscriptome works as expected",{
         vcf <- VariantAnnotation::VcfFile(
             system.file("extdata/1000GP_subset.vcf.gz", package = "transmogR")
         )
-        new1 <- mogrifyTranscriptome(
+        new1 <- transmogrify(
             hg38, vcf, exons, tag = "test", verbose = FALSE,
             which = GRanges("chr1:100000-400000")
         )
@@ -65,7 +65,7 @@ test_that("mogrifyTranscriptome works as expected",{
 
         seq <- as(getSeq(hg38, names = "chr1"), "DNAStringSet")
         names(seq) <- "chr1"
-        new2 <- mogrifyTranscriptome(
+        new2 <- transmogrify(
             seq, vcf, exons, tag = "test", verbose = FALSE,
             which = GRanges("chr1:100000-400000")
         )

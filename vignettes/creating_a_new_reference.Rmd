@@ -148,11 +148,11 @@ overlapsByVar(regions, var)
 ## Modifying a Reference Genome
 
 The simplest method for modifying a reference genome is to simply call 
-`mogrifyGenome()` with either a `DNAStringSet` or `BSgenome` object.
+`genomogrify()` with either a `DNAStringSet` or `BSgenome` object.
 A tag can be optionally added to all sequence names to avoid confusion.
 
 ```{r chr1-mod}
-chr1_mod <- mogrifyGenome(chr1, var, tag = "mod")
+chr1_mod <- genomogrify(chr1, var, tag = "mod")
 chr1_mod
 ```
 
@@ -172,7 +172,7 @@ Deletions respectively.
 In our example dataset, only one transcript contains both SNVs and an insertion.
 
 ```{r trans-mod}
-trans_mod <- mogrifyTranscriptome(
+trans_mod <- transmogrify(
     chr1, var, gtf$exon, tag = "mod", var_tags = TRUE
 )
 trans_mod
@@ -204,9 +204,9 @@ parY(sq_hg38)
 ```
 
 If the user wishes to exclude transcripts in the PAR-Y region, these ranges can 
-be passed to `mogrifyTranscriptome()` and any trascripts which overlap the PAR-Y
+be passed to `transmogrify()` and any trascripts which overlap the PAR-Y
 region will be excluded.
-Alternatively, passing the entire Y-chromosome to `mogrifyTranscriptome()` will 
+Alternatively, passing the entire Y-chromosome to `transmogrify()` will 
 exclude all transcripts in the Y-chromosome, as may be preferred for 
 female-specific references.
 
