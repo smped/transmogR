@@ -15,10 +15,12 @@ genomogrify(x, var, ...)
   x,
   var,
   alt_col = "ALT",
+  mask,
   tag = NULL,
   sep = "_",
   var_tags = FALSE,
   var_sep = "_",
+  verbose = TRUE,
   ...
 )
 
@@ -26,6 +28,7 @@ genomogrify(x, var, ...)
   x,
   var,
   alt_col = "ALT",
+  mask,
   names,
   tag = NULL,
   sep = "_",
@@ -39,6 +42,7 @@ genomogrify(x, var, ...)
   x,
   var,
   alt_col = "ALT",
+  mask,
   names,
   tag = NULL,
   sep = "_",
@@ -53,6 +57,7 @@ genomogrify(x, var, ...)
   x,
   var,
   alt_col = "ALT",
+  mask,
   tag = NULL,
   sep = "_",
   var_tags = FALSE,
@@ -72,6 +77,8 @@ genomogrify(x, var, ...)
 
 \item{alt_col}{The name of the column with \code{var} containing alternate bases}
 
+\item{mask}{Optional GRanges object defining regions to be masked with an 'N'}
+
 \item{tag}{Optional tag to add to all sequence names which were modified}
 
 \item{sep}{Separator to place between seqnames names & tag}
@@ -82,9 +89,9 @@ Deletions respectively}
 
 \item{var_sep}{Separator between any previous tags and variant tags}
 
-\item{names}{Sequence names to be mogrified}
-
 \item{verbose}{logical(1) Print progress messages while running}
+
+\item{names}{Sequence names to be mogrified}
 
 \item{which}{GRanges object passed to \link[VariantAnnotation:ScanVcfParam-class]{VariantAnnotation::ScanVcfParam} if
 using a VCF directly}
@@ -104,6 +111,7 @@ dna
 genomogrify(dna, var)
 genomogrify(dna, var, tag = "mod")
 genomogrify(dna, var, var_tags = TRUE)
+genomogrify(dna, var, mask = GRanges("chr2:1-5"), var_tags = TRUE)
 
 
 }

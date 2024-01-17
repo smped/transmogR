@@ -6,6 +6,7 @@
 #' @param var GRanges object containing the variants, or a
 #' [VariantAnnotation::VcfFile]
 #' @param alt_col The name of the column with `var` containing alternate bases
+#' @param mask Optional GRanges object defining regions to be masked with an 'N'
 #' @param names Sequence names to be mogrified
 #' @param tag Optional tag to add to all sequence names which were modified
 #' @param sep Separator to place between seqnames names & tag
@@ -29,6 +30,7 @@
 #' genomogrify(dna, var)
 #' genomogrify(dna, var, tag = "mod")
 #' genomogrify(dna, var, var_tags = TRUE)
+#' genomogrify(dna, var, mask = GRanges("chr2:1-5"), var_tags = TRUE)
 #'
 #'
 #' @export
@@ -47,8 +49,8 @@ setMethod(
     "genomogrify",
     signature = signature(x = "XStringSet", var = "GRanges"),
     function(
-        x, var, alt_col = "ALT", tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", ...
+        x, var, alt_col = "ALT", mask, tag = NULL, sep = "_",
+        var_tags = FALSE, var_sep = "_", verbose = TRUE, ...
     ) {
 
         ## 1. Identify SNPs within 'var'
@@ -58,8 +60,12 @@ setMethod(
         ## 5. Optionally tag sequence names
         ##    - Use a common tag + specific tags for SNPs/Insertions/Deletions
 
+        if (missing(mask)) mask <- GRanges()
+        stopifnot(is(mask, "GRanges"))
+
         ## Check the variants are valid
         var <- .checkAlts(var, alt_col)
+        var <- var[!overlapsAny(var, mask)]
         ## Separate into snps & indels
         var <- subset(var, seqnames %in% seqlevels(x))
         if (length(var) == 0) return(x)
@@ -69,12 +75,22 @@ setMethod(
 
         ## Overwrite SNPs
         new_seq <- owl(x, snps, alt_col)
-        ## Arm with Insertions/Deletions
-        new_seq <- indelcator(new_seq, indels, ...)
+        ## Ensure masked regions are all 'N'
+        mask <- subset(mask, seqnames %in% names(new_seq))
+        if (length(mask) > 0) {
+            if (verbose) message("Applying mask")
+            mask_grl <- splitAsList(mask, as.character(seqnames(mask)))
+            for (m in names(mask_grl)) {
+                i <- start(GPos(mask_grl[[m]]))
+                new_seq[[m]][i] <- "N"
+            }
+        }
+        ## Add Insertions/Deletions
+        new_seq <- indelcator(new_seq, indels, verbose = verbose, ...)
 
         ## Sort out tags for sequence names which were modified
         if (!is.null(tag)) {
-            ol <- names(new_seq) %in% seqlevels(var)
+            ol <- names(new_seq) %in% as.character(seqnames(var))
             names(new_seq)[ol] <- paste(names(new_seq)[ol], tag, sep = sep)
         }
         if (var_tags) {
@@ -101,7 +117,7 @@ setMethod(
     "genomogrify",
     signature = signature(x = "BSgenome", var = "GRanges"),
     function(
-        x, var, alt_col = "ALT", names, tag = NULL, sep = "_",
+        x, var, alt_col = "ALT", mask, names, tag = NULL, sep = "_",
         var_tags = FALSE, var_sep = "_", verbose = TRUE, ...
     ) {
         ## Setup the sequence info
@@ -112,8 +128,8 @@ setMethod(
         if (!missing(names)) names(seq) <- names
         if (verbose) message("done")
         genomogrify(
-            seq, var, alt_col, tag, sep, var_tags = var_tags, var_sep = "_",
-            verbose = verbose, ...
+            seq, var, alt_col, mask, tag, sep,
+            var_tags = var_tags, var_sep = "_", verbose = verbose, ...
         )
     }
 )
@@ -125,12 +141,12 @@ setMethod(
     "genomogrify",
     signature = signature(x = "BSgenome", var = "VcfFile"),
     function(
-        x, var, alt_col = "ALT", names, tag = NULL, sep = "_",
+        x, var, alt_col = "ALT", mask, names, tag = NULL, sep = "_",
         var_tags = FALSE, var_sep = "_", which, verbose = TRUE, ...
     ) {
         var <- .parseVariants(var, alt_col, which)
         genomogrify(
-            x, var, alt_col, names, tag, sep, var_tags = var_tags,
+            x, var, alt_col, mask, names, tag, sep, var_tags = var_tags,
             var_sep = "_", verbose = verbose,  ...
         )
     }
@@ -143,13 +159,13 @@ setMethod(
     "genomogrify",
     signature = signature(x = "XStringSet", var = "VcfFile"),
     function(
-        x, var, alt_col = "ALT", tag = NULL, sep = "_",
+        x, var, alt_col = "ALT", mask, tag = NULL, sep = "_",
         var_tags = FALSE, var_sep = "_", which, verbose = TRUE, ...
     ) {
         var <- .parseVariants(var, alt_col, which)
         genomogrify(
-            x, var, alt_col, tag, sep, var_tags = var_tags, var_sep = "_",
-            verbose = verbose, ...
+            x, var, alt_col, mask, tag, sep,
+            var_tags = var_tags, var_sep = "_", verbose = verbose, ...
         )
     }
 )

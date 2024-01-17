@@ -23,6 +23,13 @@ test_that("genomogrify works correctly", {
         ) # Just one deletion
         expect_true(length(new[["chr1"]]) == 248956394)
 
+        ## Check the masking
+        new <- genomogrify(
+            hg38, var, alt_col = "ALT", mask = GRanges("chrM:16561-16569"),
+            names = "chrM", tag = "test", var_tags = TRUE, verbose = FALSE
+        )
+        expect_equal(as.character(new[[1]][16562:16570]), "NNNNNNNNN")
+
     }
 
     # Test for an empty set of variants

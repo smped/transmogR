@@ -204,11 +204,14 @@ parY(sq_hg38)
 ```
 
 If the user wishes to exclude transcripts in the PAR-Y region, these ranges can 
-be passed to `transmogrify()` and any trascripts which overlap the PAR-Y
+be passed to `transmogrify()` and any transcripts which overlap the PAR-Y
 region will be excluded.
 Alternatively, passing the entire Y-chromosome to `transmogrify()` will 
 exclude all transcripts in the Y-chromosome, as may be preferred for 
 female-specific references.
+
+These regions can also be passed to `genomgrify()` as a mask, with all bases 
+within the masked region being re-assigned as an N.
 
 ## Splice Junctions
 
