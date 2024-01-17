@@ -22,16 +22,13 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
+    <loc>/reference/genomogrify-methods.html</loc>
+  </url>
+  <url>
     <loc>/reference/indelcator-methods.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mogrifyGenome-methods.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mogrifyTranscriptome-methods.html</loc>
   </url>
   <url>
     <loc>/reference/overlapsByVar.html</loc>
@@ -44,6 +41,9 @@
   </url>
   <url>
     <loc>/reference/sjFromExons.html</loc>
+  </url>
+  <url>
+    <loc>/reference/transmogrify-methods.html</loc>
   </url>
   <url>
     <loc>/reference/upsetVarByCol.html</loc>

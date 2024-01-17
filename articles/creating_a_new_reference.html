@@ -297,11 +297,11 @@ substitute in the values from our gtf for this feature type.</p>
 <h3 id="modifying-a-reference-genome">Modifying a Reference Genome<a class="anchor" aria-label="anchor" href="#modifying-a-reference-genome"></a>
 </h3>
 <p>The simplest method for modifying a reference genome is to simply
-call <code><a href="../reference/mogrifyGenome-methods.html">mogrifyGenome()</a></code> with either a
-<code>DNAStringSet</code> or <code>BSgenome</code> object. A tag can be
-optionally added to all sequence names to avoid confusion.</p>
+call <code><a href="../reference/genomogrify-methods.html">genomogrify()</a></code> with either a <code>DNAStringSet</code>
+or <code>BSgenome</code> object. A tag can be optionally added to all
+sequence names to avoid confusion.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chr1_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mogrifyGenome-methods.html">mogrifyGenome</a></span><span class="op">(</span><span class="va">chr1</span>, <span class="va">var</span>, tag <span class="op">=</span> <span class="st">"mod"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">chr1_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/genomogrify-methods.html">genomogrify</a></span><span class="op">(</span><span class="va">chr1</span>, <span class="va">var</span>, tag <span class="op">=</span> <span class="st">"mod"</span><span class="op">)</span></span>
 <span><span class="va">chr1_mod</span></span></code></pre></div>
 <pre><code><span><span class="co">## DNAStringSet object of length 1:</span></span>
 <span><span class="co">##         width seq                                           names               </span></span>
@@ -322,7 +322,7 @@ of <code>s</code>, <code>i</code> or <code>d</code> to indicate SNV,
 Insertions or Deletions respectively. In our example dataset, only one
 transcript contains both SNVs and an insertion.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">trans_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mogrifyTranscriptome-methods.html">mogrifyTranscriptome</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">trans_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transmogrify-methods.html">transmogrify</a></span><span class="op">(</span></span>
 <span>    <span class="va">chr1</span>, <span class="va">var</span>, <span class="va">gtf</span><span class="op">$</span><span class="va">exon</span>, tag <span class="op">=</span> <span class="st">"mod"</span>, var_tags <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">trans_mod</span></span></code></pre></div>
@@ -373,11 +373,11 @@ Y-chromosome and guesses which reference genome has been used.</p>
 <span><span class="co">##   -------</span></span>
 <span><span class="co">##   seqinfo: 711 sequences (1 circular) from hg38 genome</span></span></code></pre>
 <p>If the user wishes to exclude transcripts in the PAR-Y region, these
-ranges can be passed to <code><a href="../reference/mogrifyTranscriptome-methods.html">mogrifyTranscriptome()</a></code> and any
-trascripts which overlap the PAR-Y region will be excluded.
-Alternatively, passing the entire Y-chromosome to
-<code><a href="../reference/mogrifyTranscriptome-methods.html">mogrifyTranscriptome()</a></code> will exclude all transcripts in the
-Y-chromosome, as may be preferred for female-specific references.</p>
+ranges can be passed to <code><a href="../reference/transmogrify-methods.html">transmogrify()</a></code> and any trascripts
+which overlap the PAR-Y region will be excluded. Alternatively, passing
+the entire Y-chromosome to <code><a href="../reference/transmogrify-methods.html">transmogrify()</a></code> will exclude all
+transcripts in the Y-chromosome, as may be preferred for female-specific
+references.</p>
 </div>
 <div class="section level3">
 <h3 id="splice-junctions">Splice Junctions<a class="anchor" aria-label="anchor" href="#splice-junctions"></a>
