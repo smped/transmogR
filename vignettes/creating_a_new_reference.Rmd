@@ -193,8 +193,8 @@ These are also able to be called individually as shown in the help pages.
 ## Pseudo-Autosomal Regions (PAR-Y)
 
 Beyond these lower-level functions, PAR-Y regions for hg38, hg19 and CHM13 are
-able to obtained using `parY()` and passing the appropriate seqinfo object.
-This seqinfo object checks the length of the Y-chromosome and guesses which 
+able to obtained using `parY()` and passing the appropriate `seqinfo` object.
+This `seqinfo` object checks the length of the Y-chromosome and guesses which 
 reference genome has been used.
 
 
@@ -210,7 +210,7 @@ Alternatively, passing the entire Y-chromosome to `transmogrify()` will
 exclude all transcripts in the Y-chromosome, as may be preferred for 
 female-specific references.
 
-These regions can also be passed to `genomgrify()` as a mask, with all bases 
+These regions can also be passed to `genomogrify()` as a mask, with all bases 
 within the masked region being re-assigned as an N.
 
 ## Splice Junctions
