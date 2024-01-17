@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">transmogR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.7</span>
       </span>
     </div>
 
@@ -373,11 +373,14 @@ Y-chromosome and guesses which reference genome has been used.</p>
 <span><span class="co">##   -------</span></span>
 <span><span class="co">##   seqinfo: 711 sequences (1 circular) from hg38 genome</span></span></code></pre>
 <p>If the user wishes to exclude transcripts in the PAR-Y region, these
-ranges can be passed to <code><a href="../reference/transmogrify-methods.html">transmogrify()</a></code> and any trascripts
+ranges can be passed to <code><a href="../reference/transmogrify-methods.html">transmogrify()</a></code> and any transcripts
 which overlap the PAR-Y region will be excluded. Alternatively, passing
 the entire Y-chromosome to <code><a href="../reference/transmogrify-methods.html">transmogrify()</a></code> will exclude all
 transcripts in the Y-chromosome, as may be preferred for female-specific
 references.</p>
+<p>These regions can also be passed to <code>genomgrify()</code> as a
+mask, with all bases within the masked region being re-assigned as an
+N.</p>
 </div>
 <div class="section level3">
 <h3 id="splice-junctions">Splice Junctions<a class="anchor" aria-label="anchor" href="#splice-junctions"></a>
@@ -531,7 +534,7 @@ splice junctions for specific transcripts.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] BSgenome.Hsapiens.UCSC.hg38_1.4.5 BSgenome_1.70.1                  </span></span>
-<span><span class="co">##  [3] BiocIO_1.12.0                     transmogR_0.1.6                  </span></span>
+<span><span class="co">##  [3] BiocIO_1.12.0                     transmogR_0.1.7                  </span></span>
 <span><span class="co">##  [5] extraChIPs_1.6.0                  tibble_3.2.1                     </span></span>
 <span><span class="co">##  [7] ggside_0.2.3                      ggplot2_3.4.4                    </span></span>
 <span><span class="co">##  [9] BiocParallel_1.36.0               rtracklayer_1.62.0               </span></span>

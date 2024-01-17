@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">transmogR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.7</span>
       </span>
     </div>
 
@@ -70,10 +70,12 @@
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">var</span>,</span>
 <span>  alt_col <span class="op">=</span> <span class="st">"ALT"</span>,</span>
+<span>  <span class="va">mask</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">"_"</span>,</span>
 <span>  var_tags <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  var_sep <span class="op">=</span> <span class="st">"_"</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -82,6 +84,7 @@
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">var</span>,</span>
 <span>  alt_col <span class="op">=</span> <span class="st">"ALT"</span>,</span>
+<span>  <span class="va">mask</span>,</span>
 <span>  <span class="va">names</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">"_"</span>,</span>
@@ -96,6 +99,7 @@
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">var</span>,</span>
 <span>  alt_col <span class="op">=</span> <span class="st">"ALT"</span>,</span>
+<span>  <span class="va">mask</span>,</span>
 <span>  <span class="va">names</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">"_"</span>,</span>
@@ -111,6 +115,7 @@
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">var</span>,</span>
 <span>  alt_col <span class="op">=</span> <span class="st">"ALT"</span>,</span>
+<span>  <span class="va">mask</span>,</span>
 <span>  tag <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">"_"</span>,</span>
 <span>  var_tags <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -140,6 +145,10 @@
 <dd><p>The name of the column with <code>var</code> containing alternate bases</p></dd>
 
 
+<dt>mask</dt>
+<dd><p>Optional GRanges object defining regions to be masked with an 'N'</p></dd>
+
+
 <dt>tag</dt>
 <dd><p>Optional tag to add to all sequence names which were modified</p></dd>
 
@@ -158,12 +167,12 @@ Deletions respectively</p></dd>
 <dd><p>Separator between any previous tags and variant tags</p></dd>
 
 
-<dt>names</dt>
-<dd><p>Sequence names to be mogrified</p></dd>
-
-
 <dt>verbose</dt>
 <dd><p>logical(1) Print progress messages while running</p></dd>
+
+
+<dt>names</dt>
+<dd><p>Sequence names to be mogrified</p></dd>
 
 
 <dt>which</dt>
@@ -216,6 +225,14 @@ using a VCF directly</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     width seq                                               names               </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]     5 <span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span>                                             chr1_si</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2]     3 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TT</span>                                               chr2_d</span>
+<span class="r-in"><span><span class="fu">genomogrify</span><span class="op">(</span><span class="va">dna</span>, <span class="va">var</span>, mask <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr2:1-5"</span><span class="op">)</span>, var_tags <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Applying mask</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Updating chr1; Original length: 4</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ; Updated length: 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DNAStringSet object of length 2:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     width seq                                               names               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]     5 <span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span>                                             chr1_si</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2]     5 <span style="color: #EEEEEE; background-color: #B2B2B2;">NNNNN</span>                                             chr2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
