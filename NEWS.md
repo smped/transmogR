@@ -31,3 +31,8 @@
 # transmogR 0.1.6
 
 * Added vignette
+
+# transmogR 0.1.7
+
+* Renamed mogrify*() to `transmogrify()` and `genomogrify()`
+* Added masking to `genomogrify()`
