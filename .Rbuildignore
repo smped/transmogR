@@ -6,3 +6,4 @@
 ^pkgdown$
 ^TODO\.md$
 ^data-raw$
+^.github$
