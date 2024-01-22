@@ -56,7 +56,7 @@
 #' sjFromExons(gtf, as = "GInteractions")
 #'
 #'
-#' @importFrom S4Vectors mcols 'mcols<-'
+#' @importFrom S4Vectors mcols mcols<-
 #' @importFrom methods is
 #' @importFrom stats aggregate
 #' @export

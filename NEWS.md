@@ -36,3 +36,7 @@
 
 * Renamed mogrify*() to `transmogrify()` and `genomogrify()`
 * Added masking to `genomogrify()`
+
+# transmogR 0.1.8
+
+* Switched `parY()` to an S4 methods

@@ -102,6 +102,16 @@ XStringSet with variant modified sequences
 \description{
 Use a set of SNPS, insertions and deletions to modify a reference genome
 }
+\details{
+This function is designed to create a variant-modified reference genome,
+intended to be included as a set of decoys when using salmon in selective
+alignment mode.
+Sequence lengths will change if InDels are included and any coordinate-based
+information will be lost on the output of this function.
+
+Tags are able to be added to any modified sequence to assist identifying any
+changes that have been made to a sequence.
+}
 \examples{
 library(GenomicRanges)
 dna <- DNAStringSet(c(chr1 = "ACGT", chr2 = "AATTT"))

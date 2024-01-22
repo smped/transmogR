@@ -4,6 +4,9 @@
 #' Modify one or more sequences to include Insertions or Deletions
 #'
 #' @details
+#' This is a lower-level function relied on by both [transmogrify()] and
+#' [genomogrify()].
+#'
 #' Takes an [Biostrings::XString] or [Biostrings::XStringSet] object and
 #' modifies the sequence to incorporate InDels.
 #' The expected types of data determine the behaviour, with the following
@@ -27,7 +30,7 @@
 #' @param names passed to [BSgenome::getSeq] when x is a BSgenome object
 #' @param ... Passed to [parallel::mclapply]
 #'
-#' @seealso [transmogrify()]
+#' @seealso [transmogrify()] [genomogrify()]
 #'
 #' @examples
 #' ## Start with a DNAStringSet
@@ -58,7 +61,7 @@ setGeneric(
 #' @import GenomicRanges
 #' @importFrom methods is as
 #' @importFrom IRanges subsetByOverlaps findOverlaps
-#' @importFrom S4Vectors mcols 'mcols<-' queryHits subjectHits DataFrame
+#' @importFrom S4Vectors mcols mcols<- queryHits subjectHits DataFrame
 #' @importFrom stats aggregate
 #' @rdname indelcator-methods
 #' @aliases indelcator
@@ -132,8 +135,8 @@ setMethod(
 #' @import Biostrings
 #' @import GenomicRanges
 #' @importFrom GenomeInfoDb seqnames seqinfo seqlevelsInUse
-#' @importFrom S4Vectors splitAsList mcols 'mcols<-'
-#' @importFrom IRanges width Views start end 'width<-'
+#' @importFrom S4Vectors splitAsList mcols mcols<-
+#' @importFrom IRanges width Views start end width<-
 #' @importFrom parallel mclapply
 #' @rdname indelcator-methods
 #' @aliases indelcator

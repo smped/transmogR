@@ -46,7 +46,7 @@
 #' @importFrom ComplexUpset intersection_size upset_set_size upset
 #' @importFrom ggplot2 aes geom_bar geom_text after_stat ggtitle position_stack
 #' @importFrom ggplot2 scale_y_reverse scale_y_continuous expansion ylab
-#' @importFrom rlang list2 ':='
+#' @importFrom rlang list2 :=
 #' @export
 upsetVarByCol <- function(
         gr, var, alt_col = "ALT", mcol = "transcript_id", ...,

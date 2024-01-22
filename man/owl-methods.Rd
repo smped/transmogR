@@ -33,8 +33,11 @@ inserted at the supplied positions
 OverWrite Letters (e.g. SNPs) in an XStringSet
 }
 \details{
-If providing a BSgenome object, this will first be coerced to a DNAStringSet
-which can be time consuming
+This is a lower-level function called by \code{\link[=transmogrify]{transmogrify()}} and
+\code{\link[=genomogrify]{genomogrify()}}, but able to be called by the user if needed
+
+Note that when providing a BSgenome object, this will first be coerced to a
+DNAStringSet which can be time consuming.
 }
 \examples{
 seq <- DNAStringSet(c(chr1 = "AAGC"))
