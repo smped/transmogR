@@ -52,8 +52,8 @@ jobs:
       matrix:
         config:
           - { os: ubuntu-latest, r: '4.3', bioc: '3.18', cont: "bioconductor/bioconductor_docker:RELEASE_3_18", rspm: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest" }
-          - { os: macOS-latest, r: '4.3', bioc: '3.18', cont: "bioconductor/bioconductor_docker:RELEASE_3_18", rspm: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest" }
-          - { os: windows-latest, r: '4.3', bioc: '3.18', cont: "bioconductor/bioconductor_docker:RELEASE_3_18", rspm: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest" }
+          - { os: macOS-latest, r: '4.3', bioc: '3.18'}
+          - { os: windows-latest, r: '4.3', bioc: '3.18'}
 ## Dockers for macOS and Windows can't handle r: 'next'
 #          - { os: ubuntu-latest, r: 'next', bioc: 'devel', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest" }
 #          - { os: macOS-latest, r: 'next', bioc: 'devel'}
@@ -65,6 +65,7 @@ jobs:
       TZ: UTC
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     steps:
 
@@ -254,7 +255,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
           git config --global --add safe.directory /__w/transmogR/transmogR
-          Rscript -e "pkgdown::deploy_to_branch(new_process = FALSE)"
+          Rscript -e "pkgdown::deploy_to_branch(clean = TRUE)"
         shell: bash {0}
         ## Note that you need to run pkgdown::deploy_to_branch(new_process = FALSE)
         ## at least one locally before this will work. This creates the gh-pages

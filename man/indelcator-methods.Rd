@@ -40,6 +40,9 @@ A DNAStringSet or XString object (See Details)
 Modify one or more sequences to include Insertions or Deletions
 }
 \details{
+This is a lower-level function relied on by both \code{\link[=transmogrify]{transmogrify()}} and
+\code{\link[=genomogrify]{genomogrify()}}.
+
 Takes an \link[Biostrings:XString-class]{Biostrings::XString} or \link[Biostrings:XStringSet-class]{Biostrings::XStringSet} object and
 modifies the sequence to incorporate InDels.
 The expected types of data determine the behaviour, with the following
@@ -69,5 +72,5 @@ indelcator(orig, var, exons = ex)
 
 }
 \seealso{
-\code{\link[=transmogrify]{transmogrify()}}
+\code{\link[=transmogrify]{transmogrify()}} \code{\link[=genomogrify]{genomogrify()}}
 }

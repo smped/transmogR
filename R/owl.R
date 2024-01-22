@@ -12,8 +12,11 @@
 #' @param ... Passed to [Biostrings::replaceLetterAt()]
 #'
 #' @details
-#' If providing a BSgenome object, this will first be coerced to a DNAStringSet
-#' which can be time consuming
+#' This is a lower-level function called by [transmogrify()] and
+#' [genomogrify()], but able to be called by the user if needed
+#'
+#' Note that when providing a BSgenome object, this will first be coerced to a
+#' DNAStringSet which can be time consuming.
 #'
 #' @return An object of the same class as the original object, but with SNPs
 #' inserted at the supplied positions
@@ -29,7 +32,7 @@
 #' @import Biostrings
 #' @importFrom S4Vectors mcols
 #' @importFrom methods is
-#' @importFrom GenomeInfoDb seqinfo 'seqinfo<-' seqlevels seqnames 'seqlevels<-'
+#' @importFrom GenomeInfoDb seqinfo seqinfo<- seqlevels seqnames seqlevels<-
 #' @importFrom BSgenome getSeq
 #'
 #' @export
@@ -41,7 +44,7 @@ setGeneric(
 #' @import Biostrings
 #' @importFrom S4Vectors mcols
 #' @importFrom methods is
-#' @importFrom GenomeInfoDb seqinfo 'seqinfo<-' seqlevels seqnames 'seqlevels<-'
+#' @importFrom GenomeInfoDb seqinfo seqinfo<- seqlevels seqnames seqlevels<-
 #' @rdname owl-methods
 #' @aliases owl
 #' @export

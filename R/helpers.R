@@ -1,6 +1,6 @@
 #' @keywords internal
 #' @importFrom Biostrings IUPAC_CODE_MAP
-#' @importFrom S4Vectors mcols 'mcols<-'
+#' @importFrom S4Vectors mcols mcols<-
 .checkAlts <- function(var, alt_col) {
 
     alt_col <- match.arg(alt_col, colnames(mcols(var)))
@@ -25,8 +25,8 @@
 #' @keywords internal
 #' @import GenomicRanges
 #' @importClassesFrom VariantAnnotation ScanVcfParam
-#' @importFrom VariantAnnotation readVcf ScanVcfParam 'vcfWhich<-'
-#' @importFrom S4Vectors mcols 'mcols<-'
+#' @importFrom VariantAnnotation readVcf ScanVcfParam vcfWhich<-
+#' @importFrom S4Vectors mcols mcols<-
 #' @importFrom SummarizedExperiment rowRanges
 #' @importFrom GenomeInfoDb seqinfo
 #' @importFrom methods is
@@ -62,7 +62,7 @@
     args
 }
 
-#' @importFrom S4Vectors mcols 'mcols<-'
+#' @importFrom S4Vectors mcols mcols<-
 #' @importFrom InteractionSet GInteractions
 #' @keywords internal
 .giFromSj <- function(sj, tx_col, rank_col) {
