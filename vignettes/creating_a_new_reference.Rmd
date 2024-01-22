@@ -1,0 +1,254 @@
+---
+title: "Creating a Variant-Modified Reference"
+author:
+- name: Stevie Pederson
+  affiliation: Black Ochre Data Labs, Telethon Kid's Institute, Adelaide, Australia
+  email: stephen.pederson@teletohnkids.org.au
+package: transmogR
+bibliography: '`r system.file("references.bib", package = "transmogR")`'
+output:
+  BiocStyle::html_document
+abstract: |
+  The use of personalised or population-level variants opens the door to the 
+  possibility of creating a variant-modified reference genome, or transcriptome.
+  The package transmogR allows the creation of both, with a focus on combining
+  both in order to created a custom reference transcriptome, along with decoy 
+  transcripts for use with the pseudo-aligner salmon.
+vignette: |
+  %\VignetteIndexEntry{Creating a Variant-Modified Reference}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(message = FALSE, crop = NULL)
+```
+
+
+# Introduction
+
+The incorporation of personalised or population-level variants into a 
+*reference genome* has been shown to have a significant impact on subsequent 
+alignments [@Kaminow2022-dz].
+Whilst implemented for splice-aware alignment or RNA-Seq data using 
+*STARconsensus*, the package `transmogR` enables the creation of a 
+variant-modified *reference transcriptome* for use with pseudo aligners such as 
+*salmon* [@Srivastava2020-tm].
+In addition, multiple visualisation and summarisation methods are included for a
+cursory analysis of any custom variant sets being used.
+
+Whilst the subsequent code is demonstrated on a small genomic region, the 
+complete process for creating a modified a reference can run in under 20 minutes 
+if using 4 or more cores.
+
+# Setup
+
+## Installation
+
+In order to perform the operations in this vignette, the following packages 
+require installation.
+
+```r 
+if (!"BiocManager" %in% rownames(installed.packages()))
+  install.packages("BiocManager")
+pkg <- c(
+  "rtracklayer", "BSgenome.Hsapiens.UCSC.hg38", "extraChIPs", "smped/transmogR"
+)
+BiocManager::install(pkg, update = FALSE)
+```
+
+Once these packages are installed, we can load them easily
+
+```{r load-packages}
+library(VariantAnnotation)
+library(rtracklayer)
+library(extraChIPs)
+library(transmogR)
+library(BSgenome.Hsapiens.UCSC.hg38)
+```
+
+## Required Data
+
+In order to create a modified reference, three primary data objects are 
+required: 1) a reference genome; 2) a set of genomic variants; and 3) a set 
+of exon-level co-ordinates defining transcript structure.
+
+For this vignette, we'll use GRCh38 as our primary reference genome, but 
+restricting the sequences to *chr1* only.
+The package can take either a `DNAStringSet` or `BSgenome` object as the 
+reference genome.
+
+```{r chr1}
+chr1 <- getSeq(BSgenome.Hsapiens.UCSC.hg38, "chr1")
+chr1 <- as(chr1, "DNAStringSet")
+names(chr1) <- "chr1"
+chr1
+```
+
+A small set of variants has been provided with the package.
+
+```{r var}
+sq <- seqinfo(chr1)
+genome(sq) <- "GRCh38"
+vcf <- system.file("extdata/1000GP_subset.vcf.gz", package = "transmogR")
+vcf_param <- ScanVcfParam(fixed = "ALT", info = NA, which = GRanges(sq))
+var <- rowRanges(readVcf(vcf, param = vcf_param))
+seqinfo(var) <- sq
+var
+```
+
+An additional set of transcripts derived from Gencode v44^[https://www.gencodegenes.org/human/] has also been 
+provided.
+
+```{r gtf}
+f <- system.file("extdata/gencode.v44.subset.gtf.gz", package = "transmogR")
+gtf <- import.gff(f, which = GRanges(sq))
+seqinfo(gtf) <- sq
+gtf
+```
+
+Splitting this gtf into feature types can also be very handy for downstream 
+processes.
+
+```{r gtf-split}
+gtf <- splitAsList(gtf, gtf$type)
+```
+
+# Inspecting Variants
+
+Knowing where our variants lie, and how they relate to each other can be 
+informative, and as such, some simple visualisation and summarisation functions
+have been included.
+In the following, we can check to see how many exons directly overlap a variant,
+showing how many unique genes this summarises to.
+Any ids, which don't overlap a variants are also described in the plot title.
+
+```{r upset-var, fig.cap = "Included variants which overlap exonic sequences, summarised by unique gene ids"}
+upsetVarByCol(gtf$exon, var, mcol = "gene_id")
+```
+
+In addition, we can obtain a simple breakdown of overlapping regions using a 
+GRangesList.
+We can use the function `defineRegions()` from `extraChIPs` to define regions 
+based on gene & transcript locations.
+This function assigns each position in the genome uniquely to a given feature
+hierarchically, using all provided transcripts, meaning some exons will be 
+considered as promoters.
+To ensure that all exons are included as exons, we can just substitute in the 
+values from our gtf for this feature type.
+
+```{r overlaps-by-var}
+regions <- defineRegions(gtf$gene, gtf$transcript, gtf$exon, proximal = 0)
+regions$exon <- granges(gtf$exon)
+overlapsByVar(regions, var)
+```
+
+# Creating Modified Reference Sequences
+
+## Modifying a Reference Genome
+
+The simplest method for modifying a reference genome is to simply call 
+`genomogrify()` with either a `DNAStringSet` or `BSgenome` object.
+A tag can be optionally added to all sequence names to avoid confusion.
+
+```{r chr1-mod}
+chr1_mod <- genomogrify(chr1, var, tag = "mod")
+chr1_mod
+```
+
+The new reference genome can be exported to fasta format using 
+`writeXStringSet()`.
+
+## Modifying a Reference Transcriptome
+
+The process for creating a variant-modified reference transcriptome is 
+essentially the same as above, with the addition of exon-level co-ordinates for
+the set of transcripts.
+An optional tag can be added to all transcripts to indicate which have been 
+modified, with an additional tag able to be included which indicates which type
+of variant has been incorporated into the new transcript sequence.
+Variant tags will be one of `s`, `i` or `d` to indicate SNV, Insertions or 
+Deletions respectively.
+In our example dataset, only one transcript contains both SNVs and an insertion.
+
+```{r trans-mod}
+trans_mod <- transmogrify(
+    chr1, var, gtf$exon, tag = "mod", var_tags = TRUE
+)
+trans_mod
+names(trans_mod)[grepl("_si", names(trans_mod))]
+```
+
+This can be simply exported again using `writeXStringSet()`.
+If using decoy transcripts for `salmon`, the `gentrome` can also be simply 
+exported by combining the two modified references.
+
+
+Both of the above processes rely on the lower-level functions `owl()` and 
+`indelcator()` which *overwrite letters* or substitute *indels* respectively.
+These are also able to be called individually as shown in the help pages.
+
+# Additional Capabilities
+
+## Pseudo-Autosomal Regions (PAR-Y)
+
+Beyond these lower-level functions, PAR-Y regions for hg38, hg19 and CHM13 are
+able to obtained using `parY()` and passing the appropriate `seqinfo` object.
+This `seqinfo` object checks the length of the Y-chromosome and guesses which 
+reference genome has been used.
+
+
+```{r par-y}
+sq_hg38 <- seqinfo(BSgenome.Hsapiens.UCSC.hg38)
+parY(sq_hg38)
+```
+
+If the user wishes to exclude transcripts in the PAR-Y region, these ranges can 
+be passed to `transmogrify()` and any transcripts which overlap the PAR-Y
+region will be excluded.
+Alternatively, passing the entire Y-chromosome to `transmogrify()` will 
+exclude all transcripts in the Y-chromosome, as may be preferred for 
+female-specific references.
+
+These regions can also be passed to `genomogrify()` as a mask, with all bases 
+within the masked region being re-assigned as an N.
+
+## Splice Junctions
+
+In addition, the set of splice junctions associated with any transcript can be 
+obtained using our known exons.
+
+```{r sj}
+ec <- c("transcript_id", "transcript_name", "gene_id", "gene_name")
+sj <- sjFromExons(gtf$exon, extra_cols = ec)
+sj
+```
+
+Many splice junctions will be shared across multiple transcripts, so the 
+returned set of junctions can also be simplified using `chopMC()` from 
+`extraChIPs`.
+
+```{r chop-sj}
+chopMC(sj)
+```
+
+As a further alternative, splice junctions can be returned as a set of 
+interactions, with donor sites being assigned to the `anchorOne` element, and
+acceptor sites being placed in the `anchorTwo` element
+This enables the identification of all splice junctions for specific 
+transcripts.
+
+```{r sj-as-gi}
+sj <- sjFromExons(gtf$exon, extra_cols = ec, as = "GInteractions")
+subset(sj, transcript_name == "DDX11L17-201")
+```
+
+
+
+# Session info
+
+```{r sessionInfo, echo=FALSE}
+sessionInfo()
+```
+
+# References

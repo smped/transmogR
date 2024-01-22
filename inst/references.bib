@@ -1,0 +1,81 @@
+@ARTICLE{Kaminow2022-dz,
+  title    = "Pan-human consensus genome significantly improves the accuracy of
+              {RNA-seq} analyses",
+  author   = "Kaminow, Benjamin and Ballouz, Sara and Gillis, Jesse and Dobin,
+              Alexander",
+  abstract = "The Human Reference Genome serves as the foundation for modern
+              genomic analyses. However, in its present form, it does not
+              adequately represent the vast genetic diversity of the human
+              population. In this study, we explored the consensus genome as a
+              potential successor of the current reference genome and assessed
+              its effect on the accuracy of RNA-seq read alignment. To find the
+              best haploid genome representation, we constructed consensus
+              genomes at the pan-human, superpopulation, and population levels,
+              using variant information from The 1000 Genomes Project
+              Consortium. Using personal haploid genomes as the ground truth,
+              we compared mapping errors for real RNA-seq reads aligned to the
+              consensus genomes versus the reference genome. For reads
+              overlapping homozygous variants, we found that the mapping error
+              decreased by a factor of approximately two to three when the
+              reference was replaced with the pan-human consensus genome. We
+              also found that using more population-specific consensuses
+              resulted in little to no increase over using the pan-human
+              consensus, suggesting a limit in the utility of incorporating a
+              more specific genomic variation. Replacing the reference with
+              consensus genomes impacts functional analyses, such as
+              differential expressions of isoforms, genes, and splice
+              junctions.",
+  journal  = "Genome Res.",
+  volume   =  32,
+  number   =  4,
+  pages    = "738--749",
+  month    =  apr,
+  year     =  2022,
+  language = "en"
+}
+
+
+@ARTICLE{Srivastava2020-tm,
+  title    = "Alignment and mapping methodology influence transcript abundance
+              estimation",
+  author   = "Srivastava, Avi and Malik, Laraib and Sarkar, Hirak and Zakeri,
+              Mohsen and Almodaresi, Fatemeh and Soneson, Charlotte and Love,
+              Michael I and Kingsford, Carl and Patro, Rob",
+  abstract = "BACKGROUND: The accuracy of transcript quantification using
+              RNA-seq data depends on many factors, such as the choice of
+              alignment or mapping method and the quantification model being
+              adopted. While the choice of quantification model has been shown
+              to be important, considerably less attention has been given to
+              comparing the effect of various read alignment approaches on
+              quantification accuracy. RESULTS: We investigate the influence of
+              mapping and alignment on the accuracy of transcript
+              quantification in both simulated and experimental data, as well
+              as the effect on subsequent differential expression analysis. We
+              observe that, even when the quantification model itself is held
+              fixed, the effect of choosing a different alignment methodology,
+              or aligning reads using different parameters, on quantification
+              estimates can sometimes be large and can affect downstream
+              differential expression analyses as well. These effects can go
+              unnoticed when assessment is focused too heavily on simulated
+              data, where the alignment task is often simpler than in
+              experimentally acquired samples. We also introduce a new
+              alignment methodology, called selective alignment, to overcome
+              the shortcomings of lightweight approaches without incurring the
+              computational cost of traditional alignment. CONCLUSION: We
+              observe that, on experimental datasets, the performance of
+              lightweight mapping and alignment-based approaches varies
+              significantly, and highlight some of the underlying factors. We
+              show this variation both in terms of quantification and
+              downstream differential expression analysis. In all comparisons,
+              we also show the improved performance of our proposed selective
+              alignment method and suggest best practices for performing
+              RNA-seq quantification.",
+  journal  = "Genome Biol.",
+  volume   =  21,
+  number   =  1,
+  pages    = "239",
+  month    =  sep,
+  year     =  2020,
+  keywords = "Quantification; RNA-seq; Read-alignment",
+  language = "en"
+}

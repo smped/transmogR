@@ -1,0 +1,36 @@
+template:
+  params:
+    bootswatch: simplex
+
+authors:
+  Stevie Pederson:
+    href: https://github.com/smped
+
+reference:
+
+- title: Modify a Reference
+  contents:
+    - indelcator
+    - owl
+    - contains("mogrify")
+
+- title: Additional Functions
+  contents:
+    - parY
+    - matches("[Vv]ar")
+    - sjFromExons
+
+navbar:
+  type: default
+  left:
+  - text: Reference
+    href: reference/index.html
+  - text: Vignettes
+    menu:
+    - text: Creating a variant modified reference
+      href: articles/creating_a_new_reference.html
+  - text: News
+    href: news/index.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/smped/transmogR
