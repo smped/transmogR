@@ -7,7 +7,9 @@ author:
 package: transmogR
 bibliography: '`r system.file("references.bib", package = "transmogR")`'
 output:
-  BiocStyle::html_document
+  BiocStyle::html_document:
+    toc: true
+    toc_depth: 2
 abstract: |
   The use of personalised or population-level variants opens the door to the 
   possibility of creating a variant-modified reference genome, or transcriptome.
@@ -52,7 +54,7 @@ require installation.
 if (!"BiocManager" %in% rownames(installed.packages()))
   install.packages("BiocManager")
 pkg <- c(
-  "rtracklayer", "BSgenome.Hsapiens.UCSC.hg38", "extraChIPs", "smped/transmogR"
+  "rtracklayer", "BSgenome.Hsapiens.UCSC.hg38", "extraChIPs", "transmogR"
 )
 BiocManager::install(pkg, update = FALSE)
 ```
