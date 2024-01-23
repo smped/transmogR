@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">transmogR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.8</span>
       </span>
     </div>
 
@@ -55,7 +55,7 @@
     <div class="page-header">
     <h1>Get the PAR-Y Regions From a Seqinfo Object</h1>
     <small class="dont-index">Source: <a href="https://github.com/smped/transmogR/blob/HEAD/R/parY.R" class="external-link"><code>R/parY.R</code></a></small>
-    <div class="hidden name"><code>parY.Rd</code></div>
+    <div class="hidden name"><code>parY-methods.Rd</code></div>
     </div>
 
     <div class="ref-description">
@@ -63,17 +63,29 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">parY</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">parY</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for Seqinfo</span></span>
+<span><span class="fu">parY</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for character</span></span>
+<span><span class="fu">parY</span><span class="op">(</span><span class="va">x</span>, prefix <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
-<dd><p>A Seqinfo object</p></dd>
+<dd><p>A Seqinfo object or any of named build. If passing
+a character vector, <code><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg()</a></code> will be used to match the build.</p></dd>
 
 
 <dt>...</dt>
 <dd><p>Not used</p></dd>
+
+
+<dt>prefix</dt>
+<dd><p>Optional prefix to place before chromosome names. Can only be
+NULL, "" or "chr"</p></dd>
 
 </dl></div>
     <div id="value">
@@ -88,7 +100,8 @@
 variations, create a GRanges object with the Pseudo-Autosomal Regions from
 the Y chromosome for that build.
 The length of the Y chromosome on the seqinfo object is used to determine
-the correct genome build</p>
+the correct genome build when passing a Seqinfo object.
+Otherwise</p>
 <p>An additional mcols column called PAR will indicate PAR1 and PAR2</p>
     </div>
 
@@ -102,7 +115,7 @@ the correct genome build</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 2 ranges and 1 metadata column:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames            ranges strand |         PAR</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chrY     10001-2781479      * |        PAR1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chrY     10001-2649520      * |        PAR1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chrY 59034050-59363566      * |        PAR2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from hg19_only_chrY genome</span>
@@ -119,6 +132,16 @@ the correct genome build</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chrY 62122809-62460029      * |        PAR2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from CHM13 genome</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Or just call by name</span></span></span>
+<span class="r-in"><span><span class="fu">parY</span><span class="op">(</span><span class="st">"GRCh38"</span>, prefix <span class="op">=</span> <span class="st">"chr"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 2 ranges and 1 metadata column:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames            ranges strand |         PAR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chrY     10001-2781479      * |        PAR1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chrY 56887903-57217415      * |        PAR2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from GRCh38 genome; no seqlengths</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">transmogR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.8</span>
       </span>
     </div>
 
@@ -185,6 +185,16 @@ using a VCF directly</p></dd>
     
 
 <p>XStringSet with variant modified sequences</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>This function is designed to create a variant-modified reference genome,
+intended to be included as a set of decoys when using salmon in selective
+alignment mode.
+Sequence lengths will change if InDels are included and any coordinate-based
+information will be lost on the output of this function.</p>
+<p>Tags are able to be added to any modified sequence to assist identifying any
+changes that have been made to a sequence.</p>
     </div>
 
     <div id="ref-examples">

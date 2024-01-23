@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">transmogR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.8</span>
       </span>
     </div>
 
@@ -359,13 +359,13 @@ able to be called individually as shown in the help pages.</p>
 <h3 id="pseudo-autosomal-regions-par-y">Pseudo-Autosomal Regions (PAR-Y)<a class="anchor" aria-label="anchor" href="#pseudo-autosomal-regions-par-y"></a>
 </h3>
 <p>Beyond these lower-level functions, PAR-Y regions for hg38, hg19 and
-CHM13 are able to obtained using <code><a href="../reference/parY.html">parY()</a></code> and passing the
+CHM13 are able to obtained using <code><a href="../reference/parY-methods.html">parY()</a></code> and passing the
 appropriate <code>seqinfo</code> object. This <code>seqinfo</code>
 object checks the length of the Y-chromosome and guesses which reference
 genome has been used.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sq_hg38</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">BSgenome.Hsapiens.UCSC.hg38</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/parY.html">parY</a></span><span class="op">(</span><span class="va">sq_hg38</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/parY-methods.html">parY</a></span><span class="op">(</span><span class="va">sq_hg38</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## GRanges object with 2 ranges and 1 metadata column:</span></span>
 <span><span class="co">##       seqnames            ranges strand |         PAR</span></span>
 <span><span class="co">##          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span></span>
@@ -535,14 +535,14 @@ splice junctions for specific transcripts.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] BSgenome.Hsapiens.UCSC.hg38_1.4.5 BSgenome_1.70.1                  </span></span>
-<span><span class="co">##  [3] BiocIO_1.12.0                     transmogR_0.1.7                  </span></span>
+<span><span class="co">##  [3] BiocIO_1.12.0                     transmogR_0.1.8                  </span></span>
 <span><span class="co">##  [5] extraChIPs_1.6.0                  tibble_3.2.1                     </span></span>
 <span><span class="co">##  [7] ggside_0.2.3                      ggplot2_3.4.4                    </span></span>
 <span><span class="co">##  [9] BiocParallel_1.36.0               rtracklayer_1.62.0               </span></span>
 <span><span class="co">## [11] VariantAnnotation_1.48.1          Rsamtools_2.18.0                 </span></span>
 <span><span class="co">## [13] Biostrings_2.70.1                 XVector_0.42.0                   </span></span>
 <span><span class="co">## [15] SummarizedExperiment_1.32.0       Biobase_2.62.0                   </span></span>
-<span><span class="co">## [17] GenomicRanges_1.54.1              GenomeInfoDb_1.38.2              </span></span>
+<span><span class="co">## [17] GenomicRanges_1.54.1              GenomeInfoDb_1.38.5              </span></span>
 <span><span class="co">## [19] IRanges_2.36.0                    S4Vectors_0.40.2                 </span></span>
 <span><span class="co">## [21] MatrixGenerics_1.14.0             matrixStats_1.2.0                </span></span>
 <span><span class="co">## [23] BiocGenerics_0.48.1               BiocStyle_2.30.0                 </span></span>
@@ -551,38 +551,38 @@ splice junctions for specific transcripts.</p>
 <span><span class="co">##   [1] bitops_1.0-7               filelock_1.0.3            </span></span>
 <span><span class="co">##   [3] polyclip_1.10-6            XML_3.99-0.16             </span></span>
 <span><span class="co">##   [5] rpart_4.1.23               lifecycle_1.0.4           </span></span>
-<span><span class="co">##   [7] edgeR_4.0.3                doParallel_1.0.17         </span></span>
-<span><span class="co">##   [9] MASS_7.3-60                lattice_0.22-5            </span></span>
+<span><span class="co">##   [7] edgeR_4.0.11               doParallel_1.0.17         </span></span>
+<span><span class="co">##   [9] MASS_7.3-60.0.1            lattice_0.22-5            </span></span>
 <span><span class="co">##  [11] ensembldb_2.26.0           backports_1.4.1           </span></span>
 <span><span class="co">##  [13] magrittr_2.0.3             limma_3.58.1              </span></span>
 <span><span class="co">##  [15] Hmisc_5.1-1                sass_0.4.8                </span></span>
 <span><span class="co">##  [17] rmarkdown_2.25             jquerylib_0.1.4           </span></span>
-<span><span class="co">##  [19] yaml_2.3.8                 metapod_1.10.0            </span></span>
-<span><span class="co">##  [21] Gviz_1.46.1                DBI_1.1.3                 </span></span>
+<span><span class="co">##  [19] yaml_2.3.8                 metapod_1.10.1            </span></span>
+<span><span class="co">##  [21] Gviz_1.46.1                DBI_1.2.1                 </span></span>
 <span><span class="co">##  [23] RColorBrewer_1.1-3         abind_1.4-5               </span></span>
 <span><span class="co">##  [25] zlibbioc_1.48.0            purrr_1.0.2               </span></span>
 <span><span class="co">##  [27] AnnotationFilter_1.26.0    biovizBase_1.50.0         </span></span>
-<span><span class="co">##  [29] RCurl_1.98-1.13            nnet_7.3-19               </span></span>
+<span><span class="co">##  [29] RCurl_1.98-1.14            nnet_7.3-19               </span></span>
 <span><span class="co">##  [31] tweenr_2.0.2               rappdirs_0.3.3            </span></span>
 <span><span class="co">##  [33] circlize_0.4.15            GenomeInfoDbData_1.2.11   </span></span>
-<span><span class="co">##  [35] ggrepel_0.9.4              pkgdown_2.0.7             </span></span>
+<span><span class="co">##  [35] ggrepel_0.9.5              pkgdown_2.0.7             </span></span>
 <span><span class="co">##  [37] codetools_0.2-19           DelayedArray_0.28.0       </span></span>
 <span><span class="co">##  [39] ggforce_0.4.1              xml2_1.3.6                </span></span>
 <span><span class="co">##  [41] tidyselect_1.2.0           shape_1.4.6               </span></span>
 <span><span class="co">##  [43] futile.logger_1.4.3        farver_2.1.1              </span></span>
 <span><span class="co">##  [45] ComplexUpset_1.3.3         BiocFileCache_2.10.1      </span></span>
-<span><span class="co">##  [47] base64enc_0.1-3            GenomicAlignments_1.38.0  </span></span>
+<span><span class="co">##  [47] base64enc_0.1-3            GenomicAlignments_1.38.2  </span></span>
 <span><span class="co">##  [49] jsonlite_1.8.8             GetoptLong_1.0.5          </span></span>
 <span><span class="co">##  [51] Formula_1.2-5              iterators_1.0.14          </span></span>
 <span><span class="co">##  [53] systemfonts_1.0.5          foreach_1.5.2             </span></span>
 <span><span class="co">##  [55] tools_4.3.2                progress_1.2.3            </span></span>
-<span><span class="co">##  [57] ragg_1.2.7                 Rcpp_1.0.11               </span></span>
-<span><span class="co">##  [59] glue_1.6.2                 gridExtra_2.3             </span></span>
-<span><span class="co">##  [61] SparseArray_1.2.2          xfun_0.41                 </span></span>
-<span><span class="co">##  [63] dplyr_1.1.4                withr_2.5.2               </span></span>
+<span><span class="co">##  [57] ragg_1.2.7                 Rcpp_1.0.12               </span></span>
+<span><span class="co">##  [59] glue_1.7.0                 gridExtra_2.3             </span></span>
+<span><span class="co">##  [61] SparseArray_1.2.3          xfun_0.41                 </span></span>
+<span><span class="co">##  [63] dplyr_1.1.4                withr_3.0.0               </span></span>
 <span><span class="co">##  [65] formatR_1.14               BiocManager_1.30.22       </span></span>
 <span><span class="co">##  [67] fastmap_1.1.1              latticeExtra_0.6-30       </span></span>
-<span><span class="co">##  [69] fansi_1.0.6                digest_0.6.33             </span></span>
+<span><span class="co">##  [69] fansi_1.0.6                digest_0.6.34             </span></span>
 <span><span class="co">##  [71] R6_2.5.1                   textshaping_0.3.7         </span></span>
 <span><span class="co">##  [73] colorspace_2.1-0           jpeg_0.1-10               </span></span>
 <span><span class="co">##  [75] dichromat_2.0-0.1          biomaRt_2.58.0            </span></span>
@@ -610,13 +610,13 @@ splice junctions for specific transcripts.</p>
 <span><span class="co">## [119] EnrichedHeatmap_1.32.0     GenomicFeatures_1.54.1    </span></span>
 <span><span class="co">## [121] cli_3.6.2                  locfit_1.5-9.8            </span></span>
 <span><span class="co">## [123] compiler_4.3.2             futile.options_1.0.1      </span></span>
-<span><span class="co">## [125] rlang_1.1.2                crayon_1.5.2              </span></span>
+<span><span class="co">## [125] rlang_1.1.3                crayon_1.5.2              </span></span>
 <span><span class="co">## [127] labeling_0.4.3             interp_1.1-5              </span></span>
 <span><span class="co">## [129] forcats_1.0.0              fs_1.6.3                  </span></span>
 <span><span class="co">## [131] stringi_1.8.3              deldir_2.0-2              </span></span>
 <span><span class="co">## [133] munsell_0.5.0              lazyeval_0.2.2            </span></span>
-<span><span class="co">## [135] csaw_1.36.0                Matrix_1.6-4              </span></span>
-<span><span class="co">## [137] hms_1.1.3                  patchwork_1.1.3           </span></span>
+<span><span class="co">## [135] csaw_1.36.1                Matrix_1.6-5              </span></span>
+<span><span class="co">## [137] hms_1.1.3                  patchwork_1.2.0           </span></span>
 <span><span class="co">## [139] bit64_4.0.5                statmod_1.5.0             </span></span>
 <span><span class="co">## [141] KEGGREST_1.42.0            highr_0.10                </span></span>
 <span><span class="co">## [143] igraph_1.6.0               broom_1.0.5               </span></span>

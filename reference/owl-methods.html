@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">transmogR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.8</span>
       </span>
     </div>
 
@@ -105,8 +105,10 @@ inserted at the supplied positions</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>If providing a BSgenome object, this will first be coerced to a DNAStringSet
-which can be time consuming</p>
+    <p>This is a lower-level function called by <code><a href="transmogrify-methods.html">transmogrify()</a></code> and
+<code><a href="genomogrify-methods.html">genomogrify()</a></code>, but able to be called by the user if needed</p>
+<p>Note that when providing a BSgenome object, this will first be coerced to a
+DNAStringSet which can be time consuming.</p>
     </div>
 
     <div id="ref-examples">
