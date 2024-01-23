@@ -206,8 +206,8 @@ changes that have been made to a sequence.</p>
 <span class="r-in"><span><span class="va">dna</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DNAStringSet object of length 2:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     width seq                                               names               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]     4 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span>                                              chr1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2]     5 <span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFD7AF;">TTT</span>                                             chr2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]     4 ACGT                                              chr1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2]     5 AATTT                                             chr2</span>
 <span class="r-in"><span><span class="fu">genomogrify</span><span class="op">(</span><span class="va">dna</span>, <span class="va">var</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Updating chr1; Original length: 4</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ; Updated length: 5</span>
@@ -215,8 +215,8 @@ changes that have been made to a sequence.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ; Updated length: 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DNAStringSet object of length 2:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     width seq                                               names               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]     5 <span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span>                                             chr1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2]     3 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TT</span>                                               chr2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]     5 CCGGT                                             chr1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2]     3 ATT                                               chr2</span>
 <span class="r-in"><span><span class="fu">genomogrify</span><span class="op">(</span><span class="va">dna</span>, <span class="va">var</span>, tag <span class="op">=</span> <span class="st">"mod"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Updating chr1; Original length: 4</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ; Updated length: 5</span>
@@ -224,8 +224,8 @@ changes that have been made to a sequence.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ; Updated length: 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DNAStringSet object of length 2:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     width seq                                               names               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]     5 <span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span>                                             chr1_mod</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2]     3 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TT</span>                                               chr2_mod</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]     5 CCGGT                                             chr1_mod</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2]     3 ATT                                               chr2_mod</span>
 <span class="r-in"><span><span class="fu">genomogrify</span><span class="op">(</span><span class="va">dna</span>, <span class="va">var</span>, var_tags <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Updating chr1; Original length: 4</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ; Updated length: 5</span>
@@ -233,16 +233,16 @@ changes that have been made to a sequence.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ; Updated length: 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DNAStringSet object of length 2:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     width seq                                               names               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]     5 <span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span>                                             chr1_si</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2]     3 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TT</span>                                               chr2_d</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]     5 CCGGT                                             chr1_si</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2]     3 ATT                                               chr2_d</span>
 <span class="r-in"><span><span class="fu">genomogrify</span><span class="op">(</span><span class="va">dna</span>, <span class="va">var</span>, mask <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr2:1-5"</span><span class="op">)</span>, var_tags <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Applying mask</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Updating chr1; Original length: 4</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ; Updated length: 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DNAStringSet object of length 2:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     width seq                                               names               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]     5 <span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span>                                             chr1_si</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2]     5 <span style="color: #EEEEEE; background-color: #B2B2B2;">NNNNN</span>                                             chr2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]     5 CCGGT                                             chr1_si</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2]     5 NNNNN                                             chr2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -259,7 +259,7 @@ changes that have been made to a sequence.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer></div>
