@@ -2,29 +2,36 @@
 % Please edit documentation in R/overlapsByVar.R
 \name{overlapsByVar}
 \alias{overlapsByVar}
+\alias{overlapsByVar,GRangesList,GRanges-method}
+\alias{overlapsByVar-methods}
+\alias{overlapsByVar,GRanges,GRanges-method}
 \title{Count overlaps by variant type}
 \usage{
-overlapsByVar(x, var, alt_col = "ALT", ...)
+overlapsByVar(x, var, ...)
+
+\S4method{overlapsByVar}{GRangesList,GRanges}(x, var, alt_col = "ALT", ...)
+
+\S4method{overlapsByVar}{GRanges,GRanges}(x, var, alt_col = "ALT", ...)
 }
 \arguments{
 \item{x}{A GRangesList with features of interest}
 
 \item{var}{A Granges object with variants of interest}
 
+\item{...}{Passed to \link{rowSums}}
+
 \item{alt_col}{The column within mcols(var) which contains the alternate
 allele}
-
-\item{...}{Passed to \link{rowSums}}
 }
 \value{
-A data.frame
+A vector or matrix
 }
 \description{
-Count how many variants overlap each element of a GRangesList
+Count how many variants of each type overlap ranges
 }
 \details{
-Taking any GRangesList, count how many of each variant type overlap a region
-within each element.
+Taking any GRanges or GRangesList, count how many of each variant type
+overlap a region.
 }
 \examples{
 library(rtracklayer)

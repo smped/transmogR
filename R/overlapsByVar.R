@@ -1,13 +1,13 @@
 #' @title Count overlaps by variant type
 #'
 #' @description
-#' Count how many variants overlap each element of a GRangesList
+#' Count how many variants of each type overlap ranges
 #'
 #' @details
-#' Taking any GRangesList, count how many of each variant type overlap a region
-#' within each element.
+#' Taking any GRanges or GRangesList, count how many of each variant type
+#' overlap a region.
 #'
-#' @return A data.frame
+#' @return A vector or matrix
 #'
 #' @param x A GRangesList with features of interest
 #' @param var A Granges object with variants of interest
@@ -26,23 +26,36 @@
 #' var <- rowRanges(readVcf(vcf, param = ScanVcfParam(fixed = "ALT")))
 #' overlapsByVar(grl, var)
 #'
-#' @importFrom S4Vectors mcols splitAsList
+#' @export
+#' @name overlapsByVar
+#' @rdname overlapsByVar-methods
+setGeneric(
+    "overlapsByVar", function(x, var, ...){standardGeneric("overlapsByVar")}
+)
+#'
 #' @importFrom IRanges overlapsAny
 #' @export
-overlapsByVar <- function(x, var, alt_col = "ALT", ...) {
-    stopifnot(is(x, "GRangesList"))
-    stopifnot(is(var, "GRanges"))
-    alt_col <- match.arg(alt_col, colnames(mcols(var)))
-    type <- varTypes(var, alt_col)
-    var_list <- splitAsList(var, type)
-    df_list <- lapply(
-        x,
-        \(i) {
-            res <- lapply(var_list, overlapsAny, i)
-            as.data.frame(lapply(res, sum))
-        }
-    )
-    df <- do.call("rbind", df_list)
-    df$Total <- rowSums(df, ...)
-    df
-}
+#' @rdname overlapsByVar-methods
+#' @aliases overlapsByVar-methods
+setMethod(
+    "overlapsByVar", signature = signature(x = "GRangesList", var = "GRanges"),
+    function(x, var, alt_col = "ALT", ...) {
+        l <- lapply(x, overlapsByVar, var, alt_col = alt_col)
+        mat <- do.call("rbind", l)
+        cbind(mat, Total = rowSums(mat))
+    }
+)
+#' @importFrom IRanges overlapsAny
+#' @export
+#' @rdname overlapsByVar-methods
+#' @aliases overlapsByVar-methods
+setMethod(
+    "overlapsByVar", signature = signature(x = "GRanges", var = "GRanges"),
+    function(x, var, alt_col = "ALT", ...) {
+        ol <- overlapsAny(var, x)
+        type <- varTypes(var, alt_col)
+        vapply(split(ol, type), sum, integer(1))
+    }
+)
+
+
