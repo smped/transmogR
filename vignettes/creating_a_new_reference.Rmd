@@ -53,10 +53,7 @@ require installation.
 ```r 
 if (!"BiocManager" %in% rownames(installed.packages()))
   install.packages("BiocManager")
-pkg <- c(
-  "rtracklayer", "BSgenome.Hsapiens.UCSC.hg38", "extraChIPs", "transmogR"
-)
-BiocManager::install(pkg, update = FALSE)
+BiocManager::install("transmogR")
 ```
 
 Once these packages are installed, we can load them easily
