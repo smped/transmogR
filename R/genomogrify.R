@@ -61,7 +61,7 @@ setMethod(
     "genomogrify",
     signature = signature(x = "XStringSet", var = "GRanges"),
     function(
-        x, var, alt_col = "ALT", mask, tag = NULL, sep = "_",
+        x, var, alt_col = "ALT", mask = GRanges(), tag = NULL, sep = "_",
         var_tags = FALSE, var_sep = "_", verbose = TRUE, ...
     ) {
 
@@ -72,9 +72,7 @@ setMethod(
         ## 5. Optionally tag sequence names
         ##    - Use a common tag + specific tags for SNPs/Insertions/Deletions
 
-        if (missing(mask)) mask <- GRanges()
         stopifnot(is(mask, "GRanges"))
-
         ## Check the variants are valid
         var <- .checkAlts(var, alt_col)
         var <- var[!overlapsAny(var, mask)]
@@ -129,7 +127,7 @@ setMethod(
     "genomogrify",
     signature = signature(x = "BSgenome", var = "GRanges"),
     function(
-        x, var, alt_col = "ALT", mask, names, tag = NULL, sep = "_",
+        x, var, alt_col = "ALT", mask = GRanges(), names, tag = NULL, sep = "_",
         var_tags = FALSE, var_sep = "_", verbose = TRUE, ...
     ) {
         ## Setup the sequence info
@@ -153,7 +151,7 @@ setMethod(
     "genomogrify",
     signature = signature(x = "BSgenome", var = "VcfFile"),
     function(
-        x, var, alt_col = "ALT", mask, names, tag = NULL, sep = "_",
+        x, var, alt_col = "ALT", mask = GRanges(), names, tag = NULL, sep = "_",
         var_tags = FALSE, var_sep = "_", which, verbose = TRUE, ...
     ) {
         var <- .parseVariants(var, alt_col, which)
@@ -171,7 +169,7 @@ setMethod(
     "genomogrify",
     signature = signature(x = "XStringSet", var = "VcfFile"),
     function(
-        x, var, alt_col = "ALT", mask, tag = NULL, sep = "_",
+        x, var, alt_col = "ALT", mask = GRanges(), tag = NULL, sep = "_",
         var_tags = FALSE, var_sep = "_", which, verbose = TRUE, ...
     ) {
         var <- .parseVariants(var, alt_col, which)

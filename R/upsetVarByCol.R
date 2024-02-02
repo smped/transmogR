@@ -43,7 +43,6 @@
 #'
 #' @importFrom S4Vectors splitAsList mcols
 #' @importFrom IRanges subsetByOverlaps
-#' @importFrom ComplexUpset intersection_size upset_set_size upset
 #' @importFrom ggplot2 aes geom_bar geom_text after_stat ggtitle position_stack
 #' @importFrom ggplot2 scale_y_reverse scale_y_continuous expansion ylab
 #' @importFrom rlang list2 :=
@@ -54,6 +53,9 @@ upsetVarByCol <- function(
         set_geom = geom_bar(width = 0.6), set_expand = 0.2, set_counts = TRUE,
         hjust_counts = 1.1, set_lab = "Set Size", title
 ){
+
+    if (!requireNamespace('ComplexUpset', quietly = TRUE))
+        stop("Please install 'ComplexUpset' to use this function.")
 
     stopifnot(is(gr, "GRanges"))
     mcol <- match.arg(mcol, colnames(mcols(gr)))
@@ -79,11 +81,11 @@ upsetVarByCol <- function(
     df_list <- list(ids = ol_ids, lapply(ol, \(x) ol_ids %in% x))
     df <- as.data.frame(df_list)
     base_args <- .makeIntersectionArgs(intersection_args)
-    base_ann <- do.call("intersection_size", base_args) +
+    base_ann <- do.call(ComplexUpset::intersection_size, base_args) +
         scale_y_continuous(expand = expansion(c(0, 0.05)))
     if (is.character(title)) base_ann <- base_ann + ggtitle(title)
 
-    sets <- upset_set_size(geom = set_geom) + ylab(set_lab) +
+    sets <- ComplexUpset::upset_set_size(geom = set_geom) + ylab(set_lab) +
         scale_y_reverse(expand = expansion(c(set_expand, 0)))
     if (set_counts) {
         count <- c()
@@ -92,7 +94,7 @@ upsetVarByCol <- function(
         )
     }
 
-    upset(
+    ComplexUpset::upset(
         df, names(var_list),
         base_annotations = list2("{intersection_lab}" := base_ann),
         set_sizes = sets, ...

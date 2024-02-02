@@ -71,9 +71,6 @@ setMethod(
     signature = signature(x = "XString", indels = "GRanges"),
     function(x, indels, exons, alt_col = "ALT", ...) {
 
-        ## Check classes (Not needed for S4)
-        cl <- class((x))
-
         ## Get the variants matching the exons
         indels <- subsetByOverlaps(indels, exons)
         strand(indels) <- "*"
@@ -118,6 +115,7 @@ setMethod(
         df$alt <- df$seq
         alt <- mcols(indels)[[alt_col]]
         names(alt) <- indels$ID
+        cl <- class((x)) # Needed for coercion at the final step
         if (neg_stranded) {
             new_cl <- paste0(cl, "Set")
             alt <- as.character(reverseComplement(as(alt, new_cl)))

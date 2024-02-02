@@ -50,10 +50,9 @@
 }
 
 #' @keywords internal
-#' @importFrom ComplexUpset intersection_size
 .makeIntersectionArgs <- function(x){
     stopifnot(is(x, "list"))
-    args <- as.list(formals(intersection_size))
+    args <- as.list(formals(ComplexUpset::intersection_size))
     args <- args[names(args) != "..."]
     cmn <- intersect(names(x), names(args))
     novel <- setdiff(names(x), names(args))
@@ -63,9 +62,11 @@
 }
 
 #' @importFrom S4Vectors mcols mcols<-
-#' @importFrom InteractionSet GInteractions
 #' @keywords internal
 .giFromSj <- function(sj, tx_col, rank_col) {
+
+    if (!requireNamespace('InteractionSet', quietly = TRUE))
+        stop("Please install 'InteractionSet' to return a GInteractions object.")
 
     stopifnot("site" %in% colnames(mcols(sj)))
     stopifnot(all(sj$site %in% c("donor", "acceptor")))
@@ -85,7 +86,7 @@
     if (any(is.na(dnr_to_acc))) stop("NA values when mapping junctions")
 
     cols <- setdiff(colnames(mcols(dnr)), c("site", rank_col))
-    gi <- GInteractions(
+    gi <- InteractionSet::GInteractions(
         anchor1 = granges(dnr)[dnr_to_acc],
         anchor2 = granges(acc)[acc_to_dnr]
     )
