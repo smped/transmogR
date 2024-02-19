@@ -52,9 +52,7 @@
 #' @export
 #' @name indelcator
 #' @rdname indelcator-methods
-setGeneric(
-    "indelcator", function(x, indels, ...){standardGeneric("indelcator")}
-)
+setGeneric("indelcator", function(x, indels, ...) standardGeneric("indelcator"))
 #'
 #'
 #' @import Biostrings

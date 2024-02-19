@@ -40,9 +40,7 @@
 #' @export
 #' @name parY
 #' @rdname parY-methods
-setGeneric(
-    "parY", function(x, ...){standardGeneric("parY")}
-)
+setGeneric("parY", function(x, ...) standardGeneric("parY"))
 #' @import GenomicRanges
 #' @importFrom GenomeInfoDb seqnames
 #' @rdname parY-methods
