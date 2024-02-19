@@ -70,8 +70,7 @@
 #' @name transmogrify
 #' @rdname transmogrify-methods
 setGeneric(
-    "transmogrify",
-    function(x, var, exons, ...){standardGeneric("transmogrify")}
+    "transmogrify", function(x, var, exons, ...) standardGeneric("transmogrify")
 )
 #' @importFrom S4Vectors mcols splitAsList
 #' @importFrom GenomeInfoDb seqlevels seqnames

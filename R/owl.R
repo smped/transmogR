@@ -38,9 +38,7 @@
 #' @export
 #' @name owl
 #' @rdname owl-methods
-setGeneric(
-    "owl", function(seq, snps, ...){standardGeneric("owl")}
-)
+setGeneric("owl", function(seq, snps, ...) standardGeneric("owl"))
 #' @import Biostrings
 #' @importFrom S4Vectors mcols
 #' @importFrom methods is

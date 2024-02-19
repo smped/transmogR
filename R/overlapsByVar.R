@@ -30,7 +30,7 @@
 #' @name overlapsByVar
 #' @rdname overlapsByVar-methods
 setGeneric(
-    "overlapsByVar", function(x, var, ...){standardGeneric("overlapsByVar")}
+    "overlapsByVar", function(x, var, ...) standardGeneric("overlapsByVar")
 )
 #'
 #' @importFrom IRanges overlapsAny

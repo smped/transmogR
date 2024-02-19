@@ -48,9 +48,7 @@
 #' @export
 #' @name genomogrify
 #' @rdname genomogrify-methods
-setGeneric(
-    "genomogrify", function(x, var, ...){standardGeneric("genomogrify")}
-)
+setGeneric("genomogrify", function(x, var, ...) standardGeneric("genomogrify"))
 #' @importFrom S4Vectors mcols
 #' @importFrom GenomeInfoDb seqlevels seqnames
 #' @importFrom IRanges width
