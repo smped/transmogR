@@ -94,11 +94,21 @@ upsetVarByCol <- function(
         )
     }
 
-    ComplexUpset::upset(
+    p <- ComplexUpset::upset(
         df, names(var_list),
         base_annotations = list2("{intersection_lab}" := base_ann),
         set_sizes = sets, ...
     )
+    ## ComplexUpset currently creates invalid themes, so these need to be checked
+    valid_theme_args <- names(formals(ggplot2::theme))
+    for (i in seq_along(p)) {
+        if ("theme" %in% names(p[[i]])) {
+            th <- p[[i]]$theme
+            th <- th[names(th) %in% valid_theme_args]
+            p[[i]]$theme <- do.call(ggplot2::theme, th)
+        }
+    }
+    p
 
 }
 

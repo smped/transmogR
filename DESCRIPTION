@@ -24,7 +24,7 @@ Imports:
     BSgenome,
     GenomeInfoDb,
     GenomicFeatures,
-    ggplot2,
+    ggplot2 (>= 3.5.0),
     IRanges,
     methods,
     parallel,
@@ -48,5 +48,5 @@ biocViews: Alignment, GenomicVariation, Sequencing, TranscriptomeVariant
 BiocType: Software
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)  
-RoxygenNote: 7.3.0
+RoxygenNote: 7.3.1
 Config/testthat/edition: 3
