@@ -8,10 +8,15 @@
     ## Deal with NAs
     alts <- mcols(var)[[alt_col]]
     if (is(alts, "XStringSetList")) alts <- as.character(unlist(alts))
+    if (length(alts) != length(var))
+        stop("Some alternate alleles have been specified with multiple values")
     is_na <- is.na(alts)
     if (any(is_na)) message("NA values found in ", alt_col, ". Removing...")
     var <- var[!is_na]
     if (all(is_na) & length(is_na) > 0) stop("All NA values in ", alt_col)
+
+    if (any(nchar(alts) == 0))
+        stop("Please set Deletions so that width(REF) > 1 and width(ALT) > 0")
 
     ## Check Non-IUPAC alt alleles
     iupac <- paste(names(IUPAC_CODE_MAP), collapse = "")
