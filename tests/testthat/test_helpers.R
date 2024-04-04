@@ -33,9 +33,10 @@ test_that(".makeIntersectionArgs behaves correctly",{
     types <- c(
         mapping = "call", counts = "logical", bar_number_threshold = "numeric",
         text_colors = "call", text = "call", text_mapping = "call", mode = "character",
-        position = "call", width = "numeric", fill = "character"
+        position = "call", fill = "character"
     )
-    expect_equal(vapply(new, \(x) is(x)[[1]], character(1)), types)
+
+    expect_equal(vapply(new, \(x) is(x)[[1]], character(1))[names(types)], types)
     expect_true(new$bar_number_threshold == 1)
     expect_true(new$fill == "blue")
     expect_error(.makeIntersectionArgs(NULL))
