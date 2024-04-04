@@ -1,6 +1,8 @@
 test_that(".checkAlts behaves correctly", {
     gr <- GenomicRanges::GRanges("chr1:1")
     gr$ALT <- ""
+    expect_error(.checkAlts(gr, "ALT"), "Please set Deletions.+")
+    gr$ALT <- "x"
     expect_error(.checkAlts(gr, "ALT"), "Non-IUPAC.+")
 
     gr$ALT <- NA
@@ -31,7 +33,7 @@ test_that(".makeIntersectionArgs behaves correctly",{
     types <- c(
         mapping = "call", counts = "logical", bar_number_threshold = "numeric",
         text_colors = "call", text = "call", text_mapping = "call", mode = "character",
-        position = "call", fill = "character"
+        position = "call", width = "numeric", fill = "character"
     )
     expect_equal(vapply(new, \(x) is(x)[[1]], character(1)), types)
     expect_true(new$bar_number_threshold == 1)
