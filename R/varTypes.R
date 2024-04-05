@@ -37,9 +37,10 @@
 #' @importFrom IRanges width
 #' @export
 varTypes <- function(x, alt_col = "ALT", ...){
+
     ## x should be a GRanges object with variants
     stopifnot(is(x, "GRanges"))
-    stopifnot(alt_col %in% colnames(mcols(x)))
+    x <- .checkAlts(x, alt_col)
 
     ## Basic info
     w <- width(x)
@@ -53,11 +54,11 @@ varTypes <- function(x, alt_col = "ALT", ...){
 
     ## Classify each range
     snv <- w == 1 & alt_width == 1
-    ins <- alt_width > w
-    dels <- w > alt_width
+    ins <- alt_width > w & w == 1
+    dels <- w > alt_width & alt_width == 1
     ## All should add up to the total
     if (sum(snv + ins + dels) != n)
-        stop("Some variants were unable to be uniquely identified")
+        stop("Some variants were unable to be identified as SNVs or InDels")
 
     ## Return output
     out <- character(n)

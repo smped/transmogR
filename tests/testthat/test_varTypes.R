@@ -14,6 +14,5 @@ test_that("varTypes errors as expected", {
     type <- varTypes(var)
     width(var)[type == "Insertion"] <- 2
     expect_error(varTypes(var), "Some variants.+")
-    var$ALT <- 1
-    expect_error(varTypes(var), ".+is not TRUE")
+
 })

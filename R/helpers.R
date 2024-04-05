@@ -1,15 +1,15 @@
 #' @keywords internal
 #' @importFrom Biostrings IUPAC_CODE_MAP
 #' @importFrom S4Vectors mcols mcols<-
-.checkAlts <- function(var, alt_col) {
+.checkAlts <- function(var, alt_col, ref_col = "REF") {
 
     alt_col <- match.arg(alt_col, colnames(mcols(var)))
     alts <- mcols(var)[[alt_col]]
     if (is(alts, "XStringSetList")) alts <- as.character(unlist(alts))
 
     ## Check duplicate loci
-    dup <- duplicated(var)
     err <- c()
+    dup <- duplicated(var)
     if (any(dup))
         err <- c(
             err, "Duplicate variant loci found. Please choose which one to use"
