@@ -4,25 +4,48 @@
 .checkAlts <- function(var, alt_col) {
 
     alt_col <- match.arg(alt_col, colnames(mcols(var)))
-
-    ## Deal with NAs
     alts <- mcols(var)[[alt_col]]
     if (is(alts, "XStringSetList")) alts <- as.character(unlist(alts))
-    if (length(alts) != length(var))
-        stop("Some alternate alleles have been specified with multiple values")
+
+    ## Check duplicate loci
+    dup <- duplicated(var)
+    err <- c()
+    if (any(dup))
+        err <- c(
+            err, "Duplicate variant loci found. Please choose which one to use"
+        )
+
+    ## Multi allelic sites
+    if (length(alts) != length(var)) {
+        err <- c(
+            err, "Alternate alleles have been specified with multiple values"
+        )
+    }
+
+    ## Deal with NAs
     is_na <- is.na(alts)
-    if (any(is_na)) message("NA values found in ", alt_col, ". Removing...")
-    var <- var[!is_na]
-    if (all(is_na) & length(is_na) > 0) stop("All NA values in ", alt_col)
+    if (any(is_na)) err <- c(err, "NA values found in alternate alleles")
 
-    if (any(nchar(alts) == 0))
-        stop("Please set Deletions so that width(REF) > 1 and width(ALT) > 0")
+    ## Empty deletions
+    if (any(nchar(alts[!is_na]) == 0)) {
+        err <- c(
+            err,
+            "Please set Deletions so that width(REF) > 1 and width(ALT) > 0"
+        )
+    }
 
-    ## Check Non-IUPAC alt alleles
+    ## Non-IUPAC alt alleles
     iupac <- paste(names(IUPAC_CODE_MAP), collapse = "")
     pat <- paste0("^[", iupac, "]+$")
-    alt_error <- !grepl(pat, alts)
-    if (any(alt_error)) stop("Non-IUPAC alleles detected")
+    alt_error <- !grepl(pat, alts[!is_na])
+    if (any(alt_error))
+        err <- c(err, "Non-IUPAC alleles detected (may include empty ALTs)")
+    ## Report errors
+    if (length(err) > 0) {
+        err <- paste(err, collapse = "\n\t")
+        stop("\nFound:\n\t", err)
+    }
+
     mcols(var)[[alt_col]] <- alts[!is_na]
     var
 }
