@@ -1,17 +1,17 @@
 test_that(".checkAlts behaves correctly", {
     gr <- GenomicRanges::GRanges("chr1:1")
     gr$ALT <- ""
-    expect_error(.checkAlts(gr, "ALT"), "Please set Deletions.+")
-    gr$ALT <- "x"
-    expect_error(.checkAlts(gr, "ALT"), "Non-IUPAC.+")
+    expect_error(.checkAlts(gr, "ALT"), ".+Please set Deletions.+IUPAC.+")
 
     gr$ALT <- NA
-    expect_error(
-        suppressMessages(.checkAlts(gr, "ALT")), "All NA values.+"
-    )
+    expect_error(.checkAlts(gr, "ALT"), ".+NA values.+")
 
     gr$ALT <- "A"
     expect_equal(gr, .checkAlts(gr, "ALT"))
+
+    gr <- c(gr, gr)
+    expect_error(.checkAlts(gr, "ALT"), ".+Duplicate.+")
+
 })
 
 test_that(".parseVariants behaves correctly",{
