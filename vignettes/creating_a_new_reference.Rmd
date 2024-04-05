@@ -43,6 +43,14 @@ Whilst the subsequent code is demonstrated on a small genomic region, the
 complete process for creating a modified a reference can run in under 20 minutes 
 if using 4 or more cores.
 
+Importantly, it is expected that the user will have carefully prepared their set of variants such that only the following exact variant types are included.
+
+- **SNV**/**SNP**: The associated range must be of width 1 with a single base as the replacement allele
+- **Insertions**: The position being replaced must be a single nucleotide with the replacement bases being > 1nt
+- **Deletions**: The position being replaced must be > 1nt, whilst the replacement allele must be a single base
+
+Any variants which do not conform to these criteria will likely cause a series of frustrating errors when attempting to use this package.
+
 # Setup
 
 ## Installation
