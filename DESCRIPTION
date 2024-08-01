@@ -1,7 +1,7 @@
 Package: transmogR
 Type: Package
 Title: Modify a set of reference sequences using a set of variants
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: person("Stevie", "Pederson", 
     email = "stephen.pederson.au@gmail.com", 
     role = c("aut", "cre"),
@@ -22,10 +22,13 @@ Depends:
     GenomicRanges
 Imports:
     BSgenome,
+    dplyr,
     GenomeInfoDb,
     GenomicFeatures,
     ggplot2 (>= 3.5.0),
     IRanges,
+    jsonlite,
+    matrixStats,
     methods,
     parallel,
     rlang,
@@ -33,7 +36,8 @@ Imports:
     stats,
     S4Vectors,
     SummarizedExperiment,
-    VariantAnnotation
+    VariantAnnotation,
+    vroom
 Suggests:
     BiocStyle,
     BSgenome.Hsapiens.UCSC.hg38,
@@ -48,5 +52,5 @@ biocViews: Alignment, GenomicVariation, Sequencing, TranscriptomeVariant
 BiocType: Software
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)  
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Config/testthat/edition: 3
