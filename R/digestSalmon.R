@@ -44,8 +44,8 @@ digestSalmon <- function(
     ## Initial file.path checks
     dir_exists <- vapply(paths, dir.exists, logical(1))
     if (!all(dir_exists)) {
-        cat("Unable to find:", paths[!dir_exists], sep = "\n")
-        stop()
+        msg <- paste("Unable to find:", paths[!dir_exists], sep = "\n")
+        stop(msg)
     }
 
     ## json checks
@@ -54,15 +54,15 @@ digestSalmon <- function(
     cmd_json <- file.path(paths, "cmd_info.json")
     json_exists <- file.exists(cmd_json)
     if (!all(json_exists)) {
-        cat("Missing json files:", cmd_json[!json_exists], sep = "\n")
-        stop()
+        msg <- paste("Missing json files:", cmd_json[!json_exists], sep = "\n")
+        stop(msg)
     }
     aux_dir <- vapply(cmd_json, \(x) jsonlite::fromJSON(x)$auxDir, character(1))
     meta_json <- file.path(paths, aux_dir, "meta_info.json")
     json_exists <- file.exists(meta_json)
     if (!all(json_exists)) {
-        cat("Missing json files:", meta_json[!json_exists], sep = "\n")
-        stop()
+        msg <- paste("Missing json files:", meta_json[!json_exists], sep = "\n")
+        stop(msg)
     }
     meta_info <- lapply(meta_json, jsonlite::fromJSON)
     n_trans <- vapply(
@@ -82,13 +82,13 @@ digestSalmon <- function(
     quant_files <- vapply(paths, file.path, character(1), "quant.sf")
     quant_exists <- file.exists(quant_files)
     if (!all(quant_exists)) {
-        cat("Missing quant files:", quant_files[!quant_exists], sep = "\n")
-        stop()
+        msg <- paste("Missing quant files:", quant_files[!quant_exists], sep = "\n")
+        stop(msg)
     }
 
     ## Import quants
-    if (verbose) message("Parsing quants...", appendLF = FALSE)
-    options(readr.show_progress = FALSE) # NFI why this doesn't work
+    options(readr.show_progress = FALSE)
+    if (verbose) message("Parsing quants...")
     quants <- lapply(quant_files, vroom::vroom, col_types = "cdddd")
     if (verbose) message("done")
 
@@ -144,7 +144,7 @@ digestSalmon <- function(
     stopifnot(all(file.exists(boot_files)))
 
     boot_stats <- lapply(
-        which(n_boot > 0),
+        which(n_boot > 0), # There will always be at least one
         \(i){
             n_boot <- n_boot[[i]]
             n_trans <- n_trans[[i]]
