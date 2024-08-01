@@ -3,7 +3,7 @@ title: "Creating a Variant-Modified Reference"
 author:
 - name: Stevie Pederson
   affiliation: Black Ochre Data Labs, Telethon Kid's Institute, Adelaide, Australia
-  email: stephen.pederson@teletohnkids.org.au
+  email: stephen.pederson@telethonkids.org.au
 package: transmogR
 bibliography: '`r system.file("references.bib", package = "transmogR")`'
 output:
