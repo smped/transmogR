@@ -19,6 +19,7 @@ reference:
     - parY
     - matches("[Vv]ar")
     - sjFromExons
+    - digestSalmon
 
 navbar:
   type: default
