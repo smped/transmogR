@@ -4,12 +4,20 @@
 \alias{digestSalmon}
 \title{Parse the output from salmon}
 \usage{
-digestSalmon(paths, max_sets = 2L, name_fun = basename, verbose = TRUE)
+digestSalmon(
+  paths,
+  max_sets = 2L,
+  aux_dir = "aux_info",
+  name_fun = basename,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{paths}{Vector of file paths to directories containing salmon results}
 
-\item{max_sets}{The maximum number of libraries permitted}
+\item{max_sets}{The maximum number of indexes permitted}
+
+\item{aux_dir}{Subdirectory where bootstraps and meta_info.json are stored}
 
 \item{name_fun}{Function applied to paths to provide colnames in the returned
 object. Set to NULL or c() to disable.}

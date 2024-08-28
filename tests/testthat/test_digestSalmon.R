@@ -1,4 +1,4 @@
-f <- system.file("extdata", package = "transmogR")
+f <- system.file("extdata/salmon_test", package = "transmogR")
 
 test_that("assayFromQuants returns correct values",{
 
@@ -24,6 +24,7 @@ test_that("salmon digestion is smooth", {
 })
 
 test_that("errors on incorrect directory", {
+    expect_error(digestSalmon(f, aux_dir = "aux", verbose = FALSE))
     expect_error(digestSalmon(dirname(f), verbose = FALSE), "Missing json.+")
     expect_error(digestSalmon(file.path(f, "not_here")), "Unable.+")
 })

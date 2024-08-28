@@ -27,7 +27,8 @@
 #' with the overdispersion estimates used to return the scaled counts.
 #'
 #' @param paths Vector of file paths to directories containing salmon results
-#' @param max_sets The maximum number of libraries permitted
+#' @param max_sets The maximum number of indexes permitted
+#' @param aux_dir Subdirectory where bootstraps and meta_info.json are stored
 #' @param name_fun Function applied to paths to provide colnames in the returned
 #' object. Set to NULL or c() to disable.
 #' @param verbose Print progress messages
@@ -38,7 +39,8 @@
 #'
 #' @export
 digestSalmon <- function(
-        paths, max_sets = 2L, name_fun = basename, verbose = TRUE
+        paths, max_sets = 2L, aux_dir = "aux_info", name_fun = basename,
+        verbose = TRUE
 ) {
 
     ## Initial file.path checks
@@ -50,14 +52,9 @@ digestSalmon <- function(
 
     ## json checks
     if (verbose) message("Parsing json metadata...", appendLF = FALSE)
-    ## Need to get aux_info from the cmd_info.json file
-    cmd_json <- file.path(paths, "cmd_info.json")
-    json_exists <- file.exists(cmd_json)
-    if (!all(json_exists)) {
-        msg <- paste("Missing json files:", cmd_json[!json_exists], sep = "\n")
-        stop(msg)
-    }
-    aux_dir <- vapply(cmd_json, \(x) jsonlite::fromJSON(x)$auxDir, character(1))
+    ## Instead of getting aux_info from the cmd_info.json file, require this
+    ## to be passed using the aux_dir argument
+    aux_dir <- rep_len(aux_dir, length(paths))
     meta_json <- file.path(paths, aux_dir, "meta_info.json")
     json_exists <- file.exists(meta_json)
     if (!all(json_exists)) {
