@@ -1,6 +1,8 @@
 template:
-  params:
-    bootswatch: simplex
+  bootstrap: 5
+  bootswatch: simplex
+
+url: https://smped.github.io/transmogR/
 
 authors:
   Stevie Pederson:
@@ -34,4 +36,5 @@ navbar:
     href: news/index.html
   right:
   - icon: fa-github fa-lg
-    href: https://github.com/smped/transmogR
+    href: https://github.com/smped/motifTestR
+    aria-label: View on github
