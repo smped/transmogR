@@ -27,10 +27,14 @@
 #' with the overdispersion estimates used to return the scaled counts.
 #'
 #' @param paths Vector of file paths to directories containing salmon results
-#' @param max_sets The maximum number of libraries permitted
+#' @param max_sets The maximum number of indexes permitted
+#' @param aux_dir Subdirectory where bootstraps and meta_info.json are stored
 #' @param name_fun Function applied to paths to provide colnames in the returned
 #' object. Set to NULL or c() to disable.
 #' @param verbose Print progress messages
+#' @param length_as_assay Output transcript lengths as an assay. May be required
+#' if using separate reference transcriptomes for different samples
+#' @param ... Not used
 #'
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
@@ -38,31 +42,27 @@
 #'
 #' @export
 digestSalmon <- function(
-        paths, max_sets = 2L, name_fun = basename, verbose = TRUE
+        paths, max_sets = 2L, aux_dir = "aux_info", name_fun = basename,
+        verbose = TRUE, length_as_assay = FALSE, ...
 ) {
 
     ## Initial file.path checks
     dir_exists <- vapply(paths, dir.exists, logical(1))
     if (!all(dir_exists)) {
-        cat("Unable to find:", paths[!dir_exists], sep = "\n")
-        stop()
+        msg <- paste("Unable to find:", paths[!dir_exists], sep = "\n")
+        stop(msg)
     }
 
     ## json checks
     if (verbose) message("Parsing json metadata...", appendLF = FALSE)
-    ## Need to get aux_info from the cmd_info.json file
-    cmd_json <- file.path(paths, "cmd_info.json")
-    json_exists <- file.exists(cmd_json)
-    if (!all(json_exists)) {
-        cat("Missing json files:", cmd_json[!json_exists], sep = "\n")
-        stop()
-    }
-    aux_dir <- vapply(cmd_json, \(x) jsonlite::fromJSON(x)$auxDir, character(1))
+    ## Instead of getting aux_info from the cmd_info.json file, require this
+    ## to be passed using the aux_dir argument
+    aux_dir <- rep_len(aux_dir, length(paths))
     meta_json <- file.path(paths, aux_dir, "meta_info.json")
     json_exists <- file.exists(meta_json)
     if (!all(json_exists)) {
-        cat("Missing json files:", meta_json[!json_exists], sep = "\n")
-        stop()
+        msg <- paste("Missing json files:", meta_json[!json_exists], sep = "\n")
+        stop(msg)
     }
     meta_info <- lapply(meta_json, jsonlite::fromJSON)
     n_trans <- vapply(
@@ -82,19 +82,32 @@ digestSalmon <- function(
     quant_files <- vapply(paths, file.path, character(1), "quant.sf")
     quant_exists <- file.exists(quant_files)
     if (!all(quant_exists)) {
-        cat("Missing quant files:", quant_files[!quant_exists], sep = "\n")
-        stop()
+        msg <- paste("Missing quant files:", quant_files[!quant_exists], sep = "\n")
+        stop(msg)
     }
 
     ## Import quants
-    if (verbose) message("Parsing quants...", appendLF = FALSE)
-    options(readr.show_progress = FALSE) # NFI why this doesn't work
+    options(readr.show_progress = FALSE)
+    if (verbose) message("Parsing quants...")
     quants <- lapply(quant_files, vroom::vroom, col_types = "cdddd")
     if (verbose) message("done")
 
     ## Transcript Lengths
     lens <- unique(do.call("rbind", quants)[c("Name", "Length")])
     ids <- lens[["Name"]]
+    ## Handle transcripts which have multiple lengths, as may be the case for a
+    ## set of personalised references
+    if (any(duplicated(ids)) & !length_as_assay) {
+        msg <- paste(
+            "Some transcripts have differing lengths between samples.",
+            "Please use length_as_assay = TRUE"
+        )
+        stop(msg)
+    }
+    ## If passing here, ids will be unique or lengths will be an assay
+    ## Setting as unique is still needed if passing to an assay
+    ids <- unique(ids)
+
     ## Setup the core assays
     if (verbose) message("Obtaining assays...", appendLF = FALSE)
     counts <- .assayFromQuants(quants, "NumReads", 0)[ids, ]
@@ -116,14 +129,17 @@ digestSalmon <- function(
         counts = counts, scaledCounts = counts / final_od, TPM = tpm,
         effectiveLength = eff_len
     )
-    ## Handle a single sample case
+    if (length_as_assay)
+        assays$length <- .assayFromQuants(quants, "Length", NA_integer_)[ids, ]
+
+    ## Handle a single sample case where R defaults to vectors
     if (length(paths) == 1) {
         assays <- lapply(assays, as.matrix)
         counts <- as.matrix(counts)
     }
-    rowDF <- DataFrame(
-        length = lens[["Length"]], overdispersion = final_od, row.names = ids
-    )
+    rowDF <- DataFrame(overdispersion = final_od, row.names = ids)
+    if (!length_as_assay) rowDF$length <- lens[["Length"]]
+
     colDF <- DataFrame(totals = colSums(counts), n_trans = n_trans)
     se <- SummarizedExperiment(assays = assays, rowData = rowDF, colData = colDF)
     metadata(se) <- list(resampleType = types)
@@ -144,7 +160,7 @@ digestSalmon <- function(
     stopifnot(all(file.exists(boot_files)))
 
     boot_stats <- lapply(
-        which(n_boot > 0),
+        which(n_boot > 0), # There will always be at least one
         \(i){
             n_boot <- n_boot[[i]]
             n_trans <- n_trans[[i]]
