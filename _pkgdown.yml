@@ -36,5 +36,5 @@ navbar:
     href: news/index.html
   right:
   - icon: fa-github fa-lg
-    href: https://github.com/smped/motifTestR
+    href: https://github.com/smped/transmogR
     aria-label: View on github
