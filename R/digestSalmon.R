@@ -32,6 +32,9 @@
 #' @param name_fun Function applied to paths to provide colnames in the returned
 #' object. Set to NULL or c() to disable.
 #' @param verbose Print progress messages
+#' @param length_as_assay Output transcript lengths as an assay. May be required
+#' if using separate reference transcriptomes for different samples
+#' @param ... Not used
 #'
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
@@ -40,7 +43,7 @@
 #' @export
 digestSalmon <- function(
         paths, max_sets = 2L, aux_dir = "aux_info", name_fun = basename,
-        verbose = TRUE
+        verbose = TRUE, length_as_assay = FALSE, ...
 ) {
 
     ## Initial file.path checks
@@ -92,6 +95,19 @@ digestSalmon <- function(
     ## Transcript Lengths
     lens <- unique(do.call("rbind", quants)[c("Name", "Length")])
     ids <- lens[["Name"]]
+    ## Handle transcripts which have multiple lengths, as may be the case for a
+    ## set of personalised references
+    if (any(duplicated(ids)) & !length_as_assay) {
+        msg <- paste(
+            "Some transcripts have differing lengths between samples.",
+            "Please use length_as_assay = TRUE"
+        )
+        stop(msg)
+    }
+    ## If passing here, ids will be unique or lengths will be an assay
+    ## Setting as unique is still needed if passing to an assay
+    ids <- unique(ids)
+
     ## Setup the core assays
     if (verbose) message("Obtaining assays...", appendLF = FALSE)
     counts <- .assayFromQuants(quants, "NumReads", 0)[ids, ]
@@ -113,14 +129,17 @@ digestSalmon <- function(
         counts = counts, scaledCounts = counts / final_od, TPM = tpm,
         effectiveLength = eff_len
     )
-    ## Handle a single sample case
+    if (length_as_assay)
+        assays$length <- .assayFromQuants(quants, "Length", NA_integer_)[ids, ]
+
+    ## Handle a single sample case where R defaults to vectors
     if (length(paths) == 1) {
         assays <- lapply(assays, as.matrix)
         counts <- as.matrix(counts)
     }
-    rowDF <- DataFrame(
-        length = lens[["Length"]], overdispersion = final_od, row.names = ids
-    )
+    rowDF <- DataFrame(overdispersion = final_od, row.names = ids)
+    if (!length_as_assay) rowDF$length <- lens[["Length"]]
+
     colDF <- DataFrame(totals = colSums(counts), n_trans = n_trans)
     se <- SummarizedExperiment(assays = assays, rowData = rowDF, colData = colDF)
     metadata(se) <- list(resampleType = types)

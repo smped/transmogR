@@ -9,7 +9,9 @@ digestSalmon(
   max_sets = 2L,
   aux_dir = "aux_info",
   name_fun = basename,
-  verbose = TRUE
+  verbose = TRUE,
+  length_as_assay = FALSE,
+  ...
 )
 }
 \arguments{
@@ -23,6 +25,11 @@ digestSalmon(
 object. Set to NULL or c() to disable.}
 
 \item{verbose}{Print progress messages}
+
+\item{length_as_assay}{Output transcript lengths as an assay. May be required
+if using separate reference transcriptomes for different samples}
+
+\item{...}{Not used}
 }
 \value{
 A SummarizedExperiment object containing assays for counts,
