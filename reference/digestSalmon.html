@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">transmogR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,8 +47,7 @@
 <span>  aux_dir <span class="op">=</span> <span class="st">"aux_info"</span>,</span>
 <span>  name_fun <span class="op">=</span> <span class="va">basename</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  length_as_assay <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  extra_assays <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TPM"</span>, <span class="st">"effectiveLength"</span><span class="op">)</span>,</span>
+<span>  extra_assays <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -78,14 +77,12 @@ object. Set to NULL or c() to disable.</p></dd>
 <dd><p>Print progress messages</p></dd>
 
 
-<dt id="arg-length-as-assay">length_as_assay<a class="anchor" aria-label="anchor" href="#arg-length-as-assay"></a></dt>
-<dd><p>Output transcript lengths as an assay. May be required
-if using separate reference transcriptomes for different samples</p></dd>
-
-
 <dt id="arg-extra-assays">extra_assays<a class="anchor" aria-label="anchor" href="#arg-extra-assays"></a></dt>
-<dd><p>Optionally request TPM and effectiveLength as assays.
-Both will be returned by default</p></dd>
+<dd><p>Can take values in  c("TPM", "effectiveLength", "length")
+to optionally request TPM, effectiveLength or length as assays. Including
+the length assay is intended for the use case of personalised transcriptomes
+where transcript lengths may no longer be uniform across samples.
+None will be returned by default</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -99,8 +96,8 @@ scaledCounts.
 The scaledCounts assay contains counts divided by overdispersions.
 rowData in the returned object will also include transcript-lengths along
 with the overdispersion estimates used to return the scaled counts.
-TPM and effectiveLength are returned as additional assays by default, but
-can be excluded by removing them from the extra_assays argument.</p>
+TPM, effectiveLength and length can be returned as additional assays by
+specifying one or more of these in the extra_assays argument</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
