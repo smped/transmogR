@@ -25,8 +25,8 @@
 #' The scaledCounts assay contains counts divided by overdispersions.
 #' rowData in the returned object will also include transcript-lengths along
 #' with the overdispersion estimates used to return the scaled counts.
-#' TPM and effectiveLength are returned as additional assays by default, but
-#' can be excluded by removing them from the extra_assays argument.
+#' TPM, effectiveLength and length can be returned as additional assays by
+#' specifying one or more of these in the extra_assays argument
 #'
 #' @param paths Vector of file paths to directories containing salmon results
 #' @param max_sets The maximum number of indexes permitted
@@ -34,10 +34,11 @@
 #' @param name_fun Function applied to paths to provide colnames in the returned
 #' object. Set to NULL or c() to disable.
 #' @param verbose Print progress messages
-#' @param length_as_assay Output transcript lengths as an assay. May be required
-#' if using separate reference transcriptomes for different samples
-#' @param extra_assays Optionally request TPM and effectiveLength as assays.
-#' Both will be returned by default
+#' @param extra_assays Can take values in  c("TPM", "effectiveLength", "length")
+#' to optionally request TPM, effectiveLength or length as assays. Including
+#' the length assay is intended for the use case of personalised transcriptomes
+#' where transcript lengths may no longer be uniform across samples.
+#' None will be returned by default
 #' @param ... Not used
 #'
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment
@@ -47,8 +48,7 @@
 #' @export
 digestSalmon <- function(
         paths, max_sets = 2L, aux_dir = "aux_info", name_fun = basename,
-        verbose = TRUE, length_as_assay = FALSE,
-        extra_assays = c("TPM", "effectiveLength"), ...
+        verbose = TRUE, extra_assays = NULL, ...
 ) {
 
     ## Initial file.path checks
@@ -56,6 +56,21 @@ digestSalmon <- function(
     if (!all(dir_exists)) {
         msg <- paste("Unable to find:", paths[!dir_exists], sep = "\n")
         stop(msg)
+    }
+
+    ## Handle the extra_assays & change in arguments
+    dotArgs <- list(...)
+    if ("length_as_assay" %in% names(dotArgs)) {
+        msg <- paste(
+            "The argument 'length_as_assay' has been deprecated with v1.1.4.",
+            "Please pass 'length' to the argument extra_assays.",
+            sep = "\n"
+        )
+        warning(msg)
+    }
+    if (!is.null(extra_assays)) {
+        valid_assays <- c("TPM", "effectiveLength", "length")
+        extra_assays <- match.arg(extra_assays, valid_assays, several.ok = TRUE)
     }
 
     ## json checks
@@ -102,10 +117,10 @@ digestSalmon <- function(
     ids <- lens[["Name"]]
     ## Handle transcripts which have multiple lengths, as may be the case for a
     ## set of personalised references
-    if (any(duplicated(ids)) & !length_as_assay) {
+    if (any(duplicated(ids)) & !("length" %in% extra_assays)) {
         msg <- paste(
             "Some transcripts have differing lengths between samples.",
-            "Please use length_as_assay = TRUE"
+            "Please set extra_assays = 'length'"
         )
         stop(msg)
     }
@@ -121,7 +136,7 @@ digestSalmon <- function(
         tpm <- .assayFromQuants(quants, "TPM", ids, 0)
     if ("effectiveLength" %in% extra_assays)
         eff_len <- .assayFromQuants(quants, "EffectiveLength", ids, NA_real_)
-    if (length_as_assay)
+    if ("length" %in% extra_assays)
         trans_len <- .assayFromQuants(quants, "Length", ids, NA_integer_)
     if (verbose) message("done")
 
@@ -142,14 +157,11 @@ digestSalmon <- function(
     assays$length <- trans_len
 
     ## Handle a single sample case where R defaults to vectors
-    if (length(paths) == 1) {
-        assays <- lapply(assays, as.matrix)
-        counts <- as.matrix(counts)
-    }
+    if (length(paths) == 1) assays <- lapply(assays, as.matrix)
     rowDF <- DataFrame(overdispersion = final_od, row.names = ids)
-    if (!length_as_assay) rowDF$length <- lens[["Length"]]
+    if (!("length" %in% extra_assays)) rowDF$length <- lens[["Length"]]
 
-    colDF <- DataFrame(totals = colSums(counts), n_trans = n_trans)
+    colDF <- DataFrame(totals = colSums(assays$counts), n_trans = n_trans)
     se <- SummarizedExperiment(assays = assays, rowData = rowDF, colData = colDF)
     metadata(se) <- list(resampleType = types)
     colnames(se) <- paths
