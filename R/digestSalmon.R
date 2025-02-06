@@ -59,8 +59,7 @@ digestSalmon <- function(
     }
 
     ## Handle the extra_assays & change in arguments
-    dotArgs <- list(...)
-    if ("length_as_assay" %in% names(dotArgs)) {
+    if ("length_as_assay" %in% names(list(...))) {
         msg <- paste(
             "The argument 'length_as_assay' has been deprecated with v1.1.4.",
             "Please pass 'length' to the argument extra_assays.",
