@@ -6,7 +6,7 @@
 
 * Added `digestSalmon()`
 
-# transmogR 1.1.4
+# transmogR 1.3.1
 
 * Changed default behaviour of `digestSalmon()` to exclude 'TPM' and 
 'effectiveLength' assays, which are now optional via the 'extra_assays' argument
