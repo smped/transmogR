@@ -20,13 +20,11 @@
 #' The SummarizedExperiment object returned will also contain multiple assays,
 #' as described below
 #'
-#' @return A SummarizedExperiment object containing assays for counts and
-#' scaledCounts.
+#' @return A SummarizedExperiment object containing assays for counts,
+#' scaledCounts, TPM and effectiveLength.
 #' The scaledCounts assay contains counts divided by overdispersions.
 #' rowData in the returned object will also include transcript-lengths along
 #' with the overdispersion estimates used to return the scaled counts.
-#' TPM, effectiveLength and length can be returned as additional assays by
-#' specifying one or more of these in the extra_assays argument
 #'
 #' @param paths Vector of file paths to directories containing salmon results
 #' @param max_sets The maximum number of indexes permitted
@@ -34,11 +32,8 @@
 #' @param name_fun Function applied to paths to provide colnames in the returned
 #' object. Set to NULL or c() to disable.
 #' @param verbose Print progress messages
-#' @param extra_assays Can take values in  c("TPM", "effectiveLength", "length")
-#' to optionally request TPM, effectiveLength or length as assays. Including
-#' the length assay is intended for the use case of personalised transcriptomes
-#' where transcript lengths may no longer be uniform across samples.
-#' None will be returned by default
+#' @param length_as_assay Output transcript lengths as an assay. May be required
+#' if using separate reference transcriptomes for different samples
 #' @param ... Not used
 #'
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment
@@ -48,7 +43,7 @@
 #' @export
 digestSalmon <- function(
         paths, max_sets = 2L, aux_dir = "aux_info", name_fun = basename,
-        verbose = TRUE, extra_assays = NULL, ...
+        verbose = TRUE, length_as_assay = FALSE, ...
 ) {
 
     ## Initial file.path checks
@@ -56,20 +51,6 @@ digestSalmon <- function(
     if (!all(dir_exists)) {
         msg <- paste("Unable to find:", paths[!dir_exists], sep = "\n")
         stop(msg)
-    }
-
-    ## Handle the extra_assays & change in arguments
-    if ("length_as_assay" %in% names(list(...))) {
-        msg <- paste(
-            "The argument 'length_as_assay' has been deprecated with v1.1.4.",
-            "Please pass 'length' to the argument extra_assays.",
-            sep = "\n"
-        )
-        warning(msg)
-    }
-    if (!is.null(extra_assays)) {
-        valid_assays <- c("TPM", "effectiveLength", "length")
-        extra_assays <- match.arg(extra_assays, valid_assays, several.ok = TRUE)
     }
 
     ## json checks
@@ -116,10 +97,10 @@ digestSalmon <- function(
     ids <- lens[["Name"]]
     ## Handle transcripts which have multiple lengths, as may be the case for a
     ## set of personalised references
-    if (any(duplicated(ids)) & !("length" %in% extra_assays)) {
+    if (any(duplicated(ids)) & !length_as_assay) {
         msg <- paste(
             "Some transcripts have differing lengths between samples.",
-            "Please set extra_assays = 'length'"
+            "Please use length_as_assay = TRUE"
         )
         stop(msg)
     }
@@ -127,18 +108,12 @@ digestSalmon <- function(
     ## Setting as unique is still needed if passing to an assay
     ids <- unique(ids)
 
-    # ## Setup the core assays
+    ## Setup the core assays
     if (verbose) message("Obtaining assays...", appendLF = FALSE)
-    counts <- .assayFromQuants(quants, "NumReads", ids, 0)
-    tpm <- eff_len <- trans_len <- NULL # Default to NULL
-    if ("TPM" %in% extra_assays)
-        tpm <- .assayFromQuants(quants, "TPM", ids, 0)
-    if ("effectiveLength" %in% extra_assays)
-        eff_len <- .assayFromQuants(quants, "EffectiveLength", ids, NA_real_)
-    if ("length" %in% extra_assays)
-        trans_len <- .assayFromQuants(quants, "Length", ids, NA_integer_)
+    counts <- .assayFromQuants(quants, "NumReads", 0)[ids, ]
+    tpm <- .assayFromQuants(quants, "TPM", 0)[ids, ]
+    eff_len <- .assayFromQuants(quants, "EffectiveLength", NA_real_)[ids, ]
     if (verbose) message("done")
-
 
     ## Now the bootstraps.
     final_od <- 1
@@ -150,17 +125,22 @@ digestSalmon <- function(
     }
 
     ## All of the above can go into an SE.
-    assays <- list(counts = counts, scaledCounts = counts / final_od)
-    assays$TPM <- tpm
-    assays$effectiveLength <- eff_len
-    assays$length <- trans_len
+    assays <- list(
+        counts = counts, scaledCounts = counts / final_od, TPM = tpm,
+        effectiveLength = eff_len
+    )
+    if (length_as_assay)
+        assays$length <- .assayFromQuants(quants, "Length", NA_integer_)[ids, ]
 
     ## Handle a single sample case where R defaults to vectors
-    if (length(paths) == 1) assays <- lapply(assays, as.matrix)
+    if (length(paths) == 1) {
+        assays <- lapply(assays, as.matrix)
+        counts <- as.matrix(counts)
+    }
     rowDF <- DataFrame(overdispersion = final_od, row.names = ids)
-    if (!("length" %in% extra_assays)) rowDF$length <- lens[["Length"]]
+    if (!length_as_assay) rowDF$length <- lens[["Length"]]
 
-    colDF <- DataFrame(totals = colSums(assays$counts), n_trans = n_trans)
+    colDF <- DataFrame(totals = colSums(counts), n_trans = n_trans)
     se <- SummarizedExperiment(assays = assays, rowData = rowDF, colData = colDF)
     metadata(se) <- list(resampleType = types)
     colnames(se) <- paths
@@ -189,7 +169,6 @@ digestSalmon <- function(
             close(con)
             dim(boots) <- c(n_trans, n_boot)
 
-            # Allows for different transcriptomes, but keep the order
             nm <- quants[[i]]$Name
             mn <- rowMeans2(boots)
             names(mn) <- nm
@@ -226,13 +205,21 @@ digestSalmon <- function(
 
 }
 
-.assayFromQuants <- function(x, var, .ids, fill = NA_real_) {
+.assayFromQuants <- function(x, var, fill = NA_real_) {
 
-    mat <- do.call(
-        "cbind", lapply(x, \(x) setNames(x[[var]], x[["Name"]])[.ids])
+    df <- dplyr::bind_rows(x, .id = "sample")
+    df <- as.data.frame(df[c("Name", "sample", var)])
+
+    # wide <- tidyr::pivot_wider(
+    #     df, names_from = "sample", values_from = var, values_fill = fill
+    # )
+    ## Try using reshape to avoid a tidyr dependency
+    wide <- stats::reshape(
+        df, idvar = "Name", direction = "wide", timevar = "sample",
+        v.names = var
     )
-    mat[is.na(mat)] <- fill
-    mat
+    colnames(wide) <- gsub(paste0(var, "\\.", collapse = ""), "", colnames(wide))
+    assay <- as.data.frame(lapply(wide[-1], \(x) {x[is.na(x)] <- fill; x}))
+    rownames(assay) <- wide[[1]]
+    as.matrix(assay)
 }
-
-
