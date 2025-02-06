@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">transmogR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,7 @@
 <span>  aux_dir <span class="op">=</span> <span class="st">"aux_info"</span>,</span>
 <span>  name_fun <span class="op">=</span> <span class="va">basename</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  extra_assays <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  length_as_assay <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -77,12 +77,9 @@ object. Set to NULL or c() to disable.</p></dd>
 <dd><p>Print progress messages</p></dd>
 
 
-<dt id="arg-extra-assays">extra_assays<a class="anchor" aria-label="anchor" href="#arg-extra-assays"></a></dt>
-<dd><p>Can take values in  c("TPM", "effectiveLength", "length")
-to optionally request TPM, effectiveLength or length as assays. Including
-the length assay is intended for the use case of personalised transcriptomes
-where transcript lengths may no longer be uniform across samples.
-None will be returned by default</p></dd>
+<dt id="arg-length-as-assay">length_as_assay<a class="anchor" aria-label="anchor" href="#arg-length-as-assay"></a></dt>
+<dd><p>Output transcript lengths as an assay. May be required
+if using separate reference transcriptomes for different samples</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -91,13 +88,11 @@ None will be returned by default</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A SummarizedExperiment object containing assays for counts and
-scaledCounts.
+    <p>A SummarizedExperiment object containing assays for counts,
+scaledCounts, TPM and effectiveLength.
 The scaledCounts assay contains counts divided by overdispersions.
 rowData in the returned object will also include transcript-lengths along
-with the overdispersion estimates used to return the scaled counts.
-TPM, effectiveLength and length can be returned as additional assays by
-specifying one or more of these in the extra_assays argument</p>
+with the overdispersion estimates used to return the scaled counts.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
