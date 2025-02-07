@@ -10,7 +10,8 @@ digestSalmon(
   aux_dir = "aux_info",
   name_fun = basename,
   verbose = TRUE,
-  length_as_assay = FALSE,
+  extra_assays = NULL,
+  max_boot = Inf,
   ...
 )
 }
@@ -26,17 +27,24 @@ object. Set to NULL or c() to disable.}
 
 \item{verbose}{Print progress messages}
 
-\item{length_as_assay}{Output transcript lengths as an assay. May be required
-if using separate reference transcriptomes for different samples}
+\item{extra_assays}{Can take values in  c("TPM", "effectiveLength", "length")
+to optionally request TPM, effectiveLength or length as assays. Including
+the length assay is intended for the use case of personalised transcriptomes
+where transcript lengths may no longer be uniform across samples.
+None will be returned by default}
+
+\item{max_boot}{The maximum number of bootstraps to use}
 
 \item{...}{Not used}
 }
 \value{
-A SummarizedExperiment object containing assays for counts,
-scaledCounts, TPM and effectiveLength.
+A SummarizedExperiment object containing assays for counts and
+scaledCounts.
 The scaledCounts assay contains counts divided by overdispersions.
 rowData in the returned object will also include transcript-lengths along
 with the overdispersion estimates used to return the scaled counts.
+TPM, effectiveLength and length can be returned as additional assays by
+specifying one or more of these in the extra_assays argument
 }
 \description{
 Parse transcript counts and additional data from salmon

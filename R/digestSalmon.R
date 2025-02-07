@@ -20,11 +20,13 @@
 #' The SummarizedExperiment object returned will also contain multiple assays,
 #' as described below
 #'
-#' @return A SummarizedExperiment object containing assays for counts,
-#' scaledCounts, TPM and effectiveLength.
+#' @return A SummarizedExperiment object containing assays for counts and
+#' scaledCounts.
 #' The scaledCounts assay contains counts divided by overdispersions.
 #' rowData in the returned object will also include transcript-lengths along
 #' with the overdispersion estimates used to return the scaled counts.
+#' TPM, effectiveLength and length can be returned as additional assays by
+#' specifying one or more of these in the extra_assays argument
 #'
 #' @param paths Vector of file paths to directories containing salmon results
 #' @param max_sets The maximum number of indexes permitted
@@ -32,8 +34,12 @@
 #' @param name_fun Function applied to paths to provide colnames in the returned
 #' object. Set to NULL or c() to disable.
 #' @param verbose Print progress messages
-#' @param length_as_assay Output transcript lengths as an assay. May be required
-#' if using separate reference transcriptomes for different samples
+#' @param extra_assays Can take values in  c("TPM", "effectiveLength", "length")
+#' to optionally request TPM, effectiveLength or length as assays. Including
+#' the length assay is intended for the use case of personalised transcriptomes
+#' where transcript lengths may no longer be uniform across samples.
+#' None will be returned by default
+#' @param max_boot The maximum number of bootstraps to use
 #' @param ... Not used
 #'
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment
@@ -43,7 +49,7 @@
 #' @export
 digestSalmon <- function(
         paths, max_sets = 2L, aux_dir = "aux_info", name_fun = basename,
-        verbose = TRUE, length_as_assay = FALSE, ...
+        verbose = TRUE, extra_assays = NULL, max_boot = Inf, ...
 ) {
 
     ## Initial file.path checks
@@ -51,6 +57,20 @@ digestSalmon <- function(
     if (!all(dir_exists)) {
         msg <- paste("Unable to find:", paths[!dir_exists], sep = "\n")
         stop(msg)
+    }
+
+    ## Handle the extra_assays & change in arguments
+    if ("length_as_assay" %in% names(list(...))) {
+        msg <- paste(
+            "The argument 'length_as_assay' has been deprecated with v1.1.4.",
+            "Please pass 'length' to the argument extra_assays.",
+            sep = "\n"
+        )
+        warning(msg)
+    }
+    if (!is.null(extra_assays)) {
+        valid_assays <- c("TPM", "effectiveLength", "length")
+        extra_assays <- match.arg(extra_assays, valid_assays, several.ok = TRUE)
     }
 
     ## json checks
@@ -65,17 +85,21 @@ digestSalmon <- function(
         stop(msg)
     }
     meta_info <- lapply(meta_json, jsonlite::fromJSON)
+    ## Check bootstrap info
+    boot_types <- unique(vapply(meta_info, \(x) x$samp_type, character(1)))
+    if (length(boot_types) > 1) stop("Bootstraps must all use the same method")
+    n_boot <- vapply(meta_info, \(x) max(x$num_bootstraps, 0L), integer(1))
+    n_boot <- min(n_boot, max_boot)
+
+    ## Check the transcriptomes
     n_trans <- vapply(
         meta_info,
         \(x) unlist(x[c("num_targets", "num_valid_targets")])[[1]],
         integer(1)
     )
+    if (length(n_trans) != length(paths)) stop("Missing values in json files")
     n_sets <- length(unique(n_trans))
-    n_boot <- vapply(meta_info, \(x) max(x$num_bootstraps, 0L), integer(1))
     if (n_sets > max_sets) stop(n_sets, " sets of annotations detected")
-    if (length(n_trans) != length(n_boot)) stop("Missing values in json files")
-    types <- unique(vapply(meta_info, \(x) x$samp_type, character(1)))
-    if (length(types) > 1) stop("Bootstraps must all use the same method")
     if (verbose) message("done")
 
     ## quant checks
@@ -93,56 +117,57 @@ digestSalmon <- function(
     if (verbose) message("done")
 
     ## Transcript Lengths
-    lens <- unique(do.call("rbind", quants)[c("Name", "Length")])
-    ids <- lens[["Name"]]
+    if (verbose) message("Checking transcript lengths...")
+    lens <- do.call("rbind", lapply(quants, \(x) x[c("Name", "Length")]))
+    ids <- unique(lens)[["Name"]]
     ## Handle transcripts which have multiple lengths, as may be the case for a
     ## set of personalised references
-    if (any(duplicated(ids)) & !length_as_assay) {
+    if (any(duplicated(ids)) & !("length" %in% extra_assays)) {
         msg <- paste(
             "Some transcripts have differing lengths between samples.",
-            "Please use length_as_assay = TRUE"
+            "Please set extra_assays = 'length'"
         )
         stop(msg)
     }
     ## If passing here, ids will be unique or lengths will be an assay
     ## Setting as unique is still needed if passing to an assay
     ids <- unique(ids)
+    if (verbose) message("done")
 
-    ## Setup the core assays
-    if (verbose) message("Obtaining assays...", appendLF = FALSE)
-    counts <- .assayFromQuants(quants, "NumReads", 0)[ids, ]
-    tpm <- .assayFromQuants(quants, "TPM", 0)[ids, ]
-    eff_len <- .assayFromQuants(quants, "EffectiveLength", NA_real_)[ids, ]
+    # ## Setup the core assays
+    if (verbose) message("Obtaining assays...")
+    counts <- .assayFromQuants(quants, "NumReads", ids, 0)
+    tpm <- eff_len <- trans_len <- NULL # Default to NULL
+    if ("TPM" %in% extra_assays)
+        tpm <- .assayFromQuants(quants, "TPM", ids, 0)
+    if ("effectiveLength" %in% extra_assays)
+        eff_len <- .assayFromQuants(quants, "EffectiveLength", ids, NA_real_)
+    if ("length" %in% extra_assays)
+        trans_len <- .assayFromQuants(quants, "Length", ids, NA_integer_)
     if (verbose) message("done")
 
     ## Now the bootstraps.
     final_od <- 1
-    if (any(n_boot > 0)) {
-        if (any(n_boot == 0)) warning("Some samples were not bootstrapped")
-        if (verbose) message("Estimating overdispersions...", appendLF = FALSE)
-        final_od <- .overdispFromBoots(paths, n_boot, n_trans, quants)[ids]
+    if (n_boot > 0) {
+        if (verbose) message("Estimating overdispersions...")
+        final_od <- .overdispFromBoots(paths, n_boot, n_trans, quants, .ids = ids)
         if (verbose) message("done")
     }
 
     ## All of the above can go into an SE.
-    assays <- list(
-        counts = counts, scaledCounts = counts / final_od, TPM = tpm,
-        effectiveLength = eff_len
-    )
-    if (length_as_assay)
-        assays$length <- .assayFromQuants(quants, "Length", NA_integer_)[ids, ]
+    assays <- list(counts = counts, scaledCounts = counts / final_od)
+    assays$TPM <- tpm
+    assays$effectiveLength <- eff_len
+    assays$length <- trans_len
 
     ## Handle a single sample case where R defaults to vectors
-    if (length(paths) == 1) {
-        assays <- lapply(assays, as.matrix)
-        counts <- as.matrix(counts)
-    }
+    if (length(paths) == 1) assays <- lapply(assays, as.matrix)
     rowDF <- DataFrame(overdispersion = final_od, row.names = ids)
-    if (!length_as_assay) rowDF$length <- lens[["Length"]]
+    if (!("length" %in% extra_assays)) rowDF$length <- lens[["Length"]]
 
-    colDF <- DataFrame(totals = colSums(counts), n_trans = n_trans)
+    colDF <- DataFrame(totals = colSums(assays$counts), n_trans = n_trans)
     se <- SummarizedExperiment(assays = assays, rowData = rowDF, colData = colDF)
-    metadata(se) <- list(resampleType = types)
+    metadata(se) <- list(resampleType = boot_types)
     colnames(se) <- paths
 
     if (is(name_fun, "function")) colnames(se) <- name_fun(colnames(se))
@@ -150,76 +175,59 @@ digestSalmon <- function(
 
 }
 
-#' @importFrom matrixStats rowMeans2
+#' @importFrom matrixStats rowMeans2 rowSums2
 #' @importFrom stats setNames median qf
 #' @keywords internal
-.overdispFromBoots <- function(paths, n_boot, n_trans, quants) {
+.overdispFromBoots <- function(paths, n_boot, n_trans, quants, .ids) {
 
     suf <- file.path("aux_info", "bootstrap", "bootstraps.gz")
     boot_files <- vapply(paths, file.path, character(1), suf)
-    stopifnot(all(file.exists(boot_files)))
+    if (!all(file.exists(boot_files))) stop("Missing bootstrap files")
 
-    boot_stats <- lapply(
-        which(n_boot > 0), # There will always be at least one
+    ## Try a more computationally efficient approach
+    sums_ti <- lapply(
+        seq_along(paths),
         \(i){
-            n_boot <- n_boot[[i]]
-            n_trans <- n_trans[[i]]
+
             con <- gzcon(file(boot_files[[i]], open = "rb"))
-            boots <- readBin(con, what = 'double', n = n_trans * n_boot)
+            ## Enable different numbers of transcripts for different references
+            boots <- readBin(con, what = 'double', n = n_trans[[i]] * n_boot)
             close(con)
-            dim(boots) <- c(n_trans, n_boot)
-
-            nm <- quants[[i]]$Name
-            mn <- rowMeans2(boots)
-            names(mn) <- nm
-
-            df <- od <- setNames(rep_len(0, n_trans), nm)
-            j <- mn > 0
-            od[j] <- rowSums((boots[j,] - mn[j])^2) / mn[j]
-            df[j] <- n_boot - 1L
-            data.frame(transcript_id = nm, overdispersion = od, df = df)
+            dim(boots) <- c(n_trans[[i]], n_boot)
+            rownames(boots) <- quants[[i]]$Name
+            lambda_ti <- rowMeans2(boots)
+            sum_ti <- rowSums2((boots - lambda_ti)^2) / lambda_ti
+            ## Return zero for undetectable transcripts (lambda_ti == 0)
+            sum_ti[is.nan(sum_ti)] <- 0
+            sum_ti[.ids]
         }
     )
-    transcript_id <- c() ## R CMD check error avoidance
-    boot_stats <- do.call("rbind", boot_stats)
-    zeros <- subset(boot_stats, boot_stats$df == 0)
-    boot_stats <- subset(boot_stats, boot_stats$df > 0)
-    ## Unfortunately, this is much faster than splitting & lapplying
-    overdispersion <- df <- NULL # R CMD check avoidance
-    boot_sums <- dplyr::summarise(
-        boot_stats,
-        overdispersion = sum(overdispersion), df = sum(df), .by = transcript_id
-    )
-    boot_sums$od <- boot_sums$overdispersion / boot_sums$df
-    df_med <- median(boot_sums$df)
-    df_prior <- 3
-    od_prior <- max(1, median(boot_sums$od) / qf(0.5, df_med, df_prior))
-    od_num <- df_prior * od_prior + boot_sums$df * boot_sums$od
-    od_denom <- df_prior + boot_sums$df
-    boot_sums$od <- pmax(od_num / od_denom, 1)
-    zero_ids <- setdiff(zeros$transcript_id, boot_sums$transcript_id)
-    c(
-        setNames(boot_sums$od, boot_sums$transcript_id),
-        setNames(rep(od_prior, length(zero_ids)), zero_ids)
-    )
+
+    ## Following Baldoni et al, except d_t is not n(B - 1) where the transcript
+    ## was not > 0 in all libraries
+    boot_sums <- do.call("cbind", sums_ti)
+    d_t <- rowSums2(boot_sums > 0, na.rm = TRUE) * (n_boot - 1)
+    od_t <- rowSums2(boot_sums, na.rm = TRUE) / d_t
+    ## Key values for the moderation of the overdispersion
+    i <- d_t > 0
+    d_0 <- 3
+    d_med <- median(d_t[i])
+    od_0 <- max(1, median(od_t[i]) / qf(0.5, d_med, d_0))
+    ## Moderate the overdispersions
+    od_mod <- pmax(1, (d_0 * od_0 + d_t * od_t) / (d_0 + d_t))
+    od_mod[is.na(od_mod)] <- od_0
+    od_mod
 
 }
 
-.assayFromQuants <- function(x, var, fill = NA_real_) {
+.assayFromQuants <- function(x, var, .ids, fill = NA_real_) {
 
-    df <- dplyr::bind_rows(x, .id = "sample")
-    df <- as.data.frame(df[c("Name", "sample", var)])
-
-    # wide <- tidyr::pivot_wider(
-    #     df, names_from = "sample", values_from = var, values_fill = fill
-    # )
-    ## Try using reshape to avoid a tidyr dependency
-    wide <- stats::reshape(
-        df, idvar = "Name", direction = "wide", timevar = "sample",
-        v.names = var
+    mat <- do.call(
+        "cbind", lapply(x, \(x) setNames(x[[var]], x[["Name"]])[.ids])
     )
-    colnames(wide) <- gsub(paste0(var, "\\.", collapse = ""), "", colnames(wide))
-    assay <- as.data.frame(lapply(wide[-1], \(x) {x[is.na(x)] <- fill; x}))
-    rownames(assay) <- wide[[1]]
-    as.matrix(assay)
+    mat[is.na(mat)] <- fill
+    mat
+
 }
+
+
