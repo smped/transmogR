@@ -11,6 +11,7 @@ digestSalmon(
   name_fun = basename,
   verbose = TRUE,
   extra_assays = NULL,
+  max_boot = Inf,
   ...
 )
 }
@@ -31,6 +32,8 @@ to optionally request TPM, effectiveLength or length as assays. Including
 the length assay is intended for the use case of personalised transcriptomes
 where transcript lengths may no longer be uniform across samples.
 None will be returned by default}
+
+\item{max_boot}{The maximum number of bootstraps to use}
 
 \item{...}{Not used}
 }

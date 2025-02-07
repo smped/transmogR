@@ -25,13 +25,12 @@ test_that("salmon digestion is smooth", {
  expect_equal(metadata(se)$resampleType, "gibbs")
  expect_equal(
      c("counts", "scaledCounts", "TPM", "effectiveLength", "length"),
-     SummarizedExperiment::assayNames(se)
+     assayNames(se)
  )
+ expect_true(!any(is.na(rowData(se)$overdispersion)))
 
  se <- suppressMessages(digestSalmon(f))
- expect_equal(
-     c("counts", "scaledCounts"), SummarizedExperiment::assayNames(se)
- )
+ expect_equal(c("counts", "scaledCounts"), assayNames(se))
 
 })
 
