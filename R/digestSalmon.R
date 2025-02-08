@@ -45,6 +45,7 @@
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom S4Vectors DataFrame metadata<-
+#' @importFrom matrixStats rowVars
 #'
 #' @export
 digestSalmon <- function(
@@ -110,42 +111,42 @@ digestSalmon <- function(
         stop(msg)
     }
 
+    ## Column Types to ensure only the reuired columns are parsed
+    col_types <- list(Name = "c", Length = "d", effectiveLength = "-", TPM = "-",  NumReads = "d")
+    col_types[names(col_types) %in% extra_assays] <- "d"
+    col_types <- paste(unlist(col_types), collapse = "")
+
     ## Import quants
     options(readr.show_progress = FALSE)
     if (verbose) message("Parsing quants...")
-    quants <- lapply(quant_files, vroom::vroom, col_types = "cdddd")
+    quants <- lapply(quant_files, vroom::vroom, col_types = col_types)
     if (verbose) message("done")
 
     ## Transcript Lengths
     if (verbose) message("Checking transcript lengths...")
-    lens <- unique(
-        do.call("rbind", lapply(quants, \(x) x[c("Name", "Length")]))
-    )
-    ids <- lens[["Name"]]
-    ## Handle transcripts which have multiple lengths, as may be the case for a
-    ## set of personalised references
-    if (any(duplicated(ids)) & !("length" %in% extra_assays)) {
-        msg <- paste(
-            "Some transcripts have differing lengths between samples.",
-            "Please set extra_assays = 'length'"
-        )
-        stop(msg)
+    ids <- sort(unique(unlist(lapply(quants, \(x) x$Name))))
+    trans_len <- .assayFromQuants(quants, "Length", ids, NA_integer_)
+    if (!("length" %in% extra_assays)) {
+        if (any(rowVars(trans_len, na.rm = TRUE) > 0)) {
+            msg <- paste(
+                "Some transcripts have differing lengths between samples.",
+                "Please set extra_assays = 'length'"
+            )
+            stop(msg)
+        }
+        # Delete the object for downstream if not required
+        trans_len <- NULL
     }
-    ## If passing here, ids will be unique or lengths will be an assay
-    ## Setting as unique is still needed if passing to an assay
-    ids <- unique(ids)
     if (verbose) message("done")
 
     # ## Setup the core assays
     if (verbose) message("Obtaining assays...")
     counts <- .assayFromQuants(quants, "NumReads", ids, 0)
-    tpm <- eff_len <- trans_len <- NULL # Default to NULL
+    tpm <- eff_len <- NULL # Default to NULL
     if ("TPM" %in% extra_assays)
         tpm <- .assayFromQuants(quants, "TPM", ids, 0)
     if ("effectiveLength" %in% extra_assays)
         eff_len <- .assayFromQuants(quants, "EffectiveLength", ids, NA_real_)
-    if ("length" %in% extra_assays)
-        trans_len <- .assayFromQuants(quants, "Length", ids, NA_integer_)
     if (verbose) message("done")
 
     ## Now the bootstraps.
@@ -165,7 +166,10 @@ digestSalmon <- function(
     ## Handle a single sample case where R defaults to vectors
     if (length(paths) == 1) assays <- lapply(assays, as.matrix)
     rowDF <- DataFrame(overdispersion = final_od, row.names = ids)
-    if (!("length" %in% extra_assays)) rowDF$length <- lens[["Length"]]
+    if (!("length" %in% extra_assays)) {
+        i <- which.max(n_trans)
+        rowDF$length <- setNames(quants[[i]]$Length, quants[[i]]$Name)[ids]
+    }
 
     colDF <- DataFrame(totals = colSums(assays$counts), n_trans = n_trans)
     se <- SummarizedExperiment(assays = assays, rowData = rowDF, colData = colDF)
@@ -176,6 +180,7 @@ digestSalmon <- function(
     se
 
 }
+
 
 #' @importFrom matrixStats rowMeans2 rowSums2
 #' @importFrom stats setNames median qf
