@@ -127,7 +127,7 @@ digestSalmon <- function(
     ids <- sort(unique(unlist(lapply(quants, \(x) x$Name))))
     trans_len <- .assayFromQuants(quants, "Length", ids, NA_integer_)
     if (!("length" %in% extra_assays)) {
-        if (any(rowVars(trans_len, na.rm = TRUE) > 0)) {
+        if (length(quants) > 1 & any(rowVars(trans_len, na.rm = TRUE) > 0)) {
             msg <- paste(
                 "Some transcripts have differing lengths between samples.",
                 "Please set extra_assays = 'length'"
@@ -182,6 +182,7 @@ digestSalmon <- function(
 }
 
 
+#' @useDynLib transmogR
 #' @importFrom matrixStats rowMeans2 rowSums2
 #' @importFrom stats setNames median qf
 #' @keywords internal
@@ -195,17 +196,14 @@ digestSalmon <- function(
     sums_ti <- lapply(
         seq_along(paths),
         \(i){
-
-            con <- gzcon(file(boot_files[[i]], open = "rb"))
-            ## Enable different numbers of transcripts for different references
-            boots <- readBin(con, what = 'double', n = n_trans[[i]] * n_boot)
-            close(con)
-            dim(boots) <- c(n_trans[[i]], n_boot)
-            rownames(boots) <- quants[[i]]$Name
-            lambda_ti <- rowMeans2(boots)
-            sum_ti <- rowSums2((boots - lambda_ti)^2) / lambda_ti
-            ## Return zero for undetectable transcripts (lambda_ti == 0)
-            sum_ti[is.nan(sum_ti)] <- 0
+            sum_ti <- .C(
+                "calc_boot_row_vals",
+                filename = boot_files[[i]],
+                n_trans = as.integer(n_trans[[i]]),
+                n_boot = as.integer(n_boot),
+                result = numeric(n_trans[[i]])
+            )$result
+            names(sum_ti) <- quants[[i]]$Name
             sum_ti[.ids]
         }
     )

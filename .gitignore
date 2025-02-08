@@ -5,3 +5,5 @@
 notes.md
 *Rproj
 docs
+*.so
+*.o
