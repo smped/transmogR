@@ -118,8 +118,10 @@ digestSalmon <- function(
 
     ## Transcript Lengths
     if (verbose) message("Checking transcript lengths...")
-    lens <- do.call("rbind", lapply(quants, \(x) x[c("Name", "Length")]))
-    ids <- unique(lens)[["Name"]]
+    lens <- unique(
+        do.call("rbind", lapply(quants, \(x) x[c("Name", "Length")]))
+    )
+    ids <- lens[["Name"]]
     ## Handle transcripts which have multiple lengths, as may be the case for a
     ## set of personalised references
     if (any(duplicated(ids)) & !("length" %in% extra_assays)) {
