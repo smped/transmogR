@@ -3,8 +3,8 @@
 #' Parse transcript counts and additional data from salmon
 #'
 #' @details
-#' This function is based heavily on [edgeR::catchSalmon()] with some important
-#' exceptions:
+#' This function is based heavily on [edgeR::catchSalmon()] however, there are
+#' some important differences:
 #'
 #' 1. A SummarizedExperiment object is returned
 #' 2. Differing numbers of transcripts are allowed between samples
@@ -17,8 +17,11 @@
 #' the function will error if >2 different sets of transcripts are detected,
 #' however this can be modified using the max_sets argument.
 #'
-#' The SummarizedExperiment object returned will also contain multiple assays,
-#' as described below
+#' This greater flexibility also requires more stringent checking and, as such,
+#' for smaller datasets, digestSalmon may be slower that the edgeR function.
+#'
+#' The SummarizedExperiment object returned may also contain multiple assays,
+#' as described elsewhere on this page
 #'
 #' @return A SummarizedExperiment object containing assays for counts and
 #' scaledCounts.
@@ -39,7 +42,9 @@
 #' the length assay is intended for the use case of personalised transcriptomes
 #' where transcript lengths may no longer be uniform across samples.
 #' None will be returned by default
-#' @param max_boot The maximum number of bootstraps to use
+#' @param max_boot The maximum number of bootstraps to use. Setting this to
+#' zero will ignore all bootstraps and the scaledCounts assay will not be
+#' included in the returned object
 #' @param ... Not used
 #'
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment
@@ -90,7 +95,8 @@ digestSalmon <- function(
     boot_types <- unique(vapply(meta_info, \(x) x$samp_type, character(1)))
     if (length(boot_types) > 1) stop("Bootstraps must all use the same method")
     n_boot <- vapply(meta_info, \(x) max(x$num_bootstraps, 0L), integer(1))
-    n_boot <- min(n_boot, max_boot)
+    n_boot <- as.integer(min(n_boot, max_boot))
+    if (n_boot == 1) stop("The number of bootstraps cannot be equal to 1")
 
     ## Check the transcriptomes
     n_trans <- vapply(
@@ -139,33 +145,30 @@ digestSalmon <- function(
     }
     if (verbose) message("done")
 
-    # ## Setup the core assays
+    ## Setup the rowData & assays
     if (verbose) message("Obtaining assays...")
     counts <- .assayFromQuants(quants, "NumReads", ids, 0)
-    tpm <- eff_len <- NULL # Default to NULL
-    if ("TPM" %in% extra_assays)
-        tpm <- .assayFromQuants(quants, "TPM", ids, 0)
-    if ("effectiveLength" %in% extra_assays)
-        eff_len <- .assayFromQuants(quants, "EffectiveLength", ids, NA_real_)
-    if (verbose) message("done")
-
-    ## Now the bootstraps.
-    final_od <- 1
+    assays <- list(counts = counts)
+    rowDF <- DataFrame(row.names = ids)
+    md <- list(resampleType = boot_types)
     if (n_boot > 0) {
         if (verbose) message("Estimating overdispersions...")
-        final_od <- .overdispFromBoots(paths, n_boot, n_trans, quants, .ids = ids)
+        final_od <- .overdispFromBoots(paths, n_boot, .ids = ids)
         if (verbose) message("done")
+        assays$scaledCounts <- counts / final_od
+        rowDF$overdispersion <- final_od
+        md$n_boot <- n_boot
     }
-
-    ## All of the above can go into an SE.
-    assays <- list(counts = counts, scaledCounts = counts / final_od)
-    assays$TPM <- tpm
-    assays$effectiveLength <- eff_len
+    ## Extra Assays
+    if ("TPM" %in% extra_assays)
+        assays$TPM <- .assayFromQuants(quants, "TPM", ids, 0)
+    if ("effectiveLength" %in% extra_assays)
+        assays$effectiveLength <- .assayFromQuants(quants, "EffectiveLength", ids, NA_real_)
     assays$length <- trans_len
+    if (verbose) message("done")
 
     ## Handle a single sample case where R defaults to vectors
     if (length(paths) == 1) assays <- lapply(assays, as.matrix)
-    rowDF <- DataFrame(overdispersion = final_od, row.names = ids)
     if (!("length" %in% extra_assays)) {
         i <- which.max(n_trans)
         rowDF$length <- setNames(quants[[i]]$Length, quants[[i]]$Name)[ids]
@@ -173,7 +176,7 @@ digestSalmon <- function(
 
     colDF <- DataFrame(totals = colSums(assays$counts), n_trans = n_trans)
     se <- SummarizedExperiment(assays = assays, rowData = rowDF, colData = colDF)
-    metadata(se) <- list(resampleType = boot_types)
+    metadata(se) <- md
     colnames(se) <- paths
 
     if (is(name_fun, "function")) colnames(se) <- name_fun(colnames(se))
@@ -182,28 +185,29 @@ digestSalmon <- function(
 }
 
 
-#' @useDynLib transmogR
+#' @useDynLib transmogR, .registration = TRUE
 #' @importFrom matrixStats rowMeans2 rowSums2
 #' @importFrom stats setNames median qf
 #' @keywords internal
-.overdispFromBoots <- function(paths, n_boot, n_trans, quants, .ids) {
+.overdispFromBoots <- function(paths, n_boot, .ids) {
 
     suf <- file.path("aux_info", "bootstrap", "bootstraps.gz")
     boot_files <- vapply(paths, file.path, character(1), suf)
     if (!all(file.exists(boot_files))) stop("Missing bootstrap files")
+    id_files <- gsub("bootstraps.gz$", "names.tsv.gz", boot_files)
+    if (!all(file.exists(id_files))) stop("Missing names.tsv.gz files")
 
     ## Try a more computationally efficient approach
     sums_ti <- lapply(
         seq_along(paths),
         \(i){
+            trans_ids <- .Call("parse_trans_names", id_files[[i]])
+            n <- length(trans_ids)
             sum_ti <- .C(
-                "calc_boot_row_vals",
-                filename = boot_files[[i]],
-                n_trans = as.integer(n_trans[[i]]),
-                n_boot = as.integer(n_boot),
-                result = numeric(n_trans[[i]])
+                "calc_boot_row_vals", filename = boot_files[[i]], n_trans = n,
+                n_boot = n_boot, result = numeric(n)
             )$result
-            names(sum_ti) <- quants[[i]]$Name
+            names(sum_ti) <- trans_ids
             sum_ti[.ids]
         }
     )
