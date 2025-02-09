@@ -1,11 +1,15 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <Rversion.h>
+#include <R_ext/Rdynload.h>
 
-extern void calc_boot_row_vals(char **filename, int *n_trans, int *n_boot, double *result);  // Declare your C function
+// Declare your C functions
+extern void calc_boot_row_vals(char **filename, int *n_trans, int *n_boot, double *result);
+extern SEXP parse_trans_names(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"calc_boot_row_vals", (DL_FUNC) &calc_boot_row_vals, 4},
+    {"parse_trans_names", (DL_FUNC) &parse_trans_names, 1},
     {NULL, NULL, 0}  // End of the list
 };
 

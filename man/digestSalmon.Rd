@@ -33,7 +33,9 @@ the length assay is intended for the use case of personalised transcriptomes
 where transcript lengths may no longer be uniform across samples.
 None will be returned by default}
 
-\item{max_boot}{The maximum number of bootstraps to use}
+\item{max_boot}{The maximum number of bootstraps to use. Setting this to
+zero will ignore all bootstraps and the scaledCounts assay will not be
+included in the returned object}
 
 \item{...}{Not used}
 }
@@ -50,8 +52,8 @@ specifying one or more of these in the extra_assays argument
 Parse transcript counts and additional data from salmon
 }
 \details{
-This function is based heavily on \code{\link[edgeR:catchSalmon]{edgeR::catchSalmon()}} with some important
-exceptions:
+This function is based heavily on \code{\link[edgeR:catchSalmon]{edgeR::catchSalmon()}} however, there are
+some important differences:
 \enumerate{
 \item A SummarizedExperiment object is returned
 \item Differing numbers of transcripts are allowed between samples
@@ -65,6 +67,9 @@ overdispersions are required for scaling transcript-level counts. By default,
 the function will error if >2 different sets of transcripts are detected,
 however this can be modified using the max_sets argument.
 
-The SummarizedExperiment object returned will also contain multiple assays,
-as described below
+This greater flexibility also requires more stringent checking and, as such,
+for smaller datasets, digestSalmon may be slower that the edgeR function.
+
+The SummarizedExperiment object returned may also contain multiple assays,
+as described elsewhere on this page
 }
