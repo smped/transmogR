@@ -3,6 +3,9 @@
 #include <zlib.h>
 #include <R.h>  // Include R header for Rprintf
 
+// After parsing the bootstraps.gz file, this calculates the first values in
+// the sums described by Baldoni et al, which are then able to be summed across
+// samples to create the final, moderated overdispersions.
 
 void calc_boot_row_vals(char **filename, int *n_trans, int *n_boot, double *result) {
 

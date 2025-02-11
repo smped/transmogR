@@ -4,6 +4,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+// This function is to parse the names.tsv.gz files returned by salmon
+// These are single-line files, but with tab-separated values making
+// up that single line.
+// In reality, there will be around 250000 values in the single line
+
 SEXP parse_trans_names(SEXP r_filename) {
     const char *filename = CHAR(STRING_ELT(r_filename, 0));
 

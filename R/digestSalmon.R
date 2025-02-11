@@ -117,7 +117,7 @@ digestSalmon <- function(
         stop(msg)
     }
 
-    ## Column Types to ensure only the reuired columns are parsed
+    ## Column Types to ensure only the required columns are parsed
     col_types <- list(Name = "c", Length = "d", effectiveLength = "-", TPM = "-",  NumReads = "d")
     col_types[names(col_types) %in% extra_assays] <- "d"
     col_types <- paste(unlist(col_types), collapse = "")
