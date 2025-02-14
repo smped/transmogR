@@ -2,6 +2,7 @@
 #include <Rinternals.h>
 #include <zlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -17,10 +18,6 @@ SEXP parse_trans_names(SEXP r_filename) {
     }
 
     const char *filename = CHAR(STRING_ELT(r_filename, 0));
-    if (!filename || strlen(filename) == 0) {
-        Rf_error("Empty filename provided");
-    }
-
     gzFile file = gzopen(filename, "rb");
     if (file == NULL) {
         Rf_error("Failed to open file: %s", filename);
@@ -44,6 +41,11 @@ SEXP parse_trans_names(SEXP r_filename) {
         // Count tabs in this chunk
         for (int i = 0; i < bytes_read; i++) {
             if (buffer[total_size + i] == '\t') tab_count++;
+        }
+        if (tab_count == 0) {
+            free(buffer);
+            gzclose(file);
+            Rf_error("No tabs found in the file");
         }
 
         total_size += bytes_read;

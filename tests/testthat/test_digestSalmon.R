@@ -1,4 +1,6 @@
 f <- system.file("extdata/salmon_test", package = "transmogR")
+f_boot <- file.path(f, "aux_info", "bootstrap", "bootstraps.gz")
+f_nm <- file.path(f, "aux_info", "bootstrap", "names.tsv.gz")
 
 test_that("assayFromQuants returns correct values",{
 
@@ -53,17 +55,40 @@ test_that("errors on single bootstrap", {
 })
 
 test_that("C parsing is correct",{
-    f_nm <- file.path(f, "aux_info", "bootstrap", "names.tsv.gz")
+
     nm <- .Call("parse_trans_names", f_nm)
     nm_true <- c("ENST00000000233.10", "ENST00000000412.8")
     expect_equal(nm, nm_true)
 
-    f_boot <- file.path(f, "aux_info", "bootstrap", "bootstraps.gz")
     od <- .C(
         "calc_boot_row_vals",
         filename = f_boot, n_trans = length(nm_true), n_boot = 1L,
         result = numeric(length(nm_true))
     )$result
     expect_equal(c(0, 0), od)
+
+})
+
+test_that("C errors correctly", {
+
+    expect_error(.Call("parse_trans_names", ""), "Failed to open file.+")
+    expect_error(
+        .Call("parse_trans_names", NULL),
+        "Filename must be a single character string"
+    )
+    expect_error(
+        .Call("parse_trans_names", c(f_nm, f_nm)),
+        "Filename must be a single character string"
+    )
+    expect_error(
+        .Call("parse_trans_names", f_boot), "No tabs found in the file"
+    )
+
+    f_empty <- tempfile(fileext = "gz")
+    f_con <- gzcon(file(f_empty, "wb"))
+    cat(NULL, file = f_con)
+    close(f_con)
+    expect_error(.Call("parse_trans_names",  f_empty), "Empty file")
+    unlink(f_empty)
 
 })
