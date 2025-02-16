@@ -45,6 +45,7 @@ Suggests:
     extraChIPs,
     InteractionSet,
     knitr,
+    readr,
     rmarkdown,
     rtracklayer,
     testthat (>= 3.0.0)
