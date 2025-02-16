@@ -4,8 +4,8 @@
 #include <R_ext/Rdynload.h>
 
 // Declare your C functions
-extern void calc_boot_row_vals(char **filename, int *n_trans, int *n_boot, double *result);
 extern SEXP parse_trans_names(SEXP);
+extern SEXP calc_boot_row_vals(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"calc_boot_row_vals", (DL_FUNC) &calc_boot_row_vals, 4},
