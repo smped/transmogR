@@ -18,6 +18,22 @@ test_that("assayFromQuants returns correct values",{
 
 })
 
+
+test_that("import matches edgeR", {
+    edger <- edgeR::catchSalmon(f)
+    se <- suppressMessages(digestSalmon(f))
+    expect_true(
+        all.equal(
+            edger$annotation$Overdispersion, rowData(se)$overdispersion
+        )
+    )
+    expect_true(all.equal(edger$counts[, 1], assay(se, "counts")[,1]))
+    expect_true(
+        all.equal(unname(rowData(se)$length), edger$annotation$Length)
+    )
+
+})
+
 test_that("salmon digestion is smooth", {
     se <- suppressMessages(
         digestSalmon(f, extra_assays = c("TPM", "effectiveLength", "length"))
