@@ -45,6 +45,9 @@
 #' @param max_boot The maximum number of bootstraps to use. Setting this to
 #' zero will ignore all bootstraps and the scaledCounts assay will not be
 #' included in the returned object
+#' @param n_threads Passed to C for optional parallelised computation of
+#' bootstrap overdispersion estimates. Only used if OpenMP is available on
+#' the computational infrastructure.
 #' @param ... Not used
 #'
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment
@@ -55,7 +58,7 @@
 #' @export
 digestSalmon <- function(
         paths, max_sets = 2L, aux_dir = "aux_info", name_fun = basename,
-        verbose = TRUE, extra_assays = NULL, max_boot = Inf, ...
+        verbose = TRUE, extra_assays = NULL, max_boot = Inf, n_threads = 1, ...
 ) {
 
     ## Initial file.path checks
@@ -97,6 +100,7 @@ digestSalmon <- function(
     n_boot <- vapply(meta_info, \(x) max(x$num_bootstraps, 0L), integer(1))
     n_boot <- as.integer(min(n_boot, max_boot))
     if (n_boot == 1) stop("The number of bootstraps cannot be equal to 1")
+    n_threads <- as.integer(n_threads)
 
     ## Check the transcriptomes
     n_trans <- vapply(
@@ -117,8 +121,11 @@ digestSalmon <- function(
         stop(msg)
     }
 
-    ## Column Types to ensure only the reuired columns are parsed
-    col_types <- list(Name = "c", Length = "d", effectiveLength = "-", TPM = "-",  NumReads = "d")
+    ## Column Types to ensure only the required columns are parsed
+    col_types <- list(
+        Name = "c", Length = "d", effectiveLength = "-", TPM = "-",
+        NumReads = "d"
+    )
     col_types[names(col_types) %in% extra_assays] <- "d"
     col_types <- paste(unlist(col_types), collapse = "")
 
@@ -131,7 +138,7 @@ digestSalmon <- function(
     ## Transcript Lengths
     if (verbose) message("Checking transcript lengths...")
     ids <- sort(unique(unlist(lapply(quants, \(x) x$Name))))
-    trans_len <- .assayFromQuants(quants, "Length", ids, NA_integer_)
+    trans_len <- .assayFromQuants(quants, "Length", ids, NA_integer_, n_threads)
     if (!("length" %in% extra_assays)) {
         if (length(quants) > 1 & any(rowVars(trans_len, na.rm = TRUE) > 0)) {
             msg <- paste(
@@ -147,13 +154,15 @@ digestSalmon <- function(
 
     ## Setup the rowData & assays
     if (verbose) message("Obtaining assays...")
-    counts <- .assayFromQuants(quants, "NumReads", ids, 0)
+    counts <- .assayFromQuants(quants, "NumReads", ids, 0, n_threads)
     assays <- list(counts = counts)
     rowDF <- DataFrame(row.names = ids)
     md <- list(resampleType = boot_types)
     if (n_boot > 0) {
         if (verbose) message("Estimating overdispersions...")
-        final_od <- .overdispFromBoots(paths, n_boot, .ids = ids)
+        final_od <- .overdispFromBoots(
+            paths, n_boot, .ids = ids, n_threads = n_threads
+        )
         if (verbose) message("done")
         assays$scaledCounts <- counts / final_od
         rowDF$overdispersion <- final_od
@@ -161,9 +170,11 @@ digestSalmon <- function(
     }
     ## Extra Assays
     if ("TPM" %in% extra_assays)
-        assays$TPM <- .assayFromQuants(quants, "TPM", ids, 0)
+        assays$TPM <- .assayFromQuants(quants, "TPM", ids, 0, n_threads)
     if ("effectiveLength" %in% extra_assays)
-        assays$effectiveLength <- .assayFromQuants(quants, "EffectiveLength", ids, NA_real_)
+        assays$effectiveLength <- .assayFromQuants(
+            quants, "EffectiveLength", ids, NA_real_, n_threads
+        )
     assays$length <- trans_len
     if (verbose) message("done")
 
@@ -187,9 +198,10 @@ digestSalmon <- function(
 
 #' @useDynLib transmogR, .registration = TRUE
 #' @importFrom matrixStats rowMeans2 rowSums2
+#' @importFrom parallel mclapply
 #' @importFrom stats setNames median qf
 #' @keywords internal
-.overdispFromBoots <- function(paths, n_boot, .ids) {
+.overdispFromBoots <- function(paths, n_boot, .ids, n_threads) {
 
     suf <- file.path("aux_info", "bootstrap", "bootstraps.gz")
     boot_files <- vapply(paths, file.path, character(1), suf)
@@ -203,10 +215,12 @@ digestSalmon <- function(
         \(i){
             trans_ids <- .Call("parse_trans_names", id_files[[i]])
             n <- length(trans_ids)
-            sum_ti <- .C(
-                "calc_boot_row_vals", filename = boot_files[[i]], n_trans = n,
-                n_boot = n_boot, result = numeric(n)
-            )$result
+            f <- boot_files[[i]]
+            # sum_ti <- .C(
+            #     "calc_boot_row_vals", filename = boot_files[[i]], n_trans = n,
+            #     n_boot = n_boot, result = numeric(n)
+            # )$result
+            sum_ti <- .Call("calc_boot_row_vals", f, n, n_boot, n_threads)
             names(sum_ti) <- trans_ids
             sum_ti[.ids]
         }
@@ -229,10 +243,13 @@ digestSalmon <- function(
 
 }
 
-.assayFromQuants <- function(x, var, .ids, fill = NA_real_) {
+.assayFromQuants <- function(x, var, .ids, fill = NA_real_, mc.cores) {
 
     mat <- do.call(
-        "cbind", lapply(x, \(x) setNames(x[[var]], x[["Name"]])[.ids])
+        "cbind",
+        mclapply(
+            x, \(x) setNames(x[[var]], x[["Name"]])[.ids], mc.cores = mc.cores
+        )
     )
     mat[is.na(mat)] <- fill
     mat

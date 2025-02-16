@@ -1,61 +1,174 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <R.h>
+#include <Rinternals.h>
 #include <zlib.h>
-#include <R.h>  // Include R header for Rprintf
+#include <float.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <stdint.h>
 
+SEXP calc_boot_row_vals(SEXP filename_sexp, SEXP n_trans_sexp,
+                              SEXP n_boot_sexp, SEXP n_threads_sexp) {
+    // Protect R objects from garbage collection
+    PROTECT_INDEX px;
+    PROTECT_WITH_INDEX(filename_sexp, &px);
 
-void calc_boot_row_vals(char **filename, int *n_trans, int *n_boot, double *result) {
+    // Convert inputs from SEXP to C types
+    const char* filename = CHAR(STRING_ELT(filename_sexp, 0));
+    int n_trans = INTEGER(n_trans_sexp)[0];
+    int n_boot = INTEGER(n_boot_sexp)[0];
+    int n_threads = INTEGER(n_threads_sexp)[0];
+
+    // Input validation
+    if (n_trans <= 1) {
+        UNPROTECT(1);
+        Rf_error("Invalid number of transcripts: n_trans=%d", n_trans);
+    }
+
+    if (n_boot <= 1) {
+        UNPROTECT(1);
+        Rf_error("Invalid number of bootstraps:  n_boot=%d", n_boot);
+    }
+
+    if (n_threads < 1) {
+        UNPROTECT(1);
+        Rf_error("Invalid number of threads: %d", n_threads);
+    }
+
+    // Calculate total values needed and check for overflow
+    double total_values_double = (double)n_trans * (double)n_boot;
+    if (total_values_double > (double)SIZE_MAX / sizeof(double)) {
+        UNPROTECT(1);
+        Rf_error("Memory size overflow");
+    }
+    size_t total_values = (size_t)total_values_double;
+    size_t memory_needed = total_values * sizeof(double);
+
+    // Create R vector for results
+    SEXP result_sexp = PROTECT(allocVector(REALSXP, n_trans));
+    double *result = REAL(result_sexp);
+    memset(result, 0, n_trans * sizeof(double));
 
     // Open the gzipped file
-    gzFile file = gzopen(*filename, "rb");
+    errno = 0;
+    gzFile file = gzopen(filename, "rb");
     if (file == NULL) {
-        perror("Error opening gzipped file");
-        return;
+        UNPROTECT(2);
+        Rf_error("Failed to open file '%s': %s", filename, strerror(errno));
     }
 
-    int total_values = (*n_trans) * (*n_boot);
-    // Allocate memory to store matrix data
-    double *matrix = (double *)malloc(total_values * sizeof(double));
-    if (matrix == NULL) {
-        perror("Memory allocation failed");
+    // Check file size if possible
+    z_off_t initial_pos = gztell(file);
+    if (gzseek(file, 0L, SEEK_END) != -1) {
+        z_off_t file_size = gztell(file);
+        gzseek(file, initial_pos, SEEK_SET);
+
+        if (file_size > memory_needed) {
+            warning("File '%s' contains more data than expected (%zu bytes vs %zu bytes needed). Extra data will be ignored.",
+                    filename, (size_t)file_size, memory_needed);
+        }
+    } else {
+        gzrewind(file);
+    }
+
+    // Allocate memory for matrix using R's allocator
+    SEXP matrix_sexp = PROTECT(allocVector(REALSXP, total_values));
+    double *matrix = REAL(matrix_sexp);
+
+    // Read data in chunks
+    const size_t chunk_size = 1024 * 1024;  // 1MB chunks
+    size_t remaining = memory_needed;
+    size_t offset = 0;
+    char *buffer = (char *)matrix;
+
+    while (remaining > 0) {
+        size_t to_read = (remaining < chunk_size) ? remaining : chunk_size;
+        int bytes_read = gzread(file, buffer + offset, to_read);
+
+        if (bytes_read < 0) {
+            int errnum;
+            const char *errmsg = gzerror(file, &errnum);
+            gzclose(file);
+            UNPROTECT(3);
+            Rf_error("Error reading from file: %s", errmsg);
+        }
+
+        if (bytes_read == 0) break;  // EOF
+
+        remaining -= bytes_read;
+        offset += bytes_read;
+    }
+
+    if (remaining > 0) {
         gzclose(file);
-        return;
+        UNPROTECT(3);
+        Rf_error("Incomplete read: expected %zu bytes, got %zu", memory_needed, offset);
     }
 
-    // Parse the data
-    size_t read_count = gzread(file, matrix, total_values * sizeof(double));
-    if (read_count != total_values * sizeof(double)) {
-        Rprintf("Expected %d values but read %zu bytes\n", total_values, read_count);
-        free(matrix);
-        gzclose(file);
-        return;
+    // Check for extra data
+    char extra_byte;
+    if (gzread(file, &extra_byte, 1) > 0) {
+        warning("Additional data exists in file after expected matrix data");
     }
 
-    gzclose(file); // Close the file
+    gzclose(file);
 
-    // Compute row statistics as requested
-    for (int i = 0; i < *n_trans; i++) {
-        double row_sum = 0.0;
+    // Use OpenMP only if n_threads > 1
+#ifdef _OPENMP
+    if (n_threads > 1) {
+        omp_set_num_threads(n_threads);
+#pragma omp parallel for schedule(dynamic)
+        for (int i = 0; i < n_trans; i++) {
+            double row_sum = 0.0;
+            double row_mean;
 
-        // Calculate row mean
-        for (int j = 0; j < *n_boot; j++) {
-            row_sum += matrix[i + j * (*n_trans)];  // Fill by column (column-major order)
+            for (int j = 0; j < n_boot; j++) {
+                row_sum += matrix[i + j * n_trans];
+            }
+            row_mean = row_sum / n_boot;
+
+            if (fabs(row_mean) < DBL_EPSILON) {
+                result[i] = 0.0;
+                continue;
+            }
+
+            double sum_squared_diffs = 0.0;
+            for (int j = 0; j < n_boot; j++) {
+                double val = matrix[i + j * n_trans];
+                double diff = val - row_mean;
+                sum_squared_diffs += diff * diff;
+            }
+
+            result[i] = sum_squared_diffs / row_mean;
         }
-        double row_mean = row_sum / (*n_boot);
+    } else {
+#endif
+        for (int i = 0; i < n_trans; i++) {
+            double row_sum = 0.0;
+            double row_mean;
 
-        if (row_mean == 0.0) {
-            result[i] = 0.0;  // Handle potential division by zero
-            continue;
-        }
+            for (int j = 0; j < n_boot; j++) {
+                row_sum += matrix[i + j * n_trans];
+            }
+            row_mean = row_sum / n_boot;
 
-        // Compute sum of squared differences divided by row mean
-        double sum_squared_diffs = 0.0;
-        for (int j = 0; j < *n_boot; j++) {
-            double diff = matrix[i + j * (*n_trans)] - row_mean;  // Subtract row mean
-            sum_squared_diffs += diff * diff;
+            if (fabs(row_mean) < DBL_EPSILON) {
+                result[i] = 0.0;
+                continue;
+            }
+
+            double sum_squared_diffs = 0.0;
+            for (int j = 0; j < n_boot; j++) {
+                double val = matrix[i + j * n_trans];
+                double diff = val - row_mean;
+                sum_squared_diffs += diff * diff;
+            }
+
+            result[i] = sum_squared_diffs / row_mean;
         }
-        result[i] = sum_squared_diffs / row_mean;  // Return result for this row
+#ifdef _OPENMP
     }
+#endif
 
-    free(matrix);
+    UNPROTECT(3);
+    return result_sexp;
 }
