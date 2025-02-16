@@ -49,6 +49,7 @@
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  extra_assays <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_boot <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  n_threads <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -90,6 +91,12 @@ None will be returned by default</p></dd>
 <dd><p>The maximum number of bootstraps to use. Setting this to
 zero will ignore all bootstraps and the scaledCounts assay will not be
 included in the returned object</p></dd>
+
+
+<dt id="arg-n-threads">n_threads<a class="anchor" aria-label="anchor" href="#arg-n-threads"></a></dt>
+<dd><p>Passed to C for optional parallelised computation of
+bootstrap overdispersion estimates. Only used if OpenMP is available on
+the computational infrastructure.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
