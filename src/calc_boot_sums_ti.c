@@ -6,8 +6,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-SEXP calc_boot_row_vals(SEXP filename_sexp, SEXP n_trans_sexp,
-                              SEXP n_boot_sexp, SEXP n_threads_sexp) {
+SEXP calc_boot_row_vals(SEXP filename_sexp, SEXP n_trans_sexp, SEXP n_boot_sexp) {
     // Protect R objects from garbage collection
     PROTECT_INDEX px;
     PROTECT_WITH_INDEX(filename_sexp, &px);
@@ -16,7 +15,6 @@ SEXP calc_boot_row_vals(SEXP filename_sexp, SEXP n_trans_sexp,
     const char* filename = CHAR(STRING_ELT(filename_sexp, 0));
     int n_trans = INTEGER(n_trans_sexp)[0];
     int n_boot = INTEGER(n_boot_sexp)[0];
-    int n_threads = INTEGER(n_threads_sexp)[0];
 
     // Input validation
     if (n_trans <= 1) {
@@ -27,11 +25,6 @@ SEXP calc_boot_row_vals(SEXP filename_sexp, SEXP n_trans_sexp,
     if (n_boot <= 1) {
         UNPROTECT(1);
         Rf_error("Invalid number of bootstraps:  n_boot=%d", n_boot);
-    }
-
-    if (n_threads < 1) {
-        UNPROTECT(1);
-        Rf_error("Invalid number of threads: %d", n_threads);
     }
 
     // Calculate total values needed and check for overflow
@@ -112,62 +105,29 @@ SEXP calc_boot_row_vals(SEXP filename_sexp, SEXP n_trans_sexp,
 
     gzclose(file);
 
-    // Use OpenMP only if n_threads > 1
-#ifdef _OPENMP
-    if (n_threads > 1) {
-        omp_set_num_threads(n_threads);
-#pragma omp parallel for schedule(dynamic)
-        for (int i = 0; i < n_trans; i++) {
-            double row_sum = 0.0;
-            double row_mean;
+    for (int i = 0; i < n_trans; i++) {
+        double row_sum = 0.0;
+        double row_mean;
 
-            for (int j = 0; j < n_boot; j++) {
-                row_sum += matrix[i + j * n_trans];
-            }
-            row_mean = row_sum / n_boot;
-
-            if (fabs(row_mean) < DBL_EPSILON) {
-                result[i] = 0.0;
-                continue;
-            }
-
-            double sum_squared_diffs = 0.0;
-            for (int j = 0; j < n_boot; j++) {
-                double val = matrix[i + j * n_trans];
-                double diff = val - row_mean;
-                sum_squared_diffs += diff * diff;
-            }
-
-            result[i] = sum_squared_diffs / row_mean;
+        for (int j = 0; j < n_boot; j++) {
+            row_sum += matrix[i + j * n_trans];
         }
-    } else {
-#endif
-        for (int i = 0; i < n_trans; i++) {
-            double row_sum = 0.0;
-            double row_mean;
+        row_mean = row_sum / n_boot;
 
-            for (int j = 0; j < n_boot; j++) {
-                row_sum += matrix[i + j * n_trans];
-            }
-            row_mean = row_sum / n_boot;
-
-            if (fabs(row_mean) < DBL_EPSILON) {
-                result[i] = 0.0;
-                continue;
-            }
-
-            double sum_squared_diffs = 0.0;
-            for (int j = 0; j < n_boot; j++) {
-                double val = matrix[i + j * n_trans];
-                double diff = val - row_mean;
-                sum_squared_diffs += diff * diff;
-            }
-
-            result[i] = sum_squared_diffs / row_mean;
+        if (fabs(row_mean) < DBL_EPSILON) {
+            result[i] = 0.0;
+            continue;
         }
-#ifdef _OPENMP
+
+        double sum_squared_diffs = 0.0;
+        for (int j = 0; j < n_boot; j++) {
+            double val = matrix[i + j * n_trans];
+            double diff = val - row_mean;
+            sum_squared_diffs += diff * diff;
+        }
+
+        result[i] = sum_squared_diffs / row_mean;
     }
-#endif
 
     UNPROTECT(3);
     return result_sexp;

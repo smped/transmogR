@@ -9,12 +9,28 @@ test_that("assayFromQuants returns correct values",{
         A = data.frame(Name = c("t1", "t2"), od = rnorm(2)),
         B = data.frame(Name = "t1", od = rnorm(1))
     )
-    mat <- .assayFromQuants(quants, "od", ids, 0, 1L)
+    mat <- .assayFromQuants(quants, "od", ids, 0)
     expect_true(is(mat, "matrix"))
     expect_true(is.double(mat))
     expect_equal(rownames(mat), c("t1", "t2"))
     expect_equal(colnames(mat), c("A", "B"))
     expect_equal(mat[4], 0)
+
+})
+
+
+test_that("import matches edgeR", {
+    edger <- edgeR::catchSalmon(f)
+    se <- suppressMessages(digestSalmon(f))
+    expect_true(
+        all.equal(
+            edger$annotation$Overdispersion, rowData(se)$overdispersion
+        )
+    )
+    expect_true(all.equal(edger$counts[, 1], assay(se, "counts")[,1]))
+    expect_true(
+        all.equal(unname(rowData(se)$length), edger$annotation$Length)
+    )
 
 })
 
@@ -60,7 +76,7 @@ test_that("C parsing is correct",{
     nm_true <- c("ENST00000000233.10", "ENST00000000412.8")
     expect_equal(nm, nm_true)
 
-    od <- .Call("calc_boot_row_vals", f_boot, length(nm_true), 10L, 1L)
+    od <- .Call("calc_boot_row_vals", f_boot, length(nm_true), 10L)
     expect_true(all.equal(c(623.060848059843, 1813.5696136543), od))
 
 })
@@ -92,19 +108,16 @@ test_that("C errors correctly when parsing transcript ids", {
 
 test_that("C errors correctly when processing bootstraps", {
     expect_error(
-        .Call("calc_boot_row_vals", f_boot, 1L, 1L, 1L), ".+transcripts.+"
+        .Call("calc_boot_row_vals", f_boot, 1L, 1L), ".+transcripts.+"
     )
     expect_error(
-        .Call("calc_boot_row_vals", f_boot, 2L, 1L, 1L), ".+bootstrap.+"
+        .Call("calc_boot_row_vals", f_boot, 2L, 1L), ".+bootstrap.+"
     )
     expect_error(
-        .Call("calc_boot_row_vals", f_boot, 2L, 10L, 0L), ".+threads.+"
-    )
-    expect_error(
-        .Call("calc_boot_row_vals", "", 2L, 10L, 1L), "Failed to open+"
+        .Call("calc_boot_row_vals", "", 2L, 10L), "Failed to open+"
     )
     expect_warning(
-        .Call("calc_boot_row_vals", f_boot, 2L, 2L, 1L),
+        .Call("calc_boot_row_vals", f_boot, 2L, 2L),
         "Additional data exists in file.+"
     )
 })

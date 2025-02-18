@@ -12,7 +12,6 @@ digestSalmon(
   verbose = TRUE,
   extra_assays = NULL,
   max_boot = Inf,
-  n_threads = 1,
   ...
 )
 }
@@ -37,10 +36,6 @@ None will be returned by default}
 \item{max_boot}{The maximum number of bootstraps to use. Setting this to
 zero will ignore all bootstraps and the scaledCounts assay will not be
 included in the returned object}
-
-\item{n_threads}{Passed to C for optional parallelised computation of
-bootstrap overdispersion estimates. Only used if OpenMP is available on
-the computational infrastructure.}
 
 \item{...}{Not used}
 }
