@@ -13,7 +13,9 @@ digestSalmon(
   extra_assays = NULL,
   max_boot = Inf,
   n_threads = 1,
-  ...
+  ...,
+  r_threads = n_threads,
+  c_threads = n_threads
 )
 }
 \arguments{
@@ -38,11 +40,17 @@ None will be returned by default}
 zero will ignore all bootstraps and the scaledCounts assay will not be
 included in the returned object}
 
-\item{n_threads}{Passed to C for optional parallelised computation of
-bootstrap overdispersion estimates. Only used if OpenMP is available on
-the computational infrastructure.}
+\item{n_threads}{The number of threads to use for all parallel processes}
 
 \item{...}{Not used}
+
+\item{r_threads}{Number of threads used for any internal calls to
+\code{\link[parallel:mclapply]{parallel::mclapply()}}. Given the default memory management practices in R,
+setting this value too high may cause issues with RAM requirements}
+
+\item{c_threads}{Passed to C for optional parallelised computation of
+bootstrap overdispersion estimates. Only used if OpenMP is available on
+the underlying computational infrastructure.}
 }
 \value{
 A SummarizedExperiment object containing assays for counts and
