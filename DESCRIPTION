@@ -22,6 +22,7 @@ Depends:
     GenomicRanges
 Imports:
     BSgenome,
+    data.table,
     GenomeInfoDb,
     GenomicFeatures,
     ggplot2 (>= 3.5.0),
@@ -35,8 +36,7 @@ Imports:
     stats,
     S4Vectors,
     SummarizedExperiment,
-    VariantAnnotation,
-    vroom
+    VariantAnnotation
 Suggests:
     BiocStyle,
     BSgenome.Hsapiens.UCSC.hg38,

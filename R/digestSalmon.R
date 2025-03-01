@@ -51,6 +51,7 @@
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom S4Vectors DataFrame metadata<-
 #' @importFrom matrixStats rowVars
+#' @importFrom data.table fread
 #'
 #' @export
 digestSalmon <- function(
@@ -117,18 +118,14 @@ digestSalmon <- function(
         stop(msg)
     }
 
-    ## Column Types to ensure only the required columns are parsed
-    col_types <- list(
-        Name = "c", Length = "d", effectiveLength = "-", TPM = "-",
-        NumReads = "d"
-    )
-    col_types[names(col_types) %in% extra_assays] <- "d"
-    col_types <- paste(unlist(col_types), collapse = "")
+    ## Ensure only the required columns are parsed
+    quant_cols <- c("Name", "Length", "EffectiveLength", "TPM", "NumReads")
+    assay_cols <- c("name", "length", tolower(extra_assays), "numreads")
+    col_select <- which(tolower(quant_cols) %in% assay_cols)
 
     ## Import quants
-    options(readr.show_progress = FALSE)
     if (verbose) message("Parsing quants...")
-    quants <- lapply(quant_files, vroom::vroom, col_types = col_types)
+    quants <- lapply(quant_files, fread, sep = "\t", select = col_select)
     if (verbose) message("done")
 
     ## Transcript Lengths
