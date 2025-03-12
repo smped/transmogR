@@ -32,6 +32,11 @@
 #' incorporated, with 's', 'i' and 'd' representing SNPs, Insertions and
 #' Deletions respectively
 #' @param var_sep Separator between any previous tags and variant tags
+#' @param ol_vars Error handling for any overlapping variants. Can take values in
+#' c("fail", "none", "first", "last", "longest", "shortest").
+#' Default is set to fail, with additional options to drop all overlapping
+#' variants ('none'), select by genomic position ('first', 'last'), or select
+#' by the scale of change to the genome ('longest', 'shortest')
 #' @param verbose logical(1) Include informative messages, or operate silently
 #' @param mc.cores Number of cores to be used when multi-threading via
 #' [parallel::mclapply]
@@ -86,8 +91,8 @@ setMethod(
     signature = signature(x = "XStringSet", var = "GRanges", exons = "GRanges"),
     function(
         x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
-        omit_ranges = NULL, tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc.cores = 1, ...
+        omit_ranges = NULL, tag = NULL, sep = "_", var_tags = FALSE,
+        var_sep = "_", ol_vars = "fail", verbose = TRUE, mc.cores = 1, ...
     ) {
 
         ## 1. Identify SNPs within 'var'
@@ -100,7 +105,7 @@ setMethod(
 
         ## Checks
         trans_col <- match.arg(trans_col, colnames(mcols(exons)))
-        var <- .checkAlts(var, alt_col)
+        var <- .checkAlts(var, alt_col, ol_vars = ol_vars)
 
         ## Separate into snps & indels
         var <- subset(var, seqnames %in% seqlevels(x))
@@ -190,8 +195,8 @@ setMethod(
     signature = signature(x = "BSgenome", var = "GRanges", exons = "GRanges"),
     function(
         x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
-        omit_ranges = NULL, tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc.cores = 1, ...
+        omit_ranges = NULL, tag = NULL, sep = "_", var_tags = FALSE,
+        var_sep = "_", ol_vars = "fail", verbose = TRUE, mc.cores = 1, ...
     ) {
         ## Setup the sequence info, only extracting those with a transcript
         seq_to_get <- unique(seqnames(exons))
@@ -204,7 +209,7 @@ setMethod(
         if (verbose) message("done")
         transmogrify(
             x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,
-            var_sep, verbose, mc.cores, ...
+            var_sep, ol_vars, verbose, mc.cores, ...
         )
     }
 )
@@ -219,15 +224,15 @@ setMethod(
     signature = signature(x = "BSgenome", var = "VcfFile", exons = "GRanges"),
     function(
         x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
-        omit_ranges = NULL, tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc.cores = 1, which,
+        omit_ranges = NULL, tag = NULL, sep = "_", var_tags = FALSE,
+        var_sep = "_", ol_vars = "fail", verbose = TRUE, mc.cores = 1, which,
         ...
     ) {
         var <- .parseVariants(var, alt_col, which)
         if (verbose) message("Loaded ", length(var), " variants")
         transmogrify(
             x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,
-            var_sep, verbose, mc.cores, ...
+            var_sep, ol_vars, verbose, mc.cores, ...
         )
     }
 )
@@ -241,14 +246,14 @@ setMethod(
     signature = signature(x = "XStringSet", var = "VcfFile", exons = "GRanges"),
     function(
         x, var, exons, alt_col = "ALT", trans_col = "transcript_id",
-        omit_ranges = NULL, tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", verbose = TRUE, mc.cores = 1, which,
+        omit_ranges = NULL, tag = NULL, sep = "_", var_tags = FALSE,
+        var_sep = "_", ol_vars = "fail", verbose = TRUE, mc.cores = 1, which,
         ...
     ) {
         var <- .parseVariants(var, alt_col, which)
         transmogrify(
             x, var, exons, alt_col, trans_col, omit_ranges, tag, sep, var_tags,
-            var_sep, verbose, mc.cores, ...
+            var_sep, ol_vars, verbose, mc.cores, ...
         )
     }
 )

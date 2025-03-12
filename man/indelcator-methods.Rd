@@ -9,11 +9,27 @@
 \usage{
 indelcator(x, indels, ...)
 
-\S4method{indelcator}{XString,GRanges}(x, indels, exons, alt_col = "ALT", ...)
+\S4method{indelcator}{XString,GRanges}(x, indels, exons, alt_col = "ALT", ol_vars = "fail", ...)
 
-\S4method{indelcator}{DNAStringSet,GRanges}(x, indels, alt_col = "ALT", mc.cores = 1, verbose = TRUE, ...)
+\S4method{indelcator}{DNAStringSet,GRanges}(
+  x,
+  indels,
+  alt_col = "ALT",
+  ol_vars = "fail",
+  mc.cores = 1,
+  verbose = TRUE,
+  ...
+)
 
-\S4method{indelcator}{BSgenome,GRanges}(x, indels, alt_col = "ALT", mc.cores = 1, names, ...)
+\S4method{indelcator}{BSgenome,GRanges}(
+  x,
+  indels,
+  alt_col = "ALT",
+  ol_vars = "fail",
+  mc.cores = 1,
+  names,
+  ...
+)
 }
 \arguments{
 \item{x}{Sequence of class XString}
@@ -25,6 +41,12 @@ indelcator(x, indels, ...)
 \item{exons}{GRanges object containing exon structure for \code{x}}
 
 \item{alt_col}{Column containing the alternate allele}
+
+\item{ol_vars}{Error handling for any overlapping variants. Can take values in
+c("fail", "none", "first", "last", "longest", "shortest").
+Default is set to fail, with additional options to drop all overlapping
+variants ('none'), select by genomic position ('first', 'last'), or select
+by the scale of change to the genome ('longest', 'shortest')}
 
 \item{mc.cores}{Number of cores to use when calling \link[parallel:mclapply]{parallel::mclapply}
 internally}
