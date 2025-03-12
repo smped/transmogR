@@ -28,6 +28,11 @@
 #' @param var_sep Separator between any previous tags and variant tags
 #' @param which GRanges object passed to [VariantAnnotation::ScanVcfParam] if
 #' using a VCF directly
+#' @param ol_vars Error handling for any overlapping variants. Can take values in
+#' c("fail", "none", "first", "last", "longest", "shortest").
+#' Default is set to fail, with additional options to drop all overlapping
+#' variants ('none'), select by genomic position ('first', 'last'), or select
+#' by the scale of change to the genome ('longest', 'shortest')
 #' @param verbose logical(1) Print progress messages while running
 #' @param ... Passed to [parallel::mclapply]
 #'
@@ -60,7 +65,7 @@ setMethod(
     signature = signature(x = "XStringSet", var = "GRanges"),
     function(
         x, var, alt_col = "ALT", mask = GRanges(), tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", verbose = TRUE, ...
+        var_tags = FALSE, var_sep = "_", ol_vars = "fail", verbose = TRUE, ...
     ) {
 
         ## 1. Identify SNPs within 'var'
@@ -72,7 +77,7 @@ setMethod(
 
         stopifnot(is(mask, "GRanges"))
         ## Check the variants are valid
-        var <- .checkAlts(var, alt_col)
+        var <- .checkAlts(var, alt_col, ol_vars = ol_vars)
         var <- var[!overlapsAny(var, mask)]
         ## Separate into snps & indels
         var <- subset(var, seqnames %in% seqlevels(x))
@@ -126,7 +131,7 @@ setMethod(
     signature = signature(x = "BSgenome", var = "GRanges"),
     function(
         x, var, alt_col = "ALT", mask = GRanges(), names, tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", verbose = TRUE, ...
+        var_tags = FALSE, var_sep = "_", ol_vars = "fail", verbose = TRUE, ...
     ) {
         ## Setup the sequence info
         if (verbose) message(
@@ -137,7 +142,8 @@ setMethod(
         if (verbose) message("done")
         genomogrify(
             seq, var, alt_col, mask, tag, sep,
-            var_tags = var_tags, var_sep = "_", verbose = verbose, ...
+            var_tags = var_tags, var_sep = var_sep, ol_vars = ol_vars, verbose = verbose,
+            ...
         )
     }
 )
@@ -150,12 +156,12 @@ setMethod(
     signature = signature(x = "BSgenome", var = "VcfFile"),
     function(
         x, var, alt_col = "ALT", mask = GRanges(), names, tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", which, verbose = TRUE, ...
+        var_tags = FALSE, var_sep = "_", ol_vars = "fail", which, verbose = TRUE, ...
     ) {
         var <- .parseVariants(var, alt_col, which)
         genomogrify(
             x, var, alt_col, mask, names, tag, sep, var_tags = var_tags,
-            var_sep = "_", verbose = verbose,  ...
+            var_sep = var_sep, ol_vars = ol_vars, verbose = verbose,  ...
         )
     }
 )
@@ -168,12 +174,13 @@ setMethod(
     signature = signature(x = "XStringSet", var = "VcfFile"),
     function(
         x, var, alt_col = "ALT", mask = GRanges(), tag = NULL, sep = "_",
-        var_tags = FALSE, var_sep = "_", which, verbose = TRUE, ...
+        var_tags = FALSE, var_sep = "_", ol_vars = "fail", which, verbose = TRUE, ...
     ) {
         var <- .parseVariants(var, alt_col, which)
         genomogrify(
             x, var, alt_col, mask, tag, sep,
-            var_tags = var_tags, var_sep = "_", verbose = verbose, ...
+            var_tags = var_tags, var_sep = var_sep, ol_vars = ol_vars, verbose = verbose,
+            ...
         )
     }
 )

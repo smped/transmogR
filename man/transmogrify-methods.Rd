@@ -22,6 +22,7 @@ transmogrify(x, var, exons, ...)
   sep = "_",
   var_tags = FALSE,
   var_sep = "_",
+  ol_vars = "fail",
   verbose = TRUE,
   mc.cores = 1,
   ...
@@ -38,6 +39,7 @@ transmogrify(x, var, exons, ...)
   sep = "_",
   var_tags = FALSE,
   var_sep = "_",
+  ol_vars = "fail",
   verbose = TRUE,
   mc.cores = 1,
   ...
@@ -54,6 +56,7 @@ transmogrify(x, var, exons, ...)
   sep = "_",
   var_tags = FALSE,
   var_sep = "_",
+  ol_vars = "fail",
   verbose = TRUE,
   mc.cores = 1,
   which,
@@ -71,6 +74,7 @@ transmogrify(x, var, exons, ...)
   sep = "_",
   var_tags = FALSE,
   var_sep = "_",
+  ol_vars = "fail",
   verbose = TRUE,
   mc.cores = 1,
   which,
@@ -102,6 +106,12 @@ incorporated, with 's', 'i' and 'd' representing SNPs, Insertions and
 Deletions respectively}
 
 \item{var_sep}{Separator between any previous tags and variant tags}
+
+\item{ol_vars}{Error handling for any overlapping variants. Can take values in
+c("fail", "none", "first", "last", "longest", "shortest").
+Default is set to fail, with additional options to drop all overlapping
+variants ('none'), select by genomic position ('first', 'last'), or select
+by the scale of change to the genome ('longest', 'shortest')}
 
 \item{verbose}{logical(1) Include informative messages, or operate silently}
 

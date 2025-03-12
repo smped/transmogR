@@ -20,6 +20,7 @@ genomogrify(x, var, ...)
   sep = "_",
   var_tags = FALSE,
   var_sep = "_",
+  ol_vars = "fail",
   verbose = TRUE,
   ...
 )
@@ -34,6 +35,7 @@ genomogrify(x, var, ...)
   sep = "_",
   var_tags = FALSE,
   var_sep = "_",
+  ol_vars = "fail",
   verbose = TRUE,
   ...
 )
@@ -48,6 +50,7 @@ genomogrify(x, var, ...)
   sep = "_",
   var_tags = FALSE,
   var_sep = "_",
+  ol_vars = "fail",
   which,
   verbose = TRUE,
   ...
@@ -62,6 +65,7 @@ genomogrify(x, var, ...)
   sep = "_",
   var_tags = FALSE,
   var_sep = "_",
+  ol_vars = "fail",
   which,
   verbose = TRUE,
   ...
@@ -88,6 +92,12 @@ incorporated, with 's', 'i' and 'd' representing SNPs, Insertions and
 Deletions respectively}
 
 \item{var_sep}{Separator between any previous tags and variant tags}
+
+\item{ol_vars}{Error handling for any overlapping variants. Can take values in
+c("fail", "none", "first", "last", "longest", "shortest").
+Default is set to fail, with additional options to drop all overlapping
+variants ('none'), select by genomic position ('first', 'last'), or select
+by the scale of change to the genome ('longest', 'shortest')}
 
 \item{verbose}{logical(1) Print progress messages while running}
 

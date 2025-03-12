@@ -1,7 +1,7 @@
 #' @keywords internal
 #' @importFrom Biostrings IUPAC_CODE_MAP
 #' @importFrom S4Vectors mcols mcols<-
-.checkAlts <- function(var, alt_col, ref_col = "REF") {
+.checkAlts <- function(var, alt_col, ref_col = "REF", ol_vars) {
 
     alt_col <- match.arg(alt_col, colnames(mcols(var)))
     alts <- mcols(var)[[alt_col]]
@@ -47,7 +47,9 @@
     }
 
     mcols(var)[[alt_col]] <- alts[!is_na]
-    var
+
+    ## Final checks for any overlapping variants
+    .checkOverlapVars(var, ol_vars)
 }
 
 #' @keywords internal
@@ -126,3 +128,66 @@
     }
     gi
 }
+
+#' @keywords internal
+#' @importFrom methods slot
+.checkOverlapVars <- function(
+        var,
+        ol_vars = c("fail", "none", "first", "last", "longest", "shortest")
+){
+
+    ol_vars <- match.arg(ol_vars)
+    reduced_gr <- reduce(var, ignore.strand = TRUE, min.gapwidth = 0L)
+    ol <- findOverlaps(reduced_gr, var)
+    dups <- duplicated(slot(ol, "from"))
+    reduced_multi <- unique(slot(ol, "from")[dups])
+    self_ol <- subset(ol, queryHits %in% reduced_multi)
+
+    if (length(self_ol) > 0) {
+        msg <- paste(
+            length(self_ol),
+            "pairs of overlapping loci found and cannot be incorporated into a modified reference."
+        )
+        if (ol_vars == "fail") stop(msg)
+        if (ol_vars == "none") {
+            msg <- c(msg, "\nAll overlapping variants will be removed")
+            keep <- NULL
+        }
+
+        ## From this point a selection will be returned so setup a list
+        ol_list <- split(slot(self_ol, "to"), slot(self_ol, "from"))
+        if (ol_vars == "first") {
+            msg <- c(msg, "\nThe first overlapping locus by genomic position will be retained")
+            keep <- vapply(ol_list, \(x) x[1], integer(1))
+        }
+        if (ol_vars == "last") {
+            msg <- c(msg, "\nThe last overlapping locus by genomic position will be retained")
+            keep <- vapply(ol_list, \(x) x[length(x)], integer(1))
+        }
+
+        ## The remaining two options will require a list with lengths
+        if (ol_vars == "longest") {
+            msg <- c(msg, "\nThe longest overlapping locus by genomic change will be retained")
+            keep <- lapply(
+                ol_list,
+                \(x) x[which.max(abs(nchar(var[x]$REF) - nchar(var[x]$ALT)))]
+            )
+            keep <- unlist(keep)
+        }
+        if (ol_vars == "shortest") {
+            msg <- c(msg, "\nThe shortest overlapping locus by genomic change will be retained")
+            keep <- lapply(
+                ol_list,
+                \(x) x[which.min(abs(nchar(var[x]$REF) - nchar(var[x]$ALT)))]
+            )
+            keep <- unlist(keep)
+        }
+
+        discard <- unique(setdiff(slot(self_ol, "to"), keep))
+        var <- var[-discard]
+        warning(msg)
+    }
+    var
+}
+
+

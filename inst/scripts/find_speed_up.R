@@ -100,7 +100,6 @@ var[c(88226, 88227)]
 ## Realistically, the GCC is being replaced by GTAT
 
 
-
 var[c(2708, 2709)]
 # GRanges object with 2 ranges and 2 metadata columns:
 #                             seqnames          ranges strand |         REF         ALT
@@ -110,3 +109,6 @@ var[c(2708, 2709)]
 # -------
 #     seqinfo: 24 sequences from an unspecified genome
 ## Similarly, the TTGTGTACTC is being replaced by TAAA
+
+## How did these get in the initial VCF?
+## Realistically, they cannot both be present in > 50% of unerlated individuals
