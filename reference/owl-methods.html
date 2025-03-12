@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">transmogR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">owl</span><span class="op">(</span><span class="va">seq</span>, <span class="va">snps</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'XStringSet,GRanges'</span></span>
-<span><span class="fu">owl</span><span class="op">(</span><span class="va">seq</span>, <span class="va">snps</span>, alt_col <span class="op">=</span> <span class="st">"ALT"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">owl</span><span class="op">(</span><span class="va">seq</span>, <span class="va">snps</span>, alt_col <span class="op">=</span> <span class="st">"ALT"</span>, ol_vars <span class="op">=</span> <span class="st">"fail"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'BSgenome,GRanges'</span></span>
 <span><span class="fu">owl</span><span class="op">(</span><span class="va">seq</span>, <span class="va">snps</span>, alt_col <span class="op">=</span> <span class="st">"ALT"</span>, <span class="va">names</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
@@ -70,6 +70,14 @@ the alternate allele</p></dd>
 <dt id="arg-alt-col">alt_col<a class="anchor" aria-label="anchor" href="#arg-alt-col"></a></dt>
 <dd><p>Column name in the mcols element of <code>snps</code> containing the
 alternate allele</p></dd>
+
+
+<dt id="arg-ol-vars">ol_vars<a class="anchor" aria-label="anchor" href="#arg-ol-vars"></a></dt>
+<dd><p>Error handling for any overlapping variants. Can take values in
+c("fail", "none", "first", "last", "longest", "shortest").
+Default is set to fail, with additional options to drop all overlapping
+variants ('none'), select by genomic position ('first', 'last'), or select
+by the scale of change to the genome ('longest', 'shortest')</p></dd>
 
 
 <dt id="arg-names">names<a class="anchor" aria-label="anchor" href="#arg-names"></a></dt>
