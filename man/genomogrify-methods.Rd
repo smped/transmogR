@@ -93,11 +93,8 @@ Deletions respectively}
 
 \item{var_sep}{Separator between any previous tags and variant tags}
 
-\item{ol_vars}{Error handling for any overlapping variants. Can take values in
-c("fail", "none", "first", "last", "longest", "shortest").
-Default is set to fail, with additional options to drop all overlapping
-variants ('none'), select by genomic position ('first', 'last'), or select
-by the scale of change to the genome ('longest', 'shortest')}
+\item{ol_vars}{Error handling for any overlapping variants. See
+\link{cleanVariants} for possible values and an explanation}
 
 \item{verbose}{logical(1) Print progress messages while running}
 

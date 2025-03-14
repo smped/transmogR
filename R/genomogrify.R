@@ -28,11 +28,8 @@
 #' @param var_sep Separator between any previous tags and variant tags
 #' @param which GRanges object passed to [VariantAnnotation::ScanVcfParam] if
 #' using a VCF directly
-#' @param ol_vars Error handling for any overlapping variants. Can take values in
-#' c("fail", "none", "first", "last", "longest", "shortest").
-#' Default is set to fail, with additional options to drop all overlapping
-#' variants ('none'), select by genomic position ('first', 'last'), or select
-#' by the scale of change to the genome ('longest', 'shortest')
+#' @param ol_vars Error handling for any overlapping variants. See
+#' [cleanVariants] for possible values and an explanation
 #' @param verbose logical(1) Print progress messages while running
 #' @param ... Passed to [parallel::mclapply]
 #'
@@ -77,7 +74,7 @@ setMethod(
 
         stopifnot(is(mask, "GRanges"))
         ## Check the variants are valid
-        var <- .checkAlts(var, alt_col, ol_vars = ol_vars)
+        var <- cleanVariants(var, ol_vars, alt_col = alt_col)
         var <- var[!overlapsAny(var, mask)]
         ## Separate into snps & indels
         var <- subset(var, seqnames %in% seqlevels(x))

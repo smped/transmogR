@@ -18,11 +18,6 @@
 #' @param x GenomicRanges object
 #' @param alt_col Name of the column with mcols(x) which contains the alternate
 #' allele. Can be an XStringSetList, XStringSet or character
-#' @param ol_vars Error handling for any overlapping variants. Can take values in
-#' c("fail", "none", "first", "last", "longest", "shortest").
-#' Default is set to fail, with additional options to drop all overlapping
-#' variants ('none'), select by genomic position ('first', 'last'), or select
-#' by the scale of change to the genome ('longest', 'shortest')
 #' @param ... Not used
 #'
 #' @examples
@@ -41,11 +36,11 @@
 #' @importFrom methods is
 #' @importFrom IRanges width
 #' @export
-varTypes <- function(x, alt_col = "ALT", ol_vars = "fail", ...){
+varTypes <- function(x, alt_col = "ALT", ...){
 
     ## x should be a GRanges object with variants
     stopifnot(is(x, "GRanges"))
-    x <- .checkAlts(x, alt_col, ol_vars = ol_vars)
+    x <- .checkAlts(x, alt_col)
 
     ## Basic info
     w <- width(x)

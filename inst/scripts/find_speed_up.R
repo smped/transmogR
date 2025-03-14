@@ -19,39 +19,35 @@ library(plyranges)
 library(transmogR)
 library(rtracklayer)
 library(GenomicFeatures)
+library(parallel)
+
+## Load the relevant reference, then modify
+ref <- BSgenome.Hsapiens.UCSC.hg38
+chr <- paste0("chr", c(1:22, "X", "Y", "M"))
+# chr <- paste0("chr", c(11:15))
 
 ## Start by loading a set of variants, subset to chr10 for testing
 var <- read_rds("~/TKI/DBPAInT/data/rds/1000GP_SNV_INDEL_panhuman.rds") |>
-    subset(seqnames == "chr10") |>
+    subset(seqnames %in% chr) |>
     transmogR:::.checkOverlapVars(ol_vars = "none")
-
-## Load the relevant reference, then subset to chr10 & modify
-ref <- getSeq(BSgenome.Hsapiens.UCSC.hg38, names = "chr10") |>
-    as("DNAStringSet") |>
-    setNames("chr10")
-new_ref <- genomogrify(ref, var)
-
-## Create the map of new-old
-var_map <- var %>%
-    subset(nchar(REF) != nchar(ALT)) %>%
-    mutate(
-        change = nchar(ALT) - nchar(REF),
-        cumsum_change = cumsum(change),
-        new_start = start + c(0, cumsum_change[-length(.)]),
-        new_end = end + cumsum_change
-    )
+new_ref <- genomogrify(ref, var, names = chr)
 
 ## Load the GTF
 gtf <- read_rds("~/TKI/DBPAInT/data/rds/gencode.v44.rds") %>%
-    subset(seqnames == "chr10") %>%
+    subset(grepl("chr", seqnames)) %>%
     splitAsList(.$type)
-exons_by_trans <- gtf$exon %>%
-    splitAsList(.$transcript_id)
-
-## extractTranscriptSeqs
+exons_by_trans <- gtf$exon %>% splitAsList(.$transcript_id)
 trans_seq <- extractTranscriptSeqs(ref, exons_by_trans)
 
-## Now Figure it out by changing co-ords
+## Test the new method
+new_exon <- shiftByVar(gtf$exon, var, mc.cores = 2)
+new_exons_by_trans <- splitAsList(new_exon, new_exon$transcript_id)
+new_trans_seq <- extractTranscriptSeqs(new_ref, new_exons_by_trans)
+mean(new_trans_seq == trans_seq)
+which(new_trans_seq != trans_seq) |> head()
+
+
+# Now Figure it out by changing co-ords
 change <- Rle(0L, nchar(ref))
 change[start(var_map)] <- var_map$change
 shift <- cumsum(change)

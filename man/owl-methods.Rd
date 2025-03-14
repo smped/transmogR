@@ -23,11 +23,8 @@ the alternate allele}
 \item{alt_col}{Column name in the mcols element of \code{snps} containing the
 alternate allele}
 
-\item{ol_vars}{Error handling for any overlapping variants. Can take values in
-c("fail", "none", "first", "last", "longest", "shortest").
-Default is set to fail, with additional options to drop all overlapping
-variants ('none'), select by genomic position ('first', 'last'), or select
-by the scale of change to the genome ('longest', 'shortest')}
+\item{ol_vars}{Error handling for any overlapping variants. See
+\link{cleanVariants} for possible values and an explanation}
 
 \item{names}{Sequence names to operate on}
 }
