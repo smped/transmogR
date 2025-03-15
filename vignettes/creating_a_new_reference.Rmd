@@ -71,6 +71,7 @@ library(VariantAnnotation)
 library(rtracklayer)
 library(extraChIPs)
 library(transmogR)
+library(GenomicFeatures)
 library(BSgenome.Hsapiens.UCSC.hg38)
 ```
 
@@ -125,7 +126,23 @@ gtf <- splitAsList(gtf, gtf$type)
 
 Knowing where our variants lie, and how they relate to each other can be 
 informative, and as such, some simple visualisation and summarisation functions
-have been included.
+have been included as well as some checking steps.
+Variant callers can often produce variant calls which are incompatible and the
+function `checkVariants()` will check for overlapping InDels, as well as 
+returning the `ALT` column as a character vector.
+
+```{r clean-variants}
+var <- cleanVariants(var)
+```
+
+In this case, no incompatible variants were included, but if they are present, 
+an error will be proudced by default.
+This behaviour can be modified by setting the `ol_vars` argument to return no
+overlapping InDels (`ol_vars = 'none'`), the longest or shortest in terms of 
+the largest or smallest change to the chromosome length, or even the first or 
+last of the overlapping variants.
+
+
 In the following, we can check to see how many exons directly overlap a variant,
 showing how many unique genes this summarises to.
 Any ids, which don't overlap a variants are also described in the plot title.
@@ -152,25 +169,15 @@ overlapsByVar(regions, var)
 
 # Creating Modified Reference Sequences
 
-## Modifying a Reference Genome
-
-The simplest method for modifying a reference genome is to simply call 
-`genomogrify()` with either a `DNAStringSet` or `BSgenome` object.
-A tag can be optionally added to all sequence names to avoid confusion.
-
-```{r chr1-mod}
-chr1_mod <- genomogrify(chr1, var, tag = "mod")
-chr1_mod
-```
-
-The new reference genome can be exported to fasta format using 
-`writeXStringSet()`.
+Several approaches are available for creating modified reference genomes or transcriptomes, as outlines below.
 
 ## Modifying a Reference Transcriptome
 
-The process for creating a variant-modified reference transcriptome is 
-essentially the same as above, with the addition of exon-level co-ordinates for
-the set of transcripts.
+A simple option for creating a variant-modified reference transcriptome is to 
+call the function `transmogrify()`, providing the reference sequence, a set of
+variants and the genomic co-ordinates of sequence features (e.g. transcripts) 
+for which the sequences are required.
+
 An optional tag can be added to all transcripts to indicate which have been 
 modified, with an additional tag able to be included which indicates which type
 of variant has been incorporated into the new transcript sequence.
@@ -190,10 +197,75 @@ This can be simply exported again using `writeXStringSet()`.
 If using decoy transcripts for `salmon`, the `gentrome` can also be simply 
 exported by combining the two modified references.
 
+This approach effectively steps through all the provided transcripts inserting
+the relevant variants where required, and as such can be somewhat time-consuming
+when working with genome-wide variants and a complete transcriptome.
+
+## Modifying a Reference Genome
+
+In addition to creating a set of modified transcripts, the genomic sequence can 
+also be modified with a call to `genomogrify()`, using either a `DNAStringSet` 
+or `BSgenome` object to provide the reference sequences.
+A tag can be optionally added to all sequence names to avoid confusion, however,
+in the below example this option has not been utilised
+
+```{r chr1-mod}
+chr1_mod <- genomogrify(chr1, var)
+chr1_mod
+```
+
+The new reference genome can be exported to fasta format using 
+`writeXStringSet()`.
 
 Both of the above processes rely on the lower-level functions `owl()` and 
 `indelcator()` which *overwrite letters* or substitute *indels* respectively.
 These are also able to be called individually as shown in the help pages.
+
+## Finding Modified Co-ordinates
+
+In addition to the above approaches, the co-ordinates from a GRanges object can
+be modified to account for all length-modifying variants, i.e. InDels.
+
+```{r}
+new_exons <- shiftByVar(gtf$exon, var)
+```
+
+This will return an object with a modified `Seqinfo()` object so that sequence
+lengths will match the modified chromosomes.
+
+```{r}
+seqinfo(new_exons)
+seqinfo(chr1_mod)
+```
+
+This enables simple extraction of transcript sequences using the capabilities 
+of `GenomicFeatures`
+
+```{r}
+alt_trans_mod <- extractTranscriptSeqs(
+    chr1_mod, splitAsList(new_exons, new_exons$transcript_id)
+)
+```
+
+In this case tags may have to be added manually
+
+```{r}
+ol_ids <- var %>% 
+    splitAsList(varTypes(.)) %>% 
+    lapply(\(x) subsetByOverlaps(gtf$exon, x)$transcript_id) %>% 
+    lapply(\(x) names(alt_trans_mod) %in% x)
+tag_mat <- do.call(
+    "cbind", 
+    lapply(
+        c("SNV", "Insertion", "Deletion"),
+        \(x) ifelse(ol_ids[[x]], tolower(substring(x, 1, 1)), "")
+    ) 
+)
+tags <- gsub("([sid]+)", "_mod_\\1", apply(tag_mat, 1, paste, collapse = ""))
+names(alt_trans_mod) <- paste0(names(alt_trans_mod), tags)
+## Make this a function...
+```
+
 
 # Additional Capabilities
 
