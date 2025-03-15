@@ -1,9 +1,9 @@
 pandoc: '3.6'
 pkgdown: 2.1.1.9000
-pkgdown_sha: 7cf401f44a970ea13744fcdd883248552c68ff9d
+pkgdown_sha: 739380ac569123aa88cbeab64ba4f42105f88c00
 articles:
   creating_a_new_reference: creating_a_new_reference.html
-last_built: 2025-03-12T13:20Z
+last_built: 2025-03-15T06:18Z
 urls:
   reference: https://smped.github.io/transmogR/reference
   article: https://smped.github.io/transmogR/articles

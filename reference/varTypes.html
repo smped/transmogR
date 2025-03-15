@@ -41,7 +41,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">varTypes</span><span class="op">(</span><span class="va">x</span>, alt_col <span class="op">=</span> <span class="st">"ALT"</span>, ol_vars <span class="op">=</span> <span class="st">"fail"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">varTypes</span><span class="op">(</span><span class="va">x</span>, alt_col <span class="op">=</span> <span class="st">"ALT"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -55,14 +55,6 @@
 <dt id="arg-alt-col">alt_col<a class="anchor" aria-label="anchor" href="#arg-alt-col"></a></dt>
 <dd><p>Name of the column with mcols(x) which contains the alternate
 allele. Can be an XStringSetList, XStringSet or character</p></dd>
-
-
-<dt id="arg-ol-vars">ol_vars<a class="anchor" aria-label="anchor" href="#arg-ol-vars"></a></dt>
-<dd><p>Error handling for any overlapping variants. Can take values in
-c("fail", "none", "first", "last", "longest", "shortest").
-Default is set to fail, with additional options to drop all overlapping
-variants ('none'), select by genomic position ('first', 'last'), or select
-by the scale of change to the genome ('longest', 'shortest')</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
