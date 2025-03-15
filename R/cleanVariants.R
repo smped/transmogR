@@ -63,4 +63,3 @@ setMethod(
         cleanVariants(var, ol_vars, ref_col, alt_col, ...)
     }
 )
-
