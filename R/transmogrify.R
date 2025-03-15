@@ -32,11 +32,8 @@
 #' incorporated, with 's', 'i' and 'd' representing SNPs, Insertions and
 #' Deletions respectively
 #' @param var_sep Separator between any previous tags and variant tags
-#' @param ol_vars Error handling for any overlapping variants. Can take values in
-#' c("fail", "none", "first", "last", "longest", "shortest").
-#' Default is set to fail, with additional options to drop all overlapping
-#' variants ('none'), select by genomic position ('first', 'last'), or select
-#' by the scale of change to the genome ('longest', 'shortest')
+#' @param ol_vars Error handling for any overlapping variants. See
+#' [cleanVariants] for possible values and an explanation
 #' @param verbose logical(1) Include informative messages, or operate silently
 #' @param mc.cores Number of cores to be used when multi-threading via
 #' [parallel::mclapply]
@@ -105,7 +102,7 @@ setMethod(
 
         ## Checks
         trans_col <- match.arg(trans_col, colnames(mcols(exons)))
-        var <- .checkAlts(var, alt_col, ol_vars = ol_vars)
+        var <- cleanVariants(var, ol_vars, alt_col = alt_col)
 
         ## Separate into snps & indels
         var <- subset(var, seqnames %in% seqlevels(x))

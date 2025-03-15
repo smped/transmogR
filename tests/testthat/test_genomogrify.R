@@ -14,12 +14,9 @@ test_that("genomogrify works correctly", {
         expect_true(names(new)[[1]] == "chrM_test_si")
 
         ## Using a VCF
-        vcf <- VcfFile(
-            system.file("extdata/1000GP_subset.vcf.gz", package = "transmogR")
-        )
         new <- genomogrify(
-            hg38, vcf, names = "chr1", which = GRanges("chr1:839500-839550"),
-            verbose = FALSE
+            hg38, VcfFile(vcf), names = "chr1",
+            which = GRanges("chr1:839500-839550"), verbose = FALSE
         ) # Just one deletion
         expect_true(length(new[["chr1"]]) == 248956394)
 
@@ -44,7 +41,7 @@ test_that("genomogrify works correctly", {
     test_seq <- as(paste(rep("N", 113970), collapse = ""), "DNAStringSet")
     names(test_seq) <- "chr1"
     new <- suppressMessages(
-        genomogrify(test_seq, vcf, which = GRanges("chr1:1-113970"))
+        genomogrify(test_seq, VcfFile(vcf), which = GRanges("chr1:1-113970"))
     )
     expect_true(as.character(new[["chr1"]][113969:113970]) == "TN")
 

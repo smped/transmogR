@@ -19,39 +19,36 @@ library(plyranges)
 library(transmogR)
 library(rtracklayer)
 library(GenomicFeatures)
+library(parallel)
+
+## Load the relevant reference, then modify
+ref <- BSgenome.Hsapiens.UCSC.hg38
+chr <- paste0("chr", c(1:22, "X", "Y", "M"))
+# chr <- paste0("chr", c(11:15))
 
 ## Start by loading a set of variants, subset to chr10 for testing
 var <- read_rds("~/TKI/DBPAInT/data/rds/1000GP_SNV_INDEL_panhuman.rds") |>
-    subset(seqnames == "chr10")
-
-## Load the relevant reference, then subset to chr10 & modify
-ref <- getSeq(BSgenome.Hsapiens.UCSC.hg38, names = "chr10") |>
-    as("DNAStringSet") |>
-    setNames("chr10")
-new_ref <- genomogrify(ref, var)
-
-## Create the map of new-old
-var_map <- var %>%
-    subset(nchar(REF) != nchar(ALT)) %>%
-    mutate(
-        change = nchar(ALT) - nchar(REF),
-        cumsum_change = cumsum(change),
-        new_start = start + c(0, cumsum_change[-length(.)]),
-        new_end = end + cumsum_change
-    )
+    subset(seqnames %in% chr) |>
+    transmogR:::.checkOverlapVars(ol_vars = "none")
+new_ref <- genomogrify(ref, var, names = chr)
 
 ## Load the GTF
 gtf <- read_rds("~/TKI/DBPAInT/data/rds/gencode.v44.rds") %>%
-    subset(seqnames == "chr10") %>%
+    subset(grepl("chr", seqnames)) %>%
     splitAsList(.$type)
-exons_by_trans <- gtf$exon %>%
-    splitAsList(.$transcript_id)
-
-## extractTranscriptSeqs
+exons_by_trans <- gtf$exon %>% splitAsList(.$transcript_id)
 trans_seq <- extractTranscriptSeqs(ref, exons_by_trans)
 
-## Now Figure it out by changing co-ords
-change <- rep_len(0L, nchar(ref))
+## Test the new method
+new_exon <- shiftByVar(gtf$exon, var, mc.cores = 2)
+new_exons_by_trans <- splitAsList(new_exon, new_exon$transcript_id)
+new_trans_seq <- extractTranscriptSeqs(new_ref, new_exons_by_trans)
+mean(new_trans_seq == trans_seq)
+which(new_trans_seq != trans_seq) |> head()
+
+
+# Now Figure it out by changing co-ords
+change <- Rle(0L, nchar(ref))
 change[start(var_map)] <- var_map$change
 shift <- cumsum(change)
 new_exon <- GRanges(
@@ -68,47 +65,64 @@ new_exons_by_trans <- new_exon %>% splitAsList(.$transcript_id)
 new_trans_seq <- extractTranscriptSeqs(new_ref, new_exons_by_trans)
 trans_seq
 new_trans_seq
-sum(new_trans_seq == trans_seq) # [1] 57 ## Nope
-## ENST00000016171.6 is off by 9
-## ENST00000020673.6 is irreconcilable
-## ENST00000173785.4 is off by -1
+sum(new_trans_seq == trans_seq)
+sum(new_trans_seq != trans_seq)
 
-tail(shift)
-# [1] -968 -968 -968 -968 -968 -968
-nchar(ref) - nchar(new_ref)
-# [1] 956
-## So there's an error of ~142t using this strategy which is also present in the map!!
-## Or is genomogrify wrong? I've checked the transcripts with transmogrify...
-
-## Maybe handling each position instead of each range
-var %>%
-    subset(nchar(REF) != nchar(ALT)) %>%
-    mutate(
-        shift = nchar(ALT) - nchar(REF)
-    )
-
-## The issues are problems caused by the following
-var[c(88226, 88227)]
-# GRanges object with 2 ranges and 2 metadata columns:
-#                        seqnames              ranges strand |         REF         ALT
-#                           <Rle>           <IRanges>  <Rle> | <character> <character>
-#     10:114468420:GCC:G    chr10 114468420-114468422      * |         GCC           G
-#    10:114468422:C:CTAT    chr10           114468422      * |           C        CTAT
-# -------
-#     seqinfo: 24 sequences from an unspecified genome
-## How do we delete the GCC (replacing with G), then include the C from the CTAT in the insertion
-## Realistically, the GCC is being replaced by GTAT
-
-
-var[c(2708, 2709)]
-# GRanges object with 2 ranges and 2 metadata columns:
-#                             seqnames          ranges strand |         REF         ALT
-#                                <Rle>       <IRanges>  <Rle> | <character> <character>
-#     10:2569741:TTGTGTACTC:T    chr10 2569741-2569750      * |  TTGTGTACTC           T
-#           10:2569750:C:CAAA    chr10         2569750      * |           C        CAAA
-# -------
-#     seqinfo: 24 sequences from an unspecified genome
-## Similarly, the TTGTGTACTC is being replaced by TAAA
-
-## How did these get in the initial VCF?
-## Realistically, they cannot both be present in > 50% of unerlated individuals
+## Now everything works. Benchmark...
+## The new approach
+peakRAM::peakRAM(
+    # {
+        ## This is now the complete process & it's 8-10x faster
+        ## Adding tags has not yet been incorporated though and that will add
+        ## some time to the process
+        new_ref <- genomogrify(ref, var),
+        ## Create the map of new-old
+        split_var <- split(var, varTypes(var)),
+        split_var <- as.list(split_var),
+        split_var$SNV <- NULL,
+        split_var$Deletion <- GPos(split_var$Deletion),
+        split_var$Deletion$id <- subjectHits(findOverlaps(split_var$Deletion, var)),
+        split_var$Deletion$change <- -1 * c(0, diff(start(split_var$Deletion))),
+        ## This handles directly neighbouring deletions & also removes the first position
+        ## of any deletion
+        keep <- c(FALSE, diff(split_var$Deletion$id) == 0),
+        split_var$Deletion <- split_var$Deletion[keep],
+        split_var$Insertion$change <- nchar(split_var$Insertion$ALT) - nchar(split_var$Insertion$REF),
+        map <- GRangesList(lapply(split_var, GRanges)),
+        map <- sort(unlist(map)),
+        change <- rep_len(0, nchar(ref)),
+        change[start(map)] <- map$change,
+        shift <- cumsum(change),
+        new_exon <- GRanges(
+            seqnames = seqnames(gtf$exon),
+            IRanges(
+                start = start(gtf$exon) + shift[start(gtf$exon)],
+                end = end(gtf$exon) + shift[end(gtf$exon)] ,
+            ),
+            strand = strand(gtf$exon),
+            seqinfo = seqinfo(gtf$exon)
+        ),
+        mcols(new_exon) <- mcols(gtf$exon),
+        new_exons_by_trans <- new_exon %>% splitAsList(.$transcript_id),
+        new_trans_seq <- extractTranscriptSeqs(new_ref, new_exons_by_trans)
+    # }
+) -> pr_df2
+# user  system elapsed
+# 8.607   0.363   8.990
+## The old approach
+system.time(
+    {
+        old_trans_seq <- transmogrify(ref, var, unlist(exons_by_trans))
+        new_ref <- genomogrify(ref, var)
+    }
+)
+#   user  system elapsed
+# 75.122   0.095  75.336
+sum(old_trans_seq != new_trans_seq)
+# [1] 0
+## OK, now to put it into a function
+## Should the function take a modified reference, or modify it
+## If modifying, how should it be returned in the final object?
+## RAM may be an issue
+## Maybe modifying internally & then running `genomogrify()` separately is
+## still best...?

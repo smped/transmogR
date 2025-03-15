@@ -24,11 +24,8 @@
 #' @param exons GRanges object containing exon structure for `x`
 #' @param indels GRanges object with InDel locations and the alternate allele
 #' @param alt_col Column containing the alternate allele
-#' @param ol_vars Error handling for any overlapping variants. Can take values in
-#' c("fail", "none", "first", "last", "longest", "shortest").
-#' Default is set to fail, with additional options to drop all overlapping
-#' variants ('none'), select by genomic position ('first', 'last'), or select
-#' by the scale of change to the genome ('longest', 'shortest')
+#' @param ol_vars Error handling for any overlapping variants. See
+#' [cleanVariants] for possible values and an explanation
 #' @param mc.cores Number of cores to use when calling [parallel::mclapply]
 #' internally
 #' @param verbose logical(1) Print all messages
@@ -84,7 +81,7 @@ setMethod(
         stopifnot(n == sum(width(exons)))
 
         ## Add the ID column to the variants & check the alt column
-        indels <- .checkAlts(indels, alt_col, ol_vars = ol_vars)
+        indels <- cleanVariants(indels, ol_vars, alt_col = alt_col)
         indels$ID <- paste0("V", seq_along(indels))
         mcols(indels) <- mcols(indels)[c("ID", alt_col)]
 
@@ -160,7 +157,7 @@ setMethod(
         gr <- subset(GRanges(sq), seqnames %in% seq2_mod)
         grl <- splitAsList(gr, seqlevelsInUse(gr))
 
-        indels <- .checkAlts(indels, alt_col, ol_vars = ol_vars)
+        indels <- cleanVariants(indels, ol_vars, alt_col = alt_col)
         indels$deletion <- width(indels) > nchar(mcols(indels)[[alt_col]])
         indels$insertion <- width(indels) < nchar(mcols(indels)[[alt_col]])
         stopifnot(all(width(indels)[indels$insertion] == 1))

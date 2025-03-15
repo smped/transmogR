@@ -8,11 +8,8 @@
 #' the alternate allele
 #' @param alt_col Column name in the mcols element of `snps` containing the
 #' alternate allele
-#' @param ol_vars Error handling for any overlapping variants. Can take values in
-#' c("fail", "none", "first", "last", "longest", "shortest").
-#' Default is set to fail, with additional options to drop all overlapping
-#' variants ('none'), select by genomic position ('first', 'last'), or select
-#' by the scale of change to the genome ('longest', 'shortest')
+#' @param ol_vars Error handling for any overlapping variants. See
+#' [cleanVariants] for possible values and an explanation
 #' @param names Sequence names to operate on
 #' @param ... Passed to [Biostrings::replaceLetterAt()]
 #'
@@ -57,7 +54,7 @@ setMethod(
     function(seq, snps, alt_col = "ALT", ol_vars = "fail", ...) {
 
         ## Check the SNPs
-        snps <- .checkAlts(snps, alt_col, ol_vars = ol_vars)
+        snps <- cleanVariants(snps, ol_vars, alt_col)
         stopifnot(all(width(snps) == 1)) # Must be single positions
         stopifnot(all(nchar(mcols(snps)[[alt_col]]) == 1)) # Must be SNPs
 
