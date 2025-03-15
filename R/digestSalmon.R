@@ -53,6 +53,13 @@
 #' @importFrom matrixStats rowVars
 #' @importFrom data.table fread
 #'
+#' @examples
+#' ## Provide the path to the parent directories which contains each
+#' ## quant.sf file
+#' ex_path <- system.file("extdata/salmon_test", package = "transmogR")
+#' se <- digestSalmon(ex_path, extra_assays = "TPM", verbose = FALSE)
+#' se
+#'
 #' @export
 digestSalmon <- function(
         paths, max_sets = 2L, aux_dir = "aux_info", name_fun = basename,

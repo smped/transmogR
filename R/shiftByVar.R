@@ -14,6 +14,25 @@
 #' @param mc.cores Passed internally to [parallel::mclapply()]
 #' @param ... Not used
 #'
+#' @return
+#' GRanges object with co-ordinates shifted according the to the provided
+#' variants. The new co-ordinates will be compatible with a variant-modified
+#' genome as produced by [genomogrify()] and can be used to extract the
+#' sequences associated with the ranges in the modified reference.
+#'
+#' @examples
+#' # Define a 3nt insertion
+#' var <- GRanges("seq1:5:*", seqlengths = c(seq1=10), REF = "A", ALT = "AGT")
+#' var
+#' # A simple GRanges to shift co-ordinates for
+#' gr <- GRanges("seq1:1-10:+", seqlengths = c(seq1=10), feature = "feature1")
+#' gr
+#' # Create shifted co-ordinates based on the provided variants
+#' new_gr <- shiftByVar(gr, var)
+#' new_gr
+#' ## The seqlengths will have been adjusted to account for all variants
+#' seqinfo(new_gr)
+#'
 #' @importFrom GenomeInfoDb seqinfo seqlengths seqlengths<-
 #' @importFrom S4Vectors splitAsList
 #' @importFrom IRanges IRanges
@@ -43,6 +62,7 @@ shiftByVar <- function(x, var, alt_col = "ALT", mc.cores = 1, ...) {
     invisible(gc())
 
     ## Now apply the shifts across each sequence with a variant
+    seqlengths(sq) <- NA ## Remove to avoid out-of-bounds errors when shifting
     new_ranges <- GRangesList(
         mclapply(
             has_shift,
@@ -51,9 +71,10 @@ shiftByVar <- function(x, var, alt_col = "ALT", mc.cores = 1, ...) {
                 offset <- shifts[[i]]
                 new_start <- start(gr) + as.integer(offset[start(gr)])
                 new_ends <- end(gr) + as.integer(offset[end(gr)])
-                if (!all(new_ends >= new_start)) stop(
-                    "Unresolvable errors appear present in the variants on", i
-                )
+                if (!all(new_ends >= new_start)) {
+                    msg <- paste("Unresolvable errors appear present on", i)
+                    stop(msg)
+                }
                 iranges <- IRanges(new_start, new_ends)
                 strand <- strand(gr)
                 new_gr <- GRanges(i, iranges, strand, seqinfo = sq)
@@ -88,14 +109,16 @@ shiftByVar <- function(x, var, alt_col = "ALT", mc.cores = 1, ...) {
     ## Handle the deletions using a GPos so individual nucleotides
     ## can be deleted correctly
     dels <- subset(gr, gr$var_type == "Deletion")
-    dels <- GPos(dels)
-    hits <- findOverlaps(dels, gr)
-    stopifnot(length(hits) == length(dels)) # Shouldn't happen...
-    dels$id <- slot(hits, "to")
-    dels$change <- -1 * c(0, diff(start(dels)))
-    ## This handles directly neighbouring deletions & also removes the
-    ## first position of any deletion
-    dels <- as(dels[c(FALSE, diff(dels$id) == 0)], "GRanges")
+    if (length(dels)) {
+        dels <- GPos(dels)
+        hits <- findOverlaps(dels, gr)
+        stopifnot(length(hits) == length(dels)) # Shouldn't happen...
+        dels$id <- slot(hits, "to")
+        dels$change <- -1 * c(0, diff(start(dels)))
+        ## This handles directly neighbouring deletions & also removes the
+        ## first position of any deletion
+        dels <- as(dels[c(FALSE, diff(dels$id) == 0)], "GRanges")
+    }
 
     ## Insertions are much simpler as a single offset is added for
     ## the individual nt where the insertion occurs

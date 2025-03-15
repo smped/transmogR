@@ -18,6 +18,12 @@ variant}
 
 \item{...}{Not used}
 }
+\value{
+GRanges object with co-ordinates shifted according the to the provided
+variants. The new co-ordinates will be compatible with a variant-modified
+genome as produced by \code{\link[=genomogrify]{genomogrify()}} and can be used to extract the
+sequences associated with the ranges in the modified reference.
+}
 \description{
 Calcluate new exon co-ordinates after including InDels
 }
@@ -25,4 +31,18 @@ Calcluate new exon co-ordinates after including InDels
 Given a set of variants, this will return a set of genomic ranges with
 updated co-ordinates able to be applied on a variant modified reference
 genome
+}
+\examples{
+# Define a 3nt insertion
+var <- GRanges("seq1:5:*", seqlengths = c(seq1=10), REF = "A", ALT = "AGT")
+var
+# A simple GRanges to shift co-ordinates for
+gr <- GRanges("seq1:1-10:+", seqlengths = c(seq1=10), feature = "feature1")
+gr
+# Create shifted co-ordinates based on the provided variants
+new_gr <- shiftByVar(gr, var)
+new_gr
+## The seqlengths will have been adjusted to account for all variants
+seqinfo(new_gr)
+
 }
