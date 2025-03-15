@@ -32,6 +32,26 @@
 #' VcfFile
 #' @param ... Not used
 #'
+#' @return
+#' GRanges object with any incompatible variants removed, or an error produced.
+#' The mcols will contain the columns REF and ALT, unless otherwise specified,
+#' as character vectors
+#'
+#' @examples
+#' # Any conflicting variants will be removed
+#' var <- GRanges(c("chr10:114468420-114468422", "chr10:114468422"))
+#' var$REF <- c("GCC", "C")
+#' var$ALT <- c("G", "CTAT")
+#' var
+#' ## Taken from the 1000GP, the first variant would delete the C at 114468422
+#' ## whilst the second variant begins an insertion at this position.
+#' ## These are clearly conflicting. The default value for ol_vars is to fail
+#' ## with an error (ol_vars = "fail"). However, both can be removed by setting
+#' ## ol_vars = "none". A warning will always be produced.
+#' cleanVariants(var, ol_vars = "none")
+#' ## Or the longest can be retained, along with multiple other options
+#' cleanVariants(var, ol_vars = "longest")
+#'
 #' @export
 #' @name cleanVariants
 #' @rdname cleanVariants-methods

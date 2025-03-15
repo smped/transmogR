@@ -73,3 +73,11 @@ for smaller datasets, digestSalmon may be slower that the edgeR function.
 The SummarizedExperiment object returned may also contain multiple assays,
 as described elsewhere on this page
 }
+\examples{
+## Provide the path to the parent directories which contains each
+## quant.sf file
+ex_path <- system.file("extdata/salmon_test", package = "transmogR")
+se <- digestSalmon(ex_path, extra_assays = "TPM", verbose = FALSE)
+se
+
+}
