@@ -128,6 +128,7 @@ packages require installation.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smped/extraChIPs" class="external-link">extraChIPs</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smped/transmogR" class="external-link">transmogR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicFeatures" class="external-link">GenomicFeatures</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">BSgenome.Hsapiens.UCSC.hg38</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -148,47 +149,70 @@ as the reference genome.</p>
 <pre><code><span><span class="co">## DNAStringSet object of length 1:</span></span>
 <span><span class="co">##         width seq                                           names               </span></span>
 <span><span class="co">## [1] 248956422 <span style="color: #EEEEEE; background-color: #B2B2B2;">NNNNNNNNNNNNNNNNNNNNN</span>...<span style="color: #EEEEEE; background-color: #B2B2B2;">NNNNNNNNNNNNNNNNNNNNN</span> chr1</span></span></code></pre>
-<p>A small set of variants has been provided with the package.</p>
+<p>Given this represents the complete reference genome, we can also
+setup a <code>Seqinfo</code> object for all downstream analysis, and to
+ensure all objects are working with the same reference genome.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">chr1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">genome</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"GRCh38"</span></span>
-<span><span class="va">vcf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/1000GP_subset.vcf.gz"</span>, package <span class="op">=</span> <span class="st">"transmogR"</span><span class="op">)</span></span>
-<span><span class="va">vcf_param</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/VariantAnnotation/man/ScanVcfParam-class.html" class="external-link">ScanVcfParam</a></span><span class="op">(</span>fixed <span class="op">=</span> <span class="st">"ALT"</span>, info <span class="op">=</span> <span class="cn">NA</span>, which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">var</span> <span class="op">&lt;-</span> <span class="fu">rowRanges</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/VariantAnnotation/man/readVcf-methods.html" class="external-link">readVcf</a></span><span class="op">(</span><span class="va">vcf</span>, param <span class="op">=</span> <span class="va">vcf_param</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">sq</span></span></code></pre></div>
+<pre><code><span><span class="co">## Seqinfo object with 1 sequence from GRCh38 genome:</span></span>
+<span><span class="co">##   seqnames seqlengths isCircular genome</span></span>
+<span><span class="co">##   chr1      248956422         NA GRCh38</span></span></code></pre>
+<p>A small set of variants from the 1000 Genomes Project<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;&lt;a href="https://www.internationalgenome.org" class="external-link uri"&gt;https://www.internationalgenome.org&lt;/a&gt;&lt;/p&gt;'><sup>1</sup></a> has been provided with
+the package in VCF format.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">vcf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/1000GP_subset.vcf.gz"</span>, package <span class="op">=</span> <span class="st">"transmogR"</span><span class="op">)</span></span>
+<span><span class="va">vcf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/VariantAnnotation/man/VcfFile-class.html" class="external-link">VcfFile</a></span><span class="op">(</span><span class="va">vcf</span><span class="op">)</span></span></code></pre></div>
+<p>Variant callers can often produce variant calls which are
+incompatible and the function <code>checkVariants()</code> will check
+for overlapping InDels, as well as returning both the <code>REF</code>
+and <code>ALT</code> columns as a character vectors. This function can
+be applied to any set of variants parsed by other tools, or can be
+applied directly to a <code>VcfFile</code> to check variants whilst
+parsing.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">var</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cleanVariants-methods.html">cleanVariants</a></span><span class="op">(</span><span class="va">vcf</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">var</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">sq</span></span>
 <span><span class="va">var</span></span></code></pre></div>
-<pre><code><span><span class="co">## GRanges object with 100 ranges and 3 metadata columns:</span></span>
-<span><span class="co">##                         seqnames        ranges strand | paramRangeID</span></span>
-<span><span class="co">##                            &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; |     &lt;factor&gt;</span></span>
-<span><span class="co">##            1:113969:C:T     chr1        113969      * |         chr1</span></span>
-<span><span class="co">##            1:121009:C:T     chr1        121009      * |         chr1</span></span>
-<span><span class="co">##            1:123511:G:A     chr1        123511      * |         chr1</span></span>
-<span><span class="co">##            1:126113:C:A     chr1        126113      * |         chr1</span></span>
-<span><span class="co">##            1:128798:C:T     chr1        128798      * |         chr1</span></span>
-<span><span class="co">##                     ...      ...           ...    ... .          ...</span></span>
-<span><span class="co">##            1:839405:G:A     chr1        839405      * |         chr1</span></span>
-<span><span class="co">##   1:839480:CACACACCTG:C     chr1 839480-839494      * |         chr1</span></span>
-<span><span class="co">##   1:839515:CTAGACACAC:C     chr1 839515-839543      * |         chr1</span></span>
-<span><span class="co">##            1:840046:G:A     chr1        840046      * |         chr1</span></span>
-<span><span class="co">##            1:840279:A:G     chr1        840279      * |         chr1</span></span>
-<span><span class="co">##                                             REF                ALT</span></span>
-<span><span class="co">##                                  &lt;DNAStringSet&gt; &lt;DNAStringSetList&gt;</span></span>
-<span><span class="co">##            1:113969:C:T                       C                  T</span></span>
-<span><span class="co">##            1:121009:C:T                       C                  T</span></span>
-<span><span class="co">##            1:123511:G:A                       G                  A</span></span>
-<span><span class="co">##            1:126113:C:A                       C                  A</span></span>
-<span><span class="co">##            1:128798:C:T                       C                  T</span></span>
-<span><span class="co">##                     ...                     ...                ...</span></span>
-<span><span class="co">##            1:839405:G:A                       G                  A</span></span>
-<span><span class="co">##   1:839480:CACACACCTG:C         CACACACCTGGACAA                  C</span></span>
-<span><span class="co">##   1:839515:CTAGACACAC:C CTAGACACAC...CACACACACG                  C</span></span>
-<span><span class="co">##            1:840046:G:A                       G                  A</span></span>
-<span><span class="co">##            1:840279:A:G                       A                  G</span></span>
+<pre><code><span><span class="co">## GRanges object with 100 ranges and 2 metadata columns:</span></span>
+<span><span class="co">##                         seqnames        ranges strand |                    REF</span></span>
+<span><span class="co">##                            &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; |            &lt;character&gt;</span></span>
+<span><span class="co">##            1:113969:C:T     chr1        113969      * |                      C</span></span>
+<span><span class="co">##            1:121009:C:T     chr1        121009      * |                      C</span></span>
+<span><span class="co">##            1:123511:G:A     chr1        123511      * |                      G</span></span>
+<span><span class="co">##            1:126113:C:A     chr1        126113      * |                      C</span></span>
+<span><span class="co">##            1:128798:C:T     chr1        128798      * |                      C</span></span>
+<span><span class="co">##                     ...      ...           ...    ... .                    ...</span></span>
+<span><span class="co">##            1:839405:G:A     chr1        839405      * |                      G</span></span>
+<span><span class="co">##   1:839480:CACACACCTG:C     chr1 839480-839494      * |        CACACACCTGGACAA</span></span>
+<span><span class="co">##   1:839515:CTAGACACAC:C     chr1 839515-839543      * | CTAGACACACACACCTGGAC..</span></span>
+<span><span class="co">##            1:840046:G:A     chr1        840046      * |                      G</span></span>
+<span><span class="co">##            1:840279:A:G     chr1        840279      * |                      A</span></span>
+<span><span class="co">##                                 ALT</span></span>
+<span><span class="co">##                         &lt;character&gt;</span></span>
+<span><span class="co">##            1:113969:C:T           T</span></span>
+<span><span class="co">##            1:121009:C:T           T</span></span>
+<span><span class="co">##            1:123511:G:A           A</span></span>
+<span><span class="co">##            1:126113:C:A           A</span></span>
+<span><span class="co">##            1:128798:C:T           T</span></span>
+<span><span class="co">##                     ...         ...</span></span>
+<span><span class="co">##            1:839405:G:A           A</span></span>
+<span><span class="co">##   1:839480:CACACACCTG:C           C</span></span>
+<span><span class="co">##   1:839515:CTAGACACAC:C           C</span></span>
+<span><span class="co">##            1:840046:G:A           A</span></span>
+<span><span class="co">##            1:840279:A:G           G</span></span>
 <span><span class="co">##   -------</span></span>
 <span><span class="co">##   seqinfo: 1 sequence from GRCh38 genome</span></span></code></pre>
-<p>An additional set of transcripts derived from Gencode v44<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;&lt;a href="https://www.gencodegenes.org/human/" class="external-link uri"&gt;https://www.gencodegenes.org/human/&lt;/a&gt;&lt;/p&gt;'><sup>1</sup></a> has also
+<p>In this case, no incompatible variants were included, but if they are
+present, an error will be produced by default. This behaviour can be
+modified by setting the <code>ol_vars</code> argument to return no
+overlapping InDels (<code>ol_vars = 'none'</code>), the longest or
+shortest in terms of the largest or smallest change to the chromosome
+length, or even the first or last of the overlapping variants.</p>
+<p>An additional set of transcripts derived from Gencode v44<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content='&lt;p&gt;&lt;a href="https://www.gencodegenes.org/human/" class="external-link uri"&gt;https://www.gencodegenes.org/human/&lt;/a&gt;&lt;/p&gt;'><sup>2</sup></a> has also
 been provided.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/gencode.v44.subset.gtf.gz"</span>, package <span class="op">=</span> <span class="st">"transmogR"</span><span class="op">)</span></span>
 <span><span class="va">gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/GFFFile-class.html" class="external-link">import.gff</a></span><span class="op">(</span><span class="va">f</span>, which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">gtf</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">sq</span></span>
@@ -237,7 +261,7 @@ been provided.</p>
 <span><span class="co">##   seqinfo: 1 sequence from GRCh38 genome</span></span></code></pre>
 <p>Splitting this gtf into feature types can also be very handy for
 downstream processes.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/splitAsList.html" class="external-link">splitAsList</a></span><span class="op">(</span><span class="va">gtf</span>, <span class="va">gtf</span><span class="op">$</span><span class="va">type</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -250,7 +274,7 @@ functions have been included. In the following, we can check to see how
 many exons directly overlap a variant, showing how many unique genes
 this summarises to. Any ids, which don’t overlap a variants are also
 described in the plot title.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/upsetVarByCol.html">upsetVarByCol</a></span><span class="op">(</span><span class="va">gtf</span><span class="op">$</span><span class="va">exon</span>, <span class="va">var</span>, mcol <span class="op">=</span> <span class="st">"gene_id"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="creating_a_new_reference_files/figure-html/upset-var-1.png" alt="Included variants which overlap exonic sequences, summarised by unique gene ids" width="700"><p class="caption">
@@ -266,7 +290,7 @@ each position in the genome uniquely to a given feature hierarchically,
 using all provided transcripts, meaning some exons will be considered as
 promoters. To ensure that all exons are included as exons, we can just
 substitute in the values from our gtf for this feature type.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/extraChIPs/man/defineRegions.html" class="external-link">defineRegions</a></span><span class="op">(</span><span class="va">gtf</span><span class="op">$</span><span class="va">gene</span>, <span class="va">gtf</span><span class="op">$</span><span class="va">transcript</span>, <span class="va">gtf</span><span class="op">$</span><span class="va">exon</span>, proximal <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span><span class="va">regions</span><span class="op">$</span><span class="va">exon</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/genomic-range-squeezers.html" class="external-link">granges</a></span><span class="op">(</span><span class="va">gtf</span><span class="op">$</span><span class="va">exon</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/overlapsByVar-methods.html">overlapsByVar</a></span><span class="op">(</span><span class="va">regions</span>, <span class="va">var</span><span class="op">)</span></span></code></pre></div>
@@ -280,38 +304,25 @@ substitute in the values from our gtf for this feature type.</p>
 <div class="section level2">
 <h2 id="creating-modified-reference-sequences">Creating Modified Reference Sequences<a class="anchor" aria-label="anchor" href="#creating-modified-reference-sequences"></a>
 </h2>
-<div class="section level3">
-<h3 id="modifying-a-reference-genome">Modifying a Reference Genome<a class="anchor" aria-label="anchor" href="#modifying-a-reference-genome"></a>
-</h3>
-<p>The simplest method for modifying a reference genome is to simply
-call <code><a href="../reference/genomogrify-methods.html">genomogrify()</a></code> with either a <code>DNAStringSet</code>
-or <code>BSgenome</code> object. A tag can be optionally added to all
-sequence names to avoid confusion.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chr1_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/genomogrify-methods.html">genomogrify</a></span><span class="op">(</span><span class="va">chr1</span>, <span class="va">var</span>, tag <span class="op">=</span> <span class="st">"mod"</span><span class="op">)</span></span>
-<span><span class="va">chr1_mod</span></span></code></pre></div>
-<pre><code><span><span class="co">## DNAStringSet object of length 1:</span></span>
-<span><span class="co">##         width seq                                           names               </span></span>
-<span><span class="co">## [1] 248956362 <span style="color: #EEEEEE; background-color: #B2B2B2;">NNNNNNNNNNNNNNNNNNNNN</span>...<span style="color: #EEEEEE; background-color: #B2B2B2;">NNNNNNNNNNNNNNNNNNNNN</span> chr1_mod</span></span></code></pre>
-<p>The new reference genome can be exported to fasta format using
-<code><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-io.html" class="external-link">writeXStringSet()</a></code>.</p>
-</div>
+<p>Several approaches are available for creating modified reference
+genomes or transcriptomes, as outlines below.</p>
 <div class="section level3">
 <h3 id="modifying-a-reference-transcriptome">Modifying a Reference Transcriptome<a class="anchor" aria-label="anchor" href="#modifying-a-reference-transcriptome"></a>
 </h3>
-<p>The process for creating a variant-modified reference transcriptome
-is essentially the same as above, with the addition of exon-level
-co-ordinates for the set of transcripts. An optional tag can be added to
-all transcripts to indicate which have been modified, with an additional
-tag able to be included which indicates which type of variant has been
-incorporated into the new transcript sequence. Variant tags will be one
-of <code>s</code>, <code>i</code> or <code>d</code> to indicate SNV,
-Insertions or Deletions respectively. In our example dataset, only one
-transcript contains both SNVs and an insertion.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">trans_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transmogrify-methods.html">transmogrify</a></span><span class="op">(</span></span>
-<span>    <span class="va">chr1</span>, <span class="va">var</span>, <span class="va">gtf</span><span class="op">$</span><span class="va">exon</span>, tag <span class="op">=</span> <span class="st">"mod"</span>, var_tags <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span>
+<p>A simple option for creating a variant-modified reference
+transcriptome is to call the function <code><a href="../reference/transmogrify-methods.html">transmogrify()</a></code>,
+providing the reference sequence, a set of variants and the genomic
+co-ordinates of sequence features (e.g. transcripts) for which the
+sequences are required.</p>
+<p>An optional tag can be added to all transcripts to indicate which
+have been modified, with an additional tag able to be included which
+indicates which type of variant has been incorporated into the new
+transcript sequence. Variant tags will be one of <code>s</code>,
+<code>i</code> or <code>d</code> to indicate SNV, Insertions or
+Deletions respectively. In our example dataset, only one transcript
+contains both SNVs and an insertion.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">trans_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transmogrify-methods.html">transmogrify</a></span><span class="op">(</span><span class="va">chr1</span>, <span class="va">var</span>, <span class="va">gtf</span><span class="op">$</span><span class="va">exon</span>, tag <span class="op">=</span> <span class="st">"1000GP"</span>, var_tags <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">trans_mod</span></span></code></pre></div>
 <pre><code><span><span class="co">## DNAStringSet object of length 112:</span></span>
 <span><span class="co">##       width seq                                             names               </span></span>
@@ -326,17 +337,129 @@ transcript contains both SNVs and an insertion.</p>
 <span><span class="co">## [110]  1432 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">GGG</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span>...<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AAAAA</span><span style="color: #000000; background-color: #FFD7AF;">TTT</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span> ENST00000702273.1</span></span>
 <span><span class="co">## [111]  1460 <span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span>...<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AAAAA</span><span style="color: #000000; background-color: #FFD7AF;">TTT</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span> ENST00000702557.1</span></span>
 <span><span class="co">## [112]  1651 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span>...<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">AAAA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span> ENST00000702847.1</span></span></code></pre>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">trans_mod</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"_si"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">trans_mod</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "ENST00000473798.2_mod_si"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "ENST00000473798.2_1000GP_si"</span></span></code></pre>
 <p>This can be simply exported again using
 <code><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-io.html" class="external-link">writeXStringSet()</a></code>. If using decoy transcripts for
 <code>salmon</code>, the <code>gentrome</code> can also be simply
 exported by combining the two modified references.</p>
+<p>This approach effectively steps through all the provided transcripts
+inserting the relevant variants where required, and as such can be
+somewhat time-consuming when working with genome-wide variants and a
+complete transcriptome.</p>
+</div>
+<div class="section level3">
+<h3 id="modifying-a-reference-genome">Modifying a Reference Genome<a class="anchor" aria-label="anchor" href="#modifying-a-reference-genome"></a>
+</h3>
+<p>In addition to creating a set of modified transcripts, the genomic
+sequence can also be modified with a call to <code><a href="../reference/genomogrify-methods.html">genomogrify()</a></code>,
+using either a <code>DNAStringSet</code> or <code>BSgenome</code> object
+to provide the reference sequences. A tag can be optionally added to all
+sequence names to avoid confusion, however, in the below example this
+option has not been utilised</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">chr1_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/genomogrify-methods.html">genomogrify</a></span><span class="op">(</span><span class="va">chr1</span>, <span class="va">var</span><span class="op">)</span></span>
+<span><span class="va">chr1_mod</span></span></code></pre></div>
+<pre><code><span><span class="co">## DNAStringSet object of length 1:</span></span>
+<span><span class="co">##         width seq                                           names               </span></span>
+<span><span class="co">## [1] 248956362 <span style="color: #EEEEEE; background-color: #B2B2B2;">NNNNNNNNNNNNNNNNNNNNN</span>...<span style="color: #EEEEEE; background-color: #B2B2B2;">NNNNNNNNNNNNNNNNNNNNN</span> chr1</span></span></code></pre>
+<p>The new reference genome can be exported to fasta format using
+<code><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-io.html" class="external-link">writeXStringSet()</a></code>. Incorporation of both of these into a
+‘gentrome’ for use with the pseudo-aligner <code>salmon</code> <span class="citation">(Srivastava et al. 2020)</span> is a straight-forward
+concatenation.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">trans_mod</span>, <span class="va">chr1_mod</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-io.html" class="external-link">writeXStringSet</a></span><span class="op">(</span><span class="st">"gentrome.fa.gz"</span>, compress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">chr1_mod</span><span class="op">)</span>, <span class="st">"decoys.txt"</span><span class="op">)</span></span></code></pre></div>
 <p>Both of the above processes rely on the lower-level functions
 <code><a href="../reference/owl-methods.html">owl()</a></code> and <code><a href="../reference/indelcator-methods.html">indelcator()</a></code> which <em>overwrite
 letters</em> or substitute <em>indels</em> respectively. These are also
 able to be called individually as shown in the help pages.</p>
+</div>
+<div class="section level3">
+<h3 id="finding-modified-co-ordinates">Finding Modified Co-ordinates<a class="anchor" aria-label="anchor" href="#finding-modified-co-ordinates"></a>
+</h3>
+<p>In addition to the above approaches, the co-ordinates from a GRanges
+object can be modified to account for all length-modifying variants,
+i.e. InDels. These shifted co-ordinates can then be used with a
+variant-modified reference genome to directly extract the modified
+transcript sequences using <code>extractTranscriptSeq()</code> from
+<code>GenomicFeatures</code> <span class="citation">(Lawrence et al.
+2013)</span>. This is traditional performed using a
+<code>GRangesList</code> with each element containing the exons for a
+given transcript.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ref_exons_by_trans</span> <span class="op">&lt;-</span> <span class="va">gtf</span><span class="op">$</span><span class="va">exon</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/splitAsList.html" class="external-link">splitAsList</a></span><span class="op">(</span><span class="va">.</span><span class="op">$</span><span class="va">transcript_id</span><span class="op">)</span> </span>
+<span><span class="va">ref_trans</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/extractTranscriptSeqs.html" class="external-link">extractTranscriptSeqs</a></span><span class="op">(</span><span class="va">chr1</span>, <span class="va">ref_exons_by_trans</span><span class="op">)</span></span>
+<span><span class="va">ref_trans</span></span></code></pre></div>
+<pre><code><span><span class="co">## DNAStringSet object of length 112:</span></span>
+<span><span class="co">##       width seq                                             names               </span></span>
+<span><span class="co">##   [1]  1947 <span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CCC</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CCC</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CC</span>...<span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span> ENST00000326734.2</span></span>
+<span><span class="co">##   [2]  1702 <span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span>...<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GGG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">GGG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span> ENST00000357876.6</span></span>
+<span><span class="co">##   [3]  1358 <span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">GGGGG</span><span style="color: #000000; background-color: #AFFFAF;">C</span>...<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AAAA</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span> ENST00000412115.2</span></span>
+<span><span class="co">##   [4]   421 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GGG</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CCC</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span>...<span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span> ENST00000414688.6</span></span>
+<span><span class="co">##   [5]   894 <span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span>...<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TTT</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span> ENST00000415295.1</span></span>
+<span><span class="co">##   ...   ... ...</span></span>
+<span><span class="co">## [108]  3097 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">AA</span>...<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AAAA</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">AAAAA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">CCCC</span> ENST00000701768.1</span></span>
+<span><span class="co">## [109]  1601 <span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">CC</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span>...<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">AAAA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span> ENST00000702098.1</span></span>
+<span><span class="co">## [110]  1432 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">GGG</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFAFAF;">A</span>...<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AAAAA</span><span style="color: #000000; background-color: #FFD7AF;">TTT</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span> ENST00000702273.1</span></span>
+<span><span class="co">## [111]  1460 <span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span>...<span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AAAAA</span><span style="color: #000000; background-color: #FFD7AF;">TTT</span><span style="color: #000000; background-color: #FFAFAF;">AAA</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFAF;">C</span> ENST00000702557.1</span></span>
+<span><span class="co">## [112]  1651 <span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">AA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span>...<span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFD7AF;">T</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #FFD7AF;">TT</span><span style="color: #000000; background-color: #FFAFAF;">AAAA</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">G</span><span style="color: #000000; background-color: #FFAFAF;">A</span><span style="color: #000000; background-color: #AFFFFF;">GG</span><span style="color: #000000; background-color: #AFFFAF;">C</span><span style="color: #000000; background-color: #FFAFAF;">A</span> ENST00000702847.1</span></span></code></pre>
+<p>In order to perform an analogous operation on a variant-modified
+reference, we need to shift the co-ordinates of any feature in
+accordance with the variants incoporated into the modified reference.
+Whilst not being a concern if only SNVs are used as variants, any
+Insertion or Deletion will shift genomic co-ordinates. This can be
+performed using <code><a href="../reference/shiftByVar.html">shiftByVar()</a></code> which returns a set of GRanges
+with co-ordinates shifted to account for any variants</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">new_exons</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/shiftByVar.html">shiftByVar</a></span><span class="op">(</span><span class="va">gtf</span><span class="op">$</span><span class="va">exon</span>, <span class="va">var</span><span class="op">)</span></span></code></pre></div>
+<p>This will return an object with a modified <code><a href="https://rdrr.io/pkg/GenomeInfoDb/man/Seqinfo-class.html" class="external-link">Seqinfo()</a></code>
+object so that sequence lengths will match the modified chromosomes.</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">new_exons</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Seqinfo object with 1 sequence from GRCh38 genome:</span></span>
+<span><span class="co">##   seqnames seqlengths isCircular genome</span></span>
+<span><span class="co">##   chr1      248956362         NA GRCh38</span></span></code></pre>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">chr1_mod</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Seqinfo object with 1 sequence from an unspecified genome:</span></span>
+<span><span class="co">##   seqnames seqlengths isCircular genome</span></span>
+<span><span class="co">##   chr1      248956362         NA   &lt;NA&gt;</span></span></code></pre>
+<p>This enables simple extraction of transcript sequences using the
+capabilities of <code>GenomicFeatures</code></p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">new_exon_by_trans</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/splitAsList.html" class="external-link">splitAsList</a></span><span class="op">(</span><span class="va">new_exons</span>, <span class="va">new_exons</span><span class="op">$</span><span class="va">transcript_id</span><span class="op">)</span></span></code></pre></div>
+<p>Whilst <code>transmogrify</code> will add tags to transcript names
+when requested, if choosing this approach, tags may be added manually,
+with <code><a href="../reference/varTags.html">varTags()</a></code> being designed for this possbility.
+Importantly, checking for overlaps with variants needs to be performed
+<em>before shifting the co-ordinates</em>, and these can then be added
+at any subsequent point in the process where the order of the transcript
+names is known.</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tags</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/varTags.html">varTags</a></span><span class="op">(</span><span class="va">ref_exons_by_trans</span>, <span class="va">var</span>, tag <span class="op">=</span> <span class="st">"1000GP"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">new_exon_by_trans</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">new_exon_by_trans</span><span class="op">)</span>, <span class="va">tags</span><span class="op">)</span></span></code></pre></div>
+<p>Now, the transcript sequences can be extracted, with tags
+incorporated</p>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">new_trans_mod</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicFeatures/man/extractTranscriptSeqs.html" class="external-link">extractTranscriptSeqs</a></span><span class="op">(</span><span class="va">chr1_mod</span>, <span class="va">new_exon_by_trans</span><span class="op">)</span></span></code></pre></div>
+<p>This will return all unmodified transcripts, as unmodified, despite
+the new co-ordinates, and will return modified transcripts which are
+identical to those returned by <code><a href="../reference/transmogrify-methods.html">transmogrify()</a></code></p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">modified</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">new_trans_mod</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">new_trans_mod</span><span class="op">[</span><span class="op">!</span><span class="va">modified</span><span class="op">]</span> <span class="op">==</span> <span class="va">ref_trans</span><span class="op">[</span><span class="op">!</span><span class="va">modified</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] TRUE</span></span></code></pre>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">new_trans_mod</span><span class="op">[</span><span class="va">modified</span><span class="op">]</span> <span class="op">==</span> <span class="va">trans_mod</span><span class="op">[</span><span class="va">modified</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] TRUE</span></span></code></pre>
+<p>In general, this approach is much faster and less resource hungry
+than using <code><a href="../reference/transmogrify-methods.html">transmogrify()</a></code>, however both approaches will
+require significant RAM. Whilst some common-use laptops may have the
+required capacity, resources provided by HPC access will guarantee the
+process will execute to completion.</p>
 </div>
 </div>
 <div class="section level2">
@@ -350,7 +473,7 @@ CHM13 are able to obtained using <code><a href="../reference/parY-methods.html">
 appropriate <code>seqinfo</code> object. This <code>seqinfo</code>
 object checks the length of the Y-chromosome and guesses which reference
 genome has been used.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sq_hg38</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">BSgenome.Hsapiens.UCSC.hg38</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/parY-methods.html">parY</a></span><span class="op">(</span><span class="va">sq_hg38</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## GRanges object with 2 ranges and 1 metadata column:</span></span>
@@ -375,7 +498,7 @@ N.</p>
 </h3>
 <p>In addition, the set of splice junctions associated with any
 transcript can be obtained using our known exons.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"transcript_id"</span>, <span class="st">"transcript_name"</span>, <span class="st">"gene_id"</span>, <span class="st">"gene_name"</span><span class="op">)</span></span>
 <span><span class="va">sj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sjFromExons.html">sjFromExons</a></span><span class="op">(</span><span class="va">gtf</span><span class="op">$</span><span class="va">exon</span>, extra_cols <span class="op">=</span> <span class="va">ec</span><span class="op">)</span></span>
 <span><span class="va">sj</span></span></code></pre></div>
@@ -411,7 +534,7 @@ transcript can be obtained using our known exons.</p>
 <p>Many splice junctions will be shared across multiple transcripts, so
 the returned set of junctions can also be simplified using
 <code><a href="https://rdrr.io/pkg/extraChIPs/man/chopMC.html" class="external-link">chopMC()</a></code> from <code>extraChIPs</code>.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/extraChIPs/man/chopMC.html" class="external-link">chopMC</a></span><span class="op">(</span><span class="va">sj</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## GRanges object with 196 ranges and 6 metadata columns:</span></span>
 <span><span class="co">##         seqnames        ranges strand |        site</span></span>
@@ -473,7 +596,7 @@ of interactions, with donor sites being assigned to the
 <code>anchorOne</code> element, and acceptor sites being placed in the
 <code>anchorTwo</code> element This enables the identification of all
 splice junctions for specific transcripts.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sjFromExons.html">sjFromExons</a></span><span class="op">(</span><span class="va">gtf</span><span class="op">$</span><span class="va">exon</span>, extra_cols <span class="op">=</span> <span class="va">ec</span>, as <span class="op">=</span> <span class="st">"GInteractions"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">sj</span>, <span class="va">transcript_name</span> <span class="op">==</span> <span class="st">"DDX11L17-201"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## GInteractions object with 4 interactions and 5 metadata columns:</span></span>
@@ -522,17 +645,18 @@ splice junctions for specific transcripts.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] BSgenome.Hsapiens.UCSC.hg38_1.4.5 BSgenome_1.74.0                  </span></span>
-<span><span class="co">##  [3] BiocIO_1.16.0                     transmogR_1.3.7                  </span></span>
-<span><span class="co">##  [5] extraChIPs_1.10.0                 tibble_3.2.1                     </span></span>
-<span><span class="co">##  [7] ggside_0.3.1                      ggplot2_3.5.1                    </span></span>
-<span><span class="co">##  [9] BiocParallel_1.40.0               rtracklayer_1.66.0               </span></span>
-<span><span class="co">## [11] VariantAnnotation_1.52.0          Rsamtools_2.22.0                 </span></span>
-<span><span class="co">## [13] Biostrings_2.74.1                 XVector_0.46.0                   </span></span>
-<span><span class="co">## [15] SummarizedExperiment_1.36.0       Biobase_2.66.0                   </span></span>
-<span><span class="co">## [17] GenomicRanges_1.58.0              GenomeInfoDb_1.42.3              </span></span>
-<span><span class="co">## [19] IRanges_2.40.1                    S4Vectors_0.44.0                 </span></span>
-<span><span class="co">## [21] MatrixGenerics_1.18.1             matrixStats_1.5.0                </span></span>
-<span><span class="co">## [23] BiocGenerics_0.52.0               BiocStyle_2.34.0                 </span></span>
+<span><span class="co">##  [3] BiocIO_1.16.0                     GenomicFeatures_1.58.0           </span></span>
+<span><span class="co">##  [5] AnnotationDbi_1.68.0              transmogR_1.3.7                  </span></span>
+<span><span class="co">##  [7] extraChIPs_1.10.0                 tibble_3.2.1                     </span></span>
+<span><span class="co">##  [9] ggside_0.3.1                      ggplot2_3.5.1                    </span></span>
+<span><span class="co">## [11] BiocParallel_1.40.0               rtracklayer_1.66.0               </span></span>
+<span><span class="co">## [13] VariantAnnotation_1.52.0          Rsamtools_2.22.0                 </span></span>
+<span><span class="co">## [15] Biostrings_2.74.1                 XVector_0.46.0                   </span></span>
+<span><span class="co">## [17] SummarizedExperiment_1.36.0       Biobase_2.66.0                   </span></span>
+<span><span class="co">## [19] GenomicRanges_1.58.0              GenomeInfoDb_1.42.3              </span></span>
+<span><span class="co">## [21] IRanges_2.40.1                    S4Vectors_0.44.0                 </span></span>
+<span><span class="co">## [23] MatrixGenerics_1.18.1             matrixStats_1.5.0                </span></span>
+<span><span class="co">## [25] BiocGenerics_0.52.0               BiocStyle_2.34.0                 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] bitops_1.0-9               filelock_1.0.3            </span></span>
@@ -584,26 +708,25 @@ splice junctions for specific transcripts.</p>
 <span><span class="co">##  [93] checkmate_2.3.2            curl_6.2.1                </span></span>
 <span><span class="co">##  [95] cachem_1.1.0               stringr_1.5.1             </span></span>
 <span><span class="co">##  [97] parallel_4.4.2             foreign_0.8-88            </span></span>
-<span><span class="co">##  [99] AnnotationDbi_1.68.0       restfulr_0.0.15           </span></span>
-<span><span class="co">## [101] desc_1.4.3                 pillar_1.10.1             </span></span>
-<span><span class="co">## [103] grid_4.4.2                 vctrs_0.6.5               </span></span>
-<span><span class="co">## [105] dbplyr_2.5.0               cluster_2.1.8.1           </span></span>
-<span><span class="co">## [107] htmlTable_2.4.3            evaluate_1.0.3            </span></span>
-<span><span class="co">## [109] VennDiagram_1.7.3          GenomicFeatures_1.58.0    </span></span>
-<span><span class="co">## [111] cli_3.6.4                  locfit_1.5-9.12           </span></span>
-<span><span class="co">## [113] compiler_4.4.2             futile.options_1.0.1      </span></span>
-<span><span class="co">## [115] rlang_1.1.5                crayon_1.5.3              </span></span>
-<span><span class="co">## [117] labeling_0.4.3             interp_1.1-6              </span></span>
-<span><span class="co">## [119] forcats_1.0.0              fs_1.6.5                  </span></span>
-<span><span class="co">## [121] stringi_1.8.4              deldir_2.0-4              </span></span>
-<span><span class="co">## [123] munsell_0.5.1              lazyeval_0.2.2            </span></span>
-<span><span class="co">## [125] csaw_1.40.0                Matrix_1.7-3              </span></span>
-<span><span class="co">## [127] hms_1.1.3                  patchwork_1.3.0           </span></span>
-<span><span class="co">## [129] bit64_4.6.0-1              KEGGREST_1.46.0           </span></span>
-<span><span class="co">## [131] statmod_1.5.0              igraph_2.1.4              </span></span>
-<span><span class="co">## [133] broom_1.0.7                memoise_2.0.1             </span></span>
-<span><span class="co">## [135] bslib_0.9.0                bit_4.6.0                 </span></span>
-<span><span class="co">## [137] GenomicInteractions_1.40.0</span></span></code></pre>
+<span><span class="co">##  [99] restfulr_0.0.15            desc_1.4.3                </span></span>
+<span><span class="co">## [101] pillar_1.10.1              grid_4.4.2                </span></span>
+<span><span class="co">## [103] vctrs_0.6.5                dbplyr_2.5.0              </span></span>
+<span><span class="co">## [105] cluster_2.1.8.1            htmlTable_2.4.3           </span></span>
+<span><span class="co">## [107] evaluate_1.0.3             VennDiagram_1.7.3         </span></span>
+<span><span class="co">## [109] cli_3.6.4                  locfit_1.5-9.12           </span></span>
+<span><span class="co">## [111] compiler_4.4.2             futile.options_1.0.1      </span></span>
+<span><span class="co">## [113] rlang_1.1.5                crayon_1.5.3              </span></span>
+<span><span class="co">## [115] labeling_0.4.3             interp_1.1-6              </span></span>
+<span><span class="co">## [117] forcats_1.0.0              fs_1.6.5                  </span></span>
+<span><span class="co">## [119] stringi_1.8.4              deldir_2.0-4              </span></span>
+<span><span class="co">## [121] munsell_0.5.1              lazyeval_0.2.2            </span></span>
+<span><span class="co">## [123] csaw_1.40.0                Matrix_1.7-3              </span></span>
+<span><span class="co">## [125] hms_1.1.3                  patchwork_1.3.0           </span></span>
+<span><span class="co">## [127] bit64_4.6.0-1              KEGGREST_1.46.0           </span></span>
+<span><span class="co">## [129] statmod_1.5.0              igraph_2.1.4              </span></span>
+<span><span class="co">## [131] broom_1.0.7                memoise_2.0.1             </span></span>
+<span><span class="co">## [133] bslib_0.9.0                bit_4.6.0                 </span></span>
+<span><span class="co">## [135] GenomicInteractions_1.40.0</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -614,6 +737,12 @@ Kaminow, Benjamin, Sara Ballouz, Jesse Gillis, and Alexander Dobin.
 2022. <span>“Pan-Human Consensus Genome Significantly Improves the
 Accuracy of <span class="nocase">RNA-seq</span> Analyses.”</span>
 <em>Genome Res.</em> 32 (4): 738–49.
+</div>
+<div id="ref-Lawrence2013" class="csl-entry">
+Lawrence, Michael, Wolfgang Huber, Hervé Pagès, Patrick Aboyoun, Marc
+Carlson, Robert Gentleman, Martin Morgan, and Vincent Carey. 2013.
+<span>“Software for Computing and Annotating Genomic Ranges.”</span>
+<em><span>PLoS</span> Computational Biology</em> 9. <a href="https://doi.org/10.1371/journal.pcbi.1003118" class="external-link">https://doi.org/10.1371/journal.pcbi.1003118</a>.
 </div>
 <div id="ref-Srivastava2020-tm" class="csl-entry">
 Srivastava, Avi, Laraib Malik, Hirak Sarkar, Mohsen Zakeri, Fatemeh
