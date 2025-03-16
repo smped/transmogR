@@ -93,20 +93,35 @@ names(chr1) <- "chr1"
 chr1
 ```
 
-A small set of variants has been provided with the package.
+Given this represents the complete reference genome, we can also setup a `Seqinfo` object for all downstream analysis, and to ensure all objects are working with the same reference genome.
 
-```{r var}
+```{r sq}
 sq <- seqinfo(chr1)
 genome(sq) <- "GRCh38"
+sq
+```
+
+A small set of variants from the 1000 Genomes Project^[https://www.internationalgenome.org] has been provided with the package in VCF format.
+
+```{r vcf}
 vcf <- system.file("extdata/1000GP_subset.vcf.gz", package = "transmogR")
-vcf_param <- ScanVcfParam(fixed = "ALT", info = NA, which = GRanges(sq))
-var <- rowRanges(readVcf(vcf, param = vcf_param))
+vcf <- VcfFile(vcf)
+```
+
+Variant callers can often produce variant calls which are incompatible and the function `checkVariants()` will check for overlapping InDels, as well as returning both the `REF` and `ALT` columns as a character vectors.
+This function can be applied to any set of variants parsed by other tools, or can be applied directly to a `VcfFile` to check variants whilst parsing.
+
+
+```{r var}
+var <- cleanVariants(vcf)
 seqinfo(var) <- sq
 var
 ```
 
-An additional set of transcripts derived from Gencode v44^[https://www.gencodegenes.org/human/] has also been 
-provided.
+In this case, no incompatible variants were included, but if they are present, an error will be produced by default.
+This behaviour can be modified by setting the `ol_vars` argument to return no overlapping InDels (`ol_vars = 'none'`), the longest or shortest in terms of the largest or smallest change to the chromosome length, or even the first or last of the overlapping variants.
+
+An additional set of transcripts derived from Gencode v44^[https://www.gencodegenes.org/human/] has also been provided.
 
 ```{r gtf}
 f <- system.file("extdata/gencode.v44.subset.gtf.gz", package = "transmogR")
@@ -126,23 +141,7 @@ gtf <- splitAsList(gtf, gtf$type)
 
 Knowing where our variants lie, and how they relate to each other can be 
 informative, and as such, some simple visualisation and summarisation functions
-have been included as well as some checking steps.
-Variant callers can often produce variant calls which are incompatible and the
-function `checkVariants()` will check for overlapping InDels, as well as 
-returning the `ALT` column as a character vector.
-
-```{r clean-variants}
-var <- cleanVariants(var)
-```
-
-In this case, no incompatible variants were included, but if they are present, 
-an error will be proudced by default.
-This behaviour can be modified by setting the `ol_vars` argument to return no
-overlapping InDels (`ol_vars = 'none'`), the longest or shortest in terms of 
-the largest or smallest change to the chromosome length, or even the first or 
-last of the overlapping variants.
-
-
+have been included.
 In the following, we can check to see how many exons directly overlap a variant,
 showing how many unique genes this summarises to.
 Any ids, which don't overlap a variants are also described in the plot title.
@@ -186,9 +185,7 @@ Deletions respectively.
 In our example dataset, only one transcript contains both SNVs and an insertion.
 
 ```{r trans-mod}
-trans_mod <- transmogrify(
-    chr1, var, gtf$exon, tag = "mod", var_tags = TRUE
-)
+trans_mod <- transmogrify(chr1, var, gtf$exon, tag = "1000GP", var_tags = TRUE)
 trans_mod
 names(trans_mod)[grepl("_si", names(trans_mod))]
 ```
@@ -216,6 +213,14 @@ chr1_mod
 
 The new reference genome can be exported to fasta format using 
 `writeXStringSet()`.
+Incorporation of both of these into a 'gentrome' for use with the pseudo-aligner `salmon` [@Srivastava2020-tm] is a straight-forward concatenation.
+
+```{r gentrome, eval=FALSE}
+c(trans_mod, chr1_mod) %>% 
+    writeXStringSet("gentrome.fa.gz", compress = TRUE)
+writeLines(names(chr1_mod), "decoys.txt")
+```
+
 
 Both of the above processes rely on the lower-level functions `owl()` and 
 `indelcator()` which *overwrite letters* or substitute *indels* respectively.
@@ -225,15 +230,27 @@ These are also able to be called individually as shown in the help pages.
 
 In addition to the above approaches, the co-ordinates from a GRanges object can
 be modified to account for all length-modifying variants, i.e. InDels.
+These shifted co-ordinates can then be used with a variant-modified reference genome to directly extract the modified transcript sequences using `extractTranscriptSeq()` from `GenomicFeatures` [@Lawrence2013].
+This is traditional performed using a `GRangesList` with each element containing the exons for a given transcript.
 
-```{r}
+```{r ref-trans}
+ref_exons_by_trans <- gtf$exon %>% splitAsList(.$transcript_id) 
+ref_trans <- extractTranscriptSeqs(chr1, ref_exons_by_trans)
+ref_trans
+```
+
+In order to perform an analogous operation on a variant-modified reference, we need to shift the co-ordinates of any feature in accordance with the variants incoporated into the modified reference.
+Whilst not being a concern if only SNVs are used as variants, any Insertion or Deletion will shift genomic co-ordinates.
+This can be performed using `shiftByVar()` which returns a set of GRanges with co-ordinates shifted to account for any variants
+
+```{r new-exons}
 new_exons <- shiftByVar(gtf$exon, var)
 ```
 
 This will return an object with a modified `Seqinfo()` object so that sequence
 lengths will match the modified chromosomes.
 
-```{r}
+```{r compare-seqinfo}
 seqinfo(new_exons)
 seqinfo(chr1_mod)
 ```
@@ -241,31 +258,35 @@ seqinfo(chr1_mod)
 This enables simple extraction of transcript sequences using the capabilities 
 of `GenomicFeatures`
 
-```{r}
-alt_trans_mod <- extractTranscriptSeqs(
-    chr1_mod, splitAsList(new_exons, new_exons$transcript_id)
-)
+```{r new-exon-by-trans}
+new_exon_by_trans <- splitAsList(new_exons, new_exons$transcript_id)
 ```
 
-In this case tags may have to be added manually
+Whilst `transmogrify` will add tags to transcript names when requested, if choosing this approach, tags may be added manually, with `varTags()` being designed for this possbility.
+Importantly, checking for overlaps with variants needs to be performed *before shifting the co-ordinates*, and these can then be added at any subsequent point in the process where the order of the transcript names is known.
 
-```{r}
-ol_ids <- var %>% 
-    splitAsList(varTypes(.)) %>% 
-    lapply(\(x) subsetByOverlaps(gtf$exon, x)$transcript_id) %>% 
-    lapply(\(x) names(alt_trans_mod) %in% x)
-tag_mat <- do.call(
-    "cbind", 
-    lapply(
-        c("SNV", "Insertion", "Deletion"),
-        \(x) ifelse(ol_ids[[x]], tolower(substring(x, 1, 1)), "")
-    ) 
-)
-tags <- gsub("([sid]+)", "_mod_\\1", apply(tag_mat, 1, paste, collapse = ""))
-names(alt_trans_mod) <- paste0(names(alt_trans_mod), tags)
-## Make this a function...
+```{r tags}
+tags <- varTags(ref_exons_by_trans, var, tag = "1000GP")
+names(new_exon_by_trans) <- paste0(names(new_exon_by_trans), tags)
 ```
 
+Now, the transcript sequences can be extracted, with tags incorporated
+
+```{r new-trans-mod}
+new_trans_mod <- extractTranscriptSeqs(chr1_mod, new_exon_by_trans)
+```
+
+This will return all unmodified transcripts, as unmodified, despite the new co-ordinates, and will return modified transcripts which are identical to those returned by `transmogrify()`
+
+```{r check-modified}
+modified <- grepl("_", names(new_trans_mod))
+all(new_trans_mod[!modified] == ref_trans[!modified])
+all(new_trans_mod[modified] == trans_mod[modified])
+```
+
+
+In general, this approach is much faster and less resource hungry than using `transmogrify()`, however both approaches will require significant RAM.
+Whilst some common-use laptops may have the required capacity, resources provided by HPC access will guarantee the process will execute to completion.
 
 # Additional Capabilities
 

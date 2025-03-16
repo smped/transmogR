@@ -1,10 +1,10 @@
-library(GenomicRanges)
-library(VariantAnnotation)
+
 test_that("genomogrify works correctly", {
     if (requireNamespace("BSgenome.Hsapiens.UCSC.hg38", quietly = TRUE)) {
         ## Using a GRanges with variants
         hg38 <- BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38
         var <- GRanges(c("chrM:1", "chrM:2"), seqinfo = seqinfo(hg38))
+        var$REF <- c("G", "G")
         var$ALT <- c("A", "NN") # Normally a G
         new <- genomogrify(
             hg38, var, alt_col = "ALT", names = "chrM", tag = "test",

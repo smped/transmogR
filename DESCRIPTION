@@ -49,7 +49,7 @@ Suggests:
     rmarkdown,
     rtracklayer,
     testthat (>= 3.0.0)
-biocViews: Alignment, GenomicVariation, Sequencing, TranscriptomeVariant
+biocViews: Alignment, GenomicVariation, Sequencing, TranscriptomeVariant, VariantAnnotation
 BiocType: Software
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)  
