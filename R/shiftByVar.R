@@ -46,6 +46,10 @@ shiftByVar <- function(x, var, alt_col = "ALT", mc.cores = 1, ...) {
     sl <- seqlengths(sq)
 
     var <- cleanVariants(var, alt_col = alt_col, ...)
+    ## Also set refs as a character for easier object merging later.
+    ## Hardwire this to be called `REF`, unless it becomes problematic
+    if (is(var$REF, "XStringSet")) var$REF <- as.character(var$REF)
+
     var <- subset(var, seqnames %in% seqlevels(sq))
     var$var_type <- varTypes(var, alt_col = alt_col)
     ## Now keep only the InDels on the required chromosomes
@@ -96,7 +100,7 @@ shiftByVar <- function(x, var, alt_col = "ALT", mc.cores = 1, ...) {
     ## And return the final object
     out <- unlist(c(old_ranges, new_ranges)[seqlevels(sq)])
     seqlengths(out) <- sl
-    out
+    unname(out)
 
 }
 

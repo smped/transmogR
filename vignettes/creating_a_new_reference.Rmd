@@ -71,6 +71,7 @@ library(VariantAnnotation)
 library(rtracklayer)
 library(extraChIPs)
 library(transmogR)
+library(GenomicFeatures)
 library(BSgenome.Hsapiens.UCSC.hg38)
 ```
 
@@ -92,20 +93,35 @@ names(chr1) <- "chr1"
 chr1
 ```
 
-A small set of variants has been provided with the package.
+Given this represents the complete reference genome, we can also setup a `Seqinfo` object for all downstream analysis, and to ensure all objects are working with the same reference genome.
 
-```{r var}
+```{r sq}
 sq <- seqinfo(chr1)
 genome(sq) <- "GRCh38"
+sq
+```
+
+A small set of variants from the 1000 Genomes Project^[https://www.internationalgenome.org] has been provided with the package in VCF format.
+
+```{r vcf}
 vcf <- system.file("extdata/1000GP_subset.vcf.gz", package = "transmogR")
-vcf_param <- ScanVcfParam(fixed = "ALT", info = NA, which = GRanges(sq))
-var <- rowRanges(readVcf(vcf, param = vcf_param))
+vcf <- VcfFile(vcf)
+```
+
+Variant callers can often produce variant calls which are incompatible and the function `checkVariants()` will check for overlapping InDels, as well as returning both the `REF` and `ALT` columns as a character vectors.
+This function can be applied to any set of variants parsed by other tools, or can be applied directly to a `VcfFile` to check variants whilst parsing.
+
+
+```{r var}
+var <- cleanVariants(vcf)
 seqinfo(var) <- sq
 var
 ```
 
-An additional set of transcripts derived from Gencode v44^[https://www.gencodegenes.org/human/] has also been 
-provided.
+In this case, no incompatible variants were included, but if they are present, an error will be produced by default.
+This behaviour can be modified by setting the `ol_vars` argument to return no overlapping InDels (`ol_vars = 'none'`), the longest or shortest in terms of the largest or smallest change to the chromosome length, or even the first or last of the overlapping variants.
+
+An additional set of transcripts derived from Gencode v44^[https://www.gencodegenes.org/human/] has also been provided.
 
 ```{r gtf}
 f <- system.file("extdata/gencode.v44.subset.gtf.gz", package = "transmogR")
@@ -152,25 +168,15 @@ overlapsByVar(regions, var)
 
 # Creating Modified Reference Sequences
 
-## Modifying a Reference Genome
-
-The simplest method for modifying a reference genome is to simply call 
-`genomogrify()` with either a `DNAStringSet` or `BSgenome` object.
-A tag can be optionally added to all sequence names to avoid confusion.
-
-```{r chr1-mod}
-chr1_mod <- genomogrify(chr1, var, tag = "mod")
-chr1_mod
-```
-
-The new reference genome can be exported to fasta format using 
-`writeXStringSet()`.
+Several approaches are available for creating modified reference genomes or transcriptomes, as outlines below.
 
 ## Modifying a Reference Transcriptome
 
-The process for creating a variant-modified reference transcriptome is 
-essentially the same as above, with the addition of exon-level co-ordinates for
-the set of transcripts.
+A simple option for creating a variant-modified reference transcriptome is to 
+call the function `transmogrify()`, providing the reference sequence, a set of
+variants and the genomic co-ordinates of sequence features (e.g. transcripts) 
+for which the sequences are required.
+
 An optional tag can be added to all transcripts to indicate which have been 
 modified, with an additional tag able to be included which indicates which type
 of variant has been incorporated into the new transcript sequence.
@@ -179,9 +185,7 @@ Deletions respectively.
 In our example dataset, only one transcript contains both SNVs and an insertion.
 
 ```{r trans-mod}
-trans_mod <- transmogrify(
-    chr1, var, gtf$exon, tag = "mod", var_tags = TRUE
-)
+trans_mod <- transmogrify(chr1, var, gtf$exon, tag = "1000GP", var_tags = TRUE)
 trans_mod
 names(trans_mod)[grepl("_si", names(trans_mod))]
 ```
@@ -190,10 +194,99 @@ This can be simply exported again using `writeXStringSet()`.
 If using decoy transcripts for `salmon`, the `gentrome` can also be simply 
 exported by combining the two modified references.
 
+This approach effectively steps through all the provided transcripts inserting
+the relevant variants where required, and as such can be somewhat time-consuming
+when working with genome-wide variants and a complete transcriptome.
+
+## Modifying a Reference Genome
+
+In addition to creating a set of modified transcripts, the genomic sequence can 
+also be modified with a call to `genomogrify()`, using either a `DNAStringSet` 
+or `BSgenome` object to provide the reference sequences.
+A tag can be optionally added to all sequence names to avoid confusion, however,
+in the below example this option has not been utilised
+
+```{r chr1-mod}
+chr1_mod <- genomogrify(chr1, var)
+chr1_mod
+```
+
+The new reference genome can be exported to fasta format using 
+`writeXStringSet()`.
+Incorporation of both of these into a 'gentrome' for use with the pseudo-aligner `salmon` [@Srivastava2020-tm] is a straight-forward concatenation.
+
+```{r gentrome, eval=FALSE}
+c(trans_mod, chr1_mod) %>% 
+    writeXStringSet("gentrome.fa.gz", compress = TRUE)
+writeLines(names(chr1_mod), "decoys.txt")
+```
+
 
 Both of the above processes rely on the lower-level functions `owl()` and 
 `indelcator()` which *overwrite letters* or substitute *indels* respectively.
 These are also able to be called individually as shown in the help pages.
+
+## Finding Modified Co-ordinates
+
+In addition to the above approaches, the co-ordinates from a GRanges object can
+be modified to account for all length-modifying variants, i.e. InDels.
+These shifted co-ordinates can then be used with a variant-modified reference genome to directly extract the modified transcript sequences using `extractTranscriptSeq()` from `GenomicFeatures` [@Lawrence2013].
+This is traditional performed using a `GRangesList` with each element containing the exons for a given transcript.
+
+```{r ref-trans}
+ref_exons_by_trans <- gtf$exon %>% splitAsList(.$transcript_id) 
+ref_trans <- extractTranscriptSeqs(chr1, ref_exons_by_trans)
+ref_trans
+```
+
+In order to perform an analogous operation on a variant-modified reference, we need to shift the co-ordinates of any feature in accordance with the variants incoporated into the modified reference.
+Whilst not being a concern if only SNVs are used as variants, any Insertion or Deletion will shift genomic co-ordinates.
+This can be performed using `shiftByVar()` which returns a set of GRanges with co-ordinates shifted to account for any variants
+
+```{r new-exons}
+new_exons <- shiftByVar(gtf$exon, var)
+```
+
+This will return an object with a modified `Seqinfo()` object so that sequence
+lengths will match the modified chromosomes.
+
+```{r compare-seqinfo}
+seqinfo(new_exons)
+seqinfo(chr1_mod)
+```
+
+This enables simple extraction of transcript sequences using the capabilities 
+of `GenomicFeatures`
+
+```{r new-exon-by-trans}
+new_exon_by_trans <- splitAsList(new_exons, new_exons$transcript_id)
+```
+
+Whilst `transmogrify` will add tags to transcript names when requested, if choosing this approach, tags may be added manually, with `varTags()` being designed for this possbility.
+Importantly, checking for overlaps with variants needs to be performed *before shifting the co-ordinates*, and these can then be added at any subsequent point in the process where the order of the transcript names is known.
+
+```{r tags}
+tags <- varTags(ref_exons_by_trans, var, tag = "1000GP")
+names(new_exon_by_trans) <- paste0(names(new_exon_by_trans), tags)
+```
+
+Now, the transcript sequences can be extracted, with tags incorporated
+
+```{r new-trans-mod}
+new_trans_mod <- extractTranscriptSeqs(chr1_mod, new_exon_by_trans)
+```
+
+This will return all unmodified transcripts, as unmodified, despite the new co-ordinates, and will return modified transcripts which are identical to those returned by `transmogrify()`
+
+```{r check-modified}
+modified <- grepl("_", names(new_trans_mod))
+all(new_trans_mod[!modified] == ref_trans[!modified])
+all(new_trans_mod[modified] == trans_mod[modified])
+```
+
+
+In general, this approach is much faster and less resource hungry than using `transmogrify()`, however both approaches will require significant RAM.
+Whilst some common-use laptops may have the required capacity, resources provided by HPC access will guarantee the process will execute to completion.
 
 # Additional Capabilities
 

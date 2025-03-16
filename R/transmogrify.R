@@ -155,28 +155,8 @@ setMethod(
         all_seq[trans_with_indel] <- new_trans_seq[trans_with_indel]
 
         ## Add tags where needed
-        if (!is.null(tag)) {
-            ol <- names(all_seq) %in% trans_with_any
-            names(all_seq)[ol] <- paste(names(all_seq)[ol], tag, sep = sep)
-        }
-        if (var_tags) {
-            suff <- rep_len("", length(ex_by_trans))
-            trans_with_snp <- names(subsetByOverlaps(ex_by_trans, snps))
-            trans_with_ins <- names(
-                subsetByOverlaps(ex_by_trans, subset(indels, width == 1))
-            )
-            trans_with_del <- names(
-                subsetByOverlaps(ex_by_trans, subset(indels, width > 1))
-            )
-            suff[names(ex_by_trans) %in% trans_with_any] <- var_sep
-            s <- names(ex_by_trans) %in% trans_with_snp
-            suff[s] <- paste0(suff[s], "s")
-            i <- names(ex_by_trans) %in% trans_with_ins
-            suff[i] <- paste0(suff[i], "i")
-            d <- names(ex_by_trans) %in% trans_with_del
-            suff[d] <- paste0(suff[d], "d")
-            names(all_seq) <- paste0(names(all_seq), suff)
-        }
+        tags <- varTags(ex_by_trans, var, tag, var_tags, var_sep, sep)
+        names(all_seq) <- paste0(names(all_seq), tags)
         all_seq
 
     }

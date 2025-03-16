@@ -1,6 +1,7 @@
 library(rtracklayer)
 library(VariantAnnotation)
 library(SummarizedExperiment)
+library(GenomicRanges)
 gtf <- import.gff(
     system.file("extdata/gencode.v44.subset.gtf.gz", package = "transmogR")
 )

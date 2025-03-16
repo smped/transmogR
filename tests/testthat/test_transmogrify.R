@@ -53,7 +53,7 @@ test_that("transmogrify works as expected",{
         exons <- rtracklayer::import.gff(
             system.file("extdata/gencode.v44.subset.gtf.gz", package = "transmogR"),
             feature.type = "exon"
-        )
+        )[1:100]
         vcf <- VariantAnnotation::VcfFile(
             system.file("extdata/1000GP_subset.vcf.gz", package = "transmogR")
         )

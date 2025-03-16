@@ -97,24 +97,10 @@ setMethod(
         }
         ## Add Insertions/Deletions
         new_seq <- indelcator(new_seq, indels, verbose = verbose, ...)
-
-        ## Sort out tags for sequence names which were modified
-        if (!is.null(tag)) {
-            ol <- names(new_seq) %in% as.character(seqnames(var))
-            names(new_seq)[ol] <- paste(names(new_seq)[ol], tag, sep = sep)
-        }
-        if (var_tags) {
-            ol_snp <- names(x) %in% seqnames(snps)
-            ol_ins <- names(x) %in% seqnames(subset(indels, width == 1))
-            ol_del <- names(x) %in% seqnames(subset(indels, width > 1))
-            any_var <- ol_snp | ol_ins | ol_del
-            suff <- rep_len("", length(new_seq))
-            suff[any_var] <- var_sep
-            suff[ol_snp] <- paste0(suff[ol_snp], "s")
-            suff[ol_ins] <- paste0(suff[ol_ins], "i")
-            suff[ol_del] <- paste0(suff[ol_del], "d")
-            names(new_seq) <- paste0(names(new_seq), suff)
-        }
+        ## Add any tags
+        seq_ranges <- GRanges(seqinfo(x))
+        tags <- varTags(seq_ranges, var, tag, var_tags, var_sep, sep)
+        names(new_seq) <- paste0(names(new_seq), tags)
         new_seq
 
     }
