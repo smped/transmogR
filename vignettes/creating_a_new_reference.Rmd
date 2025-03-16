@@ -2,7 +2,7 @@
 title: "Creating a Variant-Modified Reference"
 author:
 - name: Stevie Pederson
-  affiliation: Black Ochre Data Labs, Telethon Kid's Institute, Adelaide, Australia
+  affiliation: Black Ochre Data Labs, The Kids Research Institute Australia, Adelaide, Australia
   email: stevie.pederson@thekids.org.au
 package: transmogR
 bibliography: '`r system.file("references.bib", package = "transmogR")`'
@@ -191,8 +191,6 @@ names(trans_mod)[grepl("_si", names(trans_mod))]
 ```
 
 This can be simply exported again using `writeXStringSet()`.
-If using decoy transcripts for `salmon`, the `gentrome` can also be simply 
-exported by combining the two modified references.
 
 This approach effectively steps through all the provided transcripts inserting
 the relevant variants where required, and as such can be somewhat time-consuming
@@ -216,8 +214,7 @@ The new reference genome can be exported to fasta format using
 Incorporation of both of these into a 'gentrome' for use with the pseudo-aligner `salmon` [@Srivastava2020-tm] is a straight-forward concatenation.
 
 ```{r gentrome, eval=FALSE}
-c(trans_mod, chr1_mod) %>% 
-    writeXStringSet("gentrome.fa.gz", compress = TRUE)
+c(trans_mod, chr1_mod) %>% writeXStringSet("gentrome.fa.gz", compress = TRUE)
 writeLines(names(chr1_mod), "decoys.txt")
 ```
 
