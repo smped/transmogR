@@ -243,6 +243,7 @@ digestSalmon <- function(
         lapply(x, \(x) setNames(x[[var]], x[["Name"]])[.ids])
     )
     mat[is.na(mat)] <- fill
+    rownames(mat) <- .ids
     mat
 
 }

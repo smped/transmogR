@@ -2,7 +2,7 @@
 title: "Creating a Variant-Modified Reference"
 author:
 - name: Stevie Pederson
-  affiliation: Black Ochre Data Labs, Telethon Kid's Institute, Adelaide, Australia
+  affiliation: Black Ochre Data Labs, The Kids Research Institute Australia, Adelaide, Australia
   email: stevie.pederson@thekids.org.au
 package: transmogR
 bibliography: '`r system.file("references.bib", package = "transmogR")`'
@@ -191,8 +191,6 @@ names(trans_mod)[grepl("_si", names(trans_mod))]
 ```
 
 This can be simply exported again using `writeXStringSet()`.
-If using decoy transcripts for `salmon`, the `gentrome` can also be simply 
-exported by combining the two modified references.
 
 This approach effectively steps through all the provided transcripts inserting
 the relevant variants where required, and as such can be somewhat time-consuming
@@ -216,22 +214,20 @@ The new reference genome can be exported to fasta format using
 Incorporation of both of these into a 'gentrome' for use with the pseudo-aligner `salmon` [@Srivastava2020-tm] is a straight-forward concatenation.
 
 ```{r gentrome, eval=FALSE}
-c(trans_mod, chr1_mod) %>% 
-    writeXStringSet("gentrome.fa.gz", compress = TRUE)
+c(trans_mod, chr1_mod) %>% writeXStringSet("gentrome.fa.gz", compress = TRUE)
 writeLines(names(chr1_mod), "decoys.txt")
 ```
 
-
-Both of the above processes rely on the lower-level functions `owl()` and 
-`indelcator()` which *overwrite letters* or substitute *indels* respectively.
-These are also able to be called individually as shown in the help pages.
-
 ## Finding Modified Co-ordinates
 
-In addition to the above approaches, the co-ordinates from a GRanges object can
-be modified to account for all length-modifying variants, i.e. InDels.
+Both `genomogrify()` and `transmogrify()` rely on the lower-level functions `owl()` and 
+`indelcator()` which *overwrite letters* or substitute *indels* respectively.
+These are also able to be called individually as shown in the help pages.
+However, `transmogrify()` can run for an extended time if modifying tens of thousands of transcripts, as would be the case for creating an entirely new reference transcriptome.
+
+In addition to the above, the co-ordinates from a GRanges object can be modified to account for all length-modifying variants, i.e. InDels.
 These shifted co-ordinates can then be used with a variant-modified reference genome to directly extract the modified transcript sequences using `extractTranscriptSeq()` from `GenomicFeatures` [@Lawrence2013].
-This is traditional performed using a `GRangesList` with each element containing the exons for a given transcript.
+This is traditionally performed using a `GRangesList` with each element containing the exons for a given transcript.
 
 ```{r ref-trans}
 ref_exons_by_trans <- gtf$exon %>% splitAsList(.$transcript_id) 
