@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">transmogR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,7 +57,8 @@
                         <h4 data-toc-skip class="author">Stevie
 Pederson</h4>
             <address class="author_afil">
-      Black Ochre Data Labs, Telethon Kid’s Institute, Adelaide,
+      Black Ochre Data Labs, The Kids Research Institute Australia,
+Adelaide,
 Australia<br><a class="author_email" href="mailto:#"></a><a href="mailto:stevie.pederson@thekids.org.au" class="email">stevie.pederson@thekids.org.au</a>
       </address>
                   
@@ -341,9 +342,7 @@ contains both SNVs and an insertion.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">trans_mod</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"_si"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">trans_mod</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "ENST00000473798.2_1000GP_si"</span></span></code></pre>
 <p>This can be simply exported again using
-<code><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-io.html" class="external-link">writeXStringSet()</a></code>. If using decoy transcripts for
-<code>salmon</code>, the <code>gentrome</code> can also be simply
-exported by combining the two modified references.</p>
+<code><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-io.html" class="external-link">writeXStringSet()</a></code>.</p>
 <p>This approach effectively steps through all the provided transcripts
 inserting the relevant variants where required, and as such can be
 somewhat time-consuming when working with genome-wide variants and a
@@ -369,24 +368,27 @@ option has not been utilised</p>
 ‘gentrome’ for use with the pseudo-aligner <code>salmon</code> <span class="citation">(Srivastava et al. 2020)</span> is a straight-forward
 concatenation.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">trans_mod</span>, <span class="va">chr1_mod</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>    <span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-io.html" class="external-link">writeXStringSet</a></span><span class="op">(</span><span class="st">"gentrome.fa.gz"</span>, compress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">trans_mod</span>, <span class="va">chr1_mod</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/Biostrings/man/XStringSet-io.html" class="external-link">writeXStringSet</a></span><span class="op">(</span><span class="st">"gentrome.fa.gz"</span>, compress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">chr1_mod</span><span class="op">)</span>, <span class="st">"decoys.txt"</span><span class="op">)</span></span></code></pre></div>
-<p>Both of the above processes rely on the lower-level functions
-<code><a href="../reference/owl-methods.html">owl()</a></code> and <code><a href="../reference/indelcator-methods.html">indelcator()</a></code> which <em>overwrite
-letters</em> or substitute <em>indels</em> respectively. These are also
-able to be called individually as shown in the help pages.</p>
 </div>
 <div class="section level3">
 <h3 id="finding-modified-co-ordinates">Finding Modified Co-ordinates<a class="anchor" aria-label="anchor" href="#finding-modified-co-ordinates"></a>
 </h3>
-<p>In addition to the above approaches, the co-ordinates from a GRanges
-object can be modified to account for all length-modifying variants,
-i.e. InDels. These shifted co-ordinates can then be used with a
-variant-modified reference genome to directly extract the modified
-transcript sequences using <code>extractTranscriptSeq()</code> from
+<p>Both <code><a href="../reference/genomogrify-methods.html">genomogrify()</a></code> and <code><a href="../reference/transmogrify-methods.html">transmogrify()</a></code> rely
+on the lower-level functions <code><a href="../reference/owl-methods.html">owl()</a></code> and
+<code><a href="../reference/indelcator-methods.html">indelcator()</a></code> which <em>overwrite letters</em> or substitute
+<em>indels</em> respectively. These are also able to be called
+individually as shown in the help pages. However,
+<code><a href="../reference/transmogrify-methods.html">transmogrify()</a></code> can run for an extended time if modifying
+tens of thousands of transcripts, as would be the case for creating an
+entirely new reference transcriptome.</p>
+<p>In addition to the above, the co-ordinates from a GRanges object can
+be modified to account for all length-modifying variants, i.e. InDels.
+These shifted co-ordinates can then be used with a variant-modified
+reference genome to directly extract the modified transcript sequences
+using <code>extractTranscriptSeq()</code> from
 <code>GenomicFeatures</code> <span class="citation">(Lawrence et al.
-2013)</span>. This is traditional performed using a
+2013)</span>. This is traditionally performed using a
 <code>GRangesList</code> with each element containing the exons for a
 given transcript.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
@@ -646,10 +648,10 @@ splice junctions for specific transcripts.</p>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] BSgenome.Hsapiens.UCSC.hg38_1.4.5 BSgenome_1.74.0                  </span></span>
 <span><span class="co">##  [3] BiocIO_1.16.0                     GenomicFeatures_1.58.0           </span></span>
-<span><span class="co">##  [5] AnnotationDbi_1.68.0              transmogR_1.3.8                  </span></span>
+<span><span class="co">##  [5] AnnotationDbi_1.68.0              transmogR_1.5.1                  </span></span>
 <span><span class="co">##  [7] extraChIPs_1.10.0                 tibble_3.2.1                     </span></span>
-<span><span class="co">##  [9] ggside_0.3.1                      ggplot2_3.5.1                    </span></span>
-<span><span class="co">## [11] BiocParallel_1.40.0               rtracklayer_1.66.0               </span></span>
+<span><span class="co">##  [9] ggside_0.3.1                      ggplot2_3.5.2                    </span></span>
+<span><span class="co">## [11] BiocParallel_1.40.2               rtracklayer_1.66.0               </span></span>
 <span><span class="co">## [13] VariantAnnotation_1.52.0          Rsamtools_2.22.0                 </span></span>
 <span><span class="co">## [15] Biostrings_2.74.1                 XVector_0.46.0                   </span></span>
 <span><span class="co">## [17] SummarizedExperiment_1.36.0       Biobase_2.66.0                   </span></span>
@@ -662,38 +664,38 @@ splice junctions for specific transcripts.</p>
 <span><span class="co">##   [1] bitops_1.0-9               filelock_1.0.3            </span></span>
 <span><span class="co">##   [3] polyclip_1.10-7            XML_3.99-0.18             </span></span>
 <span><span class="co">##   [5] rpart_4.1.24               lifecycle_1.0.4           </span></span>
-<span><span class="co">##   [7] httr2_1.1.1                edgeR_4.4.2               </span></span>
-<span><span class="co">##   [9] lattice_0.22-6             ensembldb_2.30.0          </span></span>
+<span><span class="co">##   [7] httr2_1.1.2                edgeR_4.4.2               </span></span>
+<span><span class="co">##   [9] lattice_0.22-7             ensembldb_2.30.0          </span></span>
 <span><span class="co">##  [11] MASS_7.3-65                backports_1.5.0           </span></span>
 <span><span class="co">##  [13] magrittr_2.0.3             limma_3.62.2              </span></span>
-<span><span class="co">##  [15] Hmisc_5.2-2                sass_0.4.9                </span></span>
+<span><span class="co">##  [15] Hmisc_5.2-3                sass_0.4.10               </span></span>
 <span><span class="co">##  [17] rmarkdown_2.29             jquerylib_0.1.4           </span></span>
 <span><span class="co">##  [19] yaml_2.3.10                metapod_1.14.0            </span></span>
 <span><span class="co">##  [21] Gviz_1.50.0                DBI_1.2.3                 </span></span>
 <span><span class="co">##  [23] RColorBrewer_1.1-3         abind_1.4-8               </span></span>
 <span><span class="co">##  [25] zlibbioc_1.52.0            purrr_1.0.4               </span></span>
 <span><span class="co">##  [27] AnnotationFilter_1.30.0    biovizBase_1.54.0         </span></span>
-<span><span class="co">##  [29] RCurl_1.98-1.16            nnet_7.3-20               </span></span>
+<span><span class="co">##  [29] RCurl_1.98-1.17            nnet_7.3-20               </span></span>
 <span><span class="co">##  [31] tweenr_2.0.3               rappdirs_0.3.3            </span></span>
 <span><span class="co">##  [33] GenomeInfoDbData_1.2.13    ggrepel_0.9.6             </span></span>
 <span><span class="co">##  [35] pkgdown_2.1.1.9000         codetools_0.2-20          </span></span>
-<span><span class="co">##  [37] DelayedArray_0.32.0        xml2_1.3.7                </span></span>
+<span><span class="co">##  [37] DelayedArray_0.32.0        xml2_1.3.8                </span></span>
 <span><span class="co">##  [39] ggforce_0.4.2              tidyselect_1.2.1          </span></span>
 <span><span class="co">##  [41] futile.logger_1.4.3        UCSC.utils_1.2.0          </span></span>
 <span><span class="co">##  [43] farver_2.1.2               ComplexUpset_1.3.3        </span></span>
 <span><span class="co">##  [45] BiocFileCache_2.14.0       base64enc_0.1-3           </span></span>
-<span><span class="co">##  [47] GenomicAlignments_1.42.0   jsonlite_1.9.1            </span></span>
-<span><span class="co">##  [49] Formula_1.2-5              systemfonts_1.2.1         </span></span>
+<span><span class="co">##  [47] GenomicAlignments_1.42.0   jsonlite_2.0.0            </span></span>
+<span><span class="co">##  [49] Formula_1.2-5              systemfonts_1.2.2         </span></span>
 <span><span class="co">##  [51] tools_4.4.2                progress_1.2.3            </span></span>
-<span><span class="co">##  [53] ragg_1.3.3                 Rcpp_1.0.14               </span></span>
+<span><span class="co">##  [53] ragg_1.4.0                 Rcpp_1.0.14               </span></span>
 <span><span class="co">##  [55] glue_1.8.0                 gridExtra_2.3             </span></span>
-<span><span class="co">##  [57] SparseArray_1.6.2          xfun_0.51                 </span></span>
+<span><span class="co">##  [57] SparseArray_1.6.2          xfun_0.52                 </span></span>
 <span><span class="co">##  [59] dplyr_1.1.4                withr_3.0.2               </span></span>
 <span><span class="co">##  [61] formatR_1.14               BiocManager_1.30.25       </span></span>
 <span><span class="co">##  [63] fastmap_1.2.0              latticeExtra_0.6-30       </span></span>
 <span><span class="co">##  [65] digest_0.6.37              R6_2.6.1                  </span></span>
 <span><span class="co">##  [67] textshaping_1.0.0          colorspace_2.1-1          </span></span>
-<span><span class="co">##  [69] jpeg_0.1-10                dichromat_2.0-0.1         </span></span>
+<span><span class="co">##  [69] jpeg_0.1-11                dichromat_2.0-0.1         </span></span>
 <span><span class="co">##  [71] biomaRt_2.62.1             RSQLite_2.3.9             </span></span>
 <span><span class="co">##  [73] tidyr_1.3.1                generics_0.1.3            </span></span>
 <span><span class="co">##  [75] data.table_1.17.0          prettyunits_1.2.0         </span></span>
@@ -701,30 +703,30 @@ splice junctions for specific transcripts.</p>
 <span><span class="co">##  [79] htmlwidgets_1.6.4          S4Arrays_1.6.0            </span></span>
 <span><span class="co">##  [81] pkgconfig_2.0.3            gtable_0.3.6              </span></span>
 <span><span class="co">##  [83] blob_1.2.4                 htmltools_0.5.8.1         </span></span>
-<span><span class="co">##  [85] bookdown_0.42              ProtGenerics_1.38.0       </span></span>
+<span><span class="co">##  [85] bookdown_0.43              ProtGenerics_1.38.0       </span></span>
 <span><span class="co">##  [87] scales_1.3.0               png_0.1-8                 </span></span>
-<span><span class="co">##  [89] knitr_1.49                 lambda.r_1.2.4            </span></span>
+<span><span class="co">##  [89] knitr_1.50                 lambda.r_1.2.4            </span></span>
 <span><span class="co">##  [91] rstudioapi_0.17.1          rjson_0.2.23              </span></span>
-<span><span class="co">##  [93] checkmate_2.3.2            curl_6.2.1                </span></span>
+<span><span class="co">##  [93] checkmate_2.3.2            curl_6.2.2                </span></span>
 <span><span class="co">##  [95] cachem_1.1.0               stringr_1.5.1             </span></span>
-<span><span class="co">##  [97] parallel_4.4.2             foreign_0.8-88            </span></span>
+<span><span class="co">##  [97] parallel_4.4.2             foreign_0.8-90            </span></span>
 <span><span class="co">##  [99] restfulr_0.0.15            desc_1.4.3                </span></span>
-<span><span class="co">## [101] pillar_1.10.1              grid_4.4.2                </span></span>
+<span><span class="co">## [101] pillar_1.10.2              grid_4.4.2                </span></span>
 <span><span class="co">## [103] vctrs_0.6.5                dbplyr_2.5.0              </span></span>
 <span><span class="co">## [105] cluster_2.1.8.1            htmlTable_2.4.3           </span></span>
 <span><span class="co">## [107] evaluate_1.0.3             VennDiagram_1.7.3         </span></span>
 <span><span class="co">## [109] cli_3.6.4                  locfit_1.5-9.12           </span></span>
 <span><span class="co">## [111] compiler_4.4.2             futile.options_1.0.1      </span></span>
-<span><span class="co">## [113] rlang_1.1.5                crayon_1.5.3              </span></span>
+<span><span class="co">## [113] rlang_1.1.6                crayon_1.5.3              </span></span>
 <span><span class="co">## [115] labeling_0.4.3             interp_1.1-6              </span></span>
-<span><span class="co">## [117] forcats_1.0.0              fs_1.6.5                  </span></span>
-<span><span class="co">## [119] stringi_1.8.4              deldir_2.0-4              </span></span>
+<span><span class="co">## [117] forcats_1.0.0              fs_1.6.6                  </span></span>
+<span><span class="co">## [119] stringi_1.8.7              deldir_2.0-4              </span></span>
 <span><span class="co">## [121] munsell_0.5.1              lazyeval_0.2.2            </span></span>
 <span><span class="co">## [123] csaw_1.40.0                Matrix_1.7-3              </span></span>
 <span><span class="co">## [125] hms_1.1.3                  patchwork_1.3.0           </span></span>
 <span><span class="co">## [127] bit64_4.6.0-1              KEGGREST_1.46.0           </span></span>
 <span><span class="co">## [129] statmod_1.5.0              igraph_2.1.4              </span></span>
-<span><span class="co">## [131] broom_1.0.7                memoise_2.0.1             </span></span>
+<span><span class="co">## [131] broom_1.0.8                memoise_2.0.1             </span></span>
 <span><span class="co">## [133] bslib_0.9.0                bit_4.6.0                 </span></span>
 <span><span class="co">## [135] GenomicInteractions_1.40.0</span></span></code></pre>
 </div>
