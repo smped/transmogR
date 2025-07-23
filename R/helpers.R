@@ -118,7 +118,7 @@
 #' @importFrom VariantAnnotation readVcf ScanVcfParam vcfWhich<-
 #' @importFrom S4Vectors mcols mcols<-
 #' @importFrom SummarizedExperiment rowRanges
-#' @importFrom GenomeInfoDb seqinfo
+#' @importFrom Seqinfo seqinfo
 #' @importFrom methods is
 .parseVariants <- function(f, alt_col, which, ...){
     param <- ScanVcfParam(fixed = alt_col, info = NA, ...)
