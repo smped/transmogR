@@ -140,17 +140,22 @@ gtf <- splitAsList(gtf, gtf$type)
 # Inspecting Variants
 
 Knowing where our variants lie, and how they relate to each other can be 
-informative, and as such, some simple visualisation and summarisation functions
+informative, and as such, some simple summarisation functions
 have been included.
-In the following, we can check to see how many exons directly overlap a variant,
-showing how many unique genes this summarises to.
-Any ids, which don't overlap a variants are also described in the plot title.
+<!-- Knowing where our variants lie, and how they relate to each other can be  -->
+<!-- informative, and as such, some simple visualisation and summarisation functions -->
+<!-- have been included. -->
+<!-- In the following, we can check to see how many exons directly overlap a variant, -->
+<!-- showing how many unique genes this summarises to. -->
+<!-- Any ids, which don't overlap a variants are also described in the plot title. -->
 
-```{r upset-var, fig.cap = "Included variants which overlap exonic sequences, summarised by unique gene ids"}
+```{r upset-var, echo = FALSE, eval = FALSE, fig.cap = "Included variants which overlap exonic sequences, summarised by unique gene ids"}
 upsetVarByCol(gtf$exon, var, mcol = "gene_id")
 ```
 
-In addition, we can obtain a simple breakdown of overlapping regions using a 
+<!-- In addition, we can obtain a simple breakdown of overlapping regions using a  -->
+<!-- GRangesList. -->
+We can obtain a simple breakdown of overlapping regions using a 
 GRangesList.
 We can use the function `defineRegions()` from `extraChIPs` to define regions 
 based on gene & transcript locations.

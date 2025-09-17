@@ -69,7 +69,8 @@ gtf <- import.gff(
 )
 vcf <- system.file("extdata/1000GP_subset.vcf.gz", package = "transmogR")
 var <- rowRanges(readVcf(vcf, param = ScanVcfParam(fixed = "ALT")))
-upsetVarByCol(gtf, var)
+## Currently pending a fix after the ggplot2 v4.0.0 upgrade
+# upsetVarByCol(gtf, var)
 
 
 

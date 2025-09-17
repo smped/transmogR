@@ -23,9 +23,9 @@ Depends:
 Imports:
     BSgenome,
     data.table,
-    GenomeInfoDb,
+    Seqinfo,
     GenomicFeatures,
-    ggplot2 (>= 3.5.0),
+    ggplot2 (>= 4.0.0),
     IRanges,
     jsonlite,
     matrixStats,
@@ -53,5 +53,5 @@ biocViews: Alignment, GenomicVariation, Sequencing, TranscriptomeVariant, Varian
 BiocType: Software
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)  
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Config/testthat/edition: 3

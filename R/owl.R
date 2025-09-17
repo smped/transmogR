@@ -34,7 +34,7 @@
 #' @import Biostrings
 #' @importFrom S4Vectors mcols
 #' @importFrom methods is
-#' @importFrom GenomeInfoDb seqinfo seqinfo<- seqlevels seqnames seqlevels<-
+#' @importFrom Seqinfo seqinfo seqinfo<- seqlevels seqnames seqlevels<-
 #' @importFrom BSgenome getSeq
 #'
 #' @export
@@ -44,7 +44,7 @@ setGeneric("owl", function(seq, snps, ...) standardGeneric("owl"))
 #' @import Biostrings
 #' @importFrom S4Vectors mcols
 #' @importFrom methods is
-#' @importFrom GenomeInfoDb seqinfo seqinfo<- seqlevels seqnames seqlevels<-
+#' @importFrom Seqinfo seqinfo seqinfo<- seqlevels seqnames seqlevels<-
 #' @rdname owl-methods
 #' @aliases owl
 #' @export
