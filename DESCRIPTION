@@ -18,6 +18,7 @@ Encoding: UTF-8
 URL: https://github.com/smped/transmogR
 BugReports: https://github.com/smped/transmogR/issues
 Depends:
+    R (>= 4.1.0),
     Biostrings,
     GenomicRanges
 Imports:
@@ -31,7 +32,7 @@ Imports:
     matrixStats,
     methods,
     parallel,
-    rlang,
+    patchwork,
     scales,
     stats,
     S4Vectors,
@@ -40,7 +41,6 @@ Imports:
 Suggests:
     BiocStyle,
     BSgenome.Hsapiens.UCSC.hg38,
-    ComplexUpset,
     edgeR,
     extraChIPs,
     InteractionSet,
@@ -48,6 +48,7 @@ Suggests:
     readr,
     rmarkdown,
     rtracklayer,
+    SimpleUpset,
     testthat (>= 3.0.0)
 biocViews: Alignment, GenomicVariation, Sequencing, TranscriptomeVariant, VariantAnnotation
 BiocType: Software
