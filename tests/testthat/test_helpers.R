@@ -27,7 +27,6 @@ test_that(".parseVariants behaves correctly",{
 
 })
 
-
 test_that(".checkOverlapVars works as expected", {
     test_var <- data.frame(
         seqnames = "chr10",

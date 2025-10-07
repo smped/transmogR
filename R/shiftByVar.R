@@ -33,7 +33,7 @@
 #' ## The seqlengths will have been adjusted to account for all variants
 #' seqinfo(new_gr)
 #'
-#' @importFrom Seqinfo seqinfo seqlengths seqlengths<-
+#' @importFrom GenomeInfoDb seqinfo seqlengths seqlengths<-
 #' @importFrom S4Vectors splitAsList
 #' @importFrom IRanges IRanges
 #' @importFrom parallel mclapply

@@ -39,7 +39,7 @@ Otherwise
 An additional mcols column called PAR will indicate PAR1 and PAR2
 }
 \examples{
-library(Seqinfo)
+library(GenomeInfoDb)
 sq <- Seqinfo(
     seqnames = "chrY", seqlengths = 59373566, genome = "hg19_only_chrY"
 )

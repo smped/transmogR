@@ -1,29 +1,16 @@
-# transmogR 1.5.2
+# transmogR 1.0.0
 
-## Bug Fix
-
-- Switched from ComplexUpset to SimpleUpset as dependency
-
-# transmogR 1.3.8
-
-## New Features
-
-- Added `shiftByVar()` to produce shifted coordinates which match those after incorporation of variants
-
-# transmogR 1.3.1
-
-## Improvements
-
-- Changed default behaviour of `digestSalmon()` to exclude 'TPM' and 'effectiveLength' assays, which are now optional via the `extra_assays` argument
+* Initial Bioc Release
 
 # transmogR 1.1.1
 
-## New Features
+* Added `digestSalmon()`
 
-- Added `digestSalmon()`
+# transmogR 1.3.1
 
-# transmogR 1.0.0
+* Changed default behaviour of `digestSalmon()` to exclude 'TPM' and 
+'effectiveLength' assays, which are now optional via the 'extra_assays' argument
 
-## Major Changes
+# transmogR 1.3.8
 
-- Initial Bioconductor release
+* Added `shiftByVar()` to produce shifted co-ordinates which match those after incorporation of variants 

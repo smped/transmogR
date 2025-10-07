@@ -75,7 +75,7 @@ setGeneric(
     "transmogrify", function(x, var, exons, ...) standardGeneric("transmogrify")
 )
 #' @importFrom S4Vectors mcols splitAsList
-#' @importFrom Seqinfo seqlevels seqnames
+#' @importFrom GenomeInfoDb seqlevels seqnames
 #' @importFrom IRanges width subsetByOverlaps
 #' @importFrom GenomicFeatures extractTranscriptSeqs
 #' @importFrom parallel mclapply
@@ -163,7 +163,7 @@ setMethod(
 )
 #' @import GenomicRanges
 #' @importFrom Biostrings getSeq
-#' @importFrom Seqinfo seqnames
+#' @importFrom GenomeInfoDb seqnames
 #' @export
 #' @rdname transmogrify-methods
 #' @aliases transmogrify-methods
@@ -192,7 +192,7 @@ setMethod(
 )
 #' @importClassesFrom VariantAnnotation VcfFile
 #' @importFrom Biostrings getSeq
-#' @importFrom Seqinfo seqnames
+#' @importFrom GenomeInfoDb seqnames
 #' @export
 #' @rdname transmogrify-methods
 #' @aliases transmogrify-methods
