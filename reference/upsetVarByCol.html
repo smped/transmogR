@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">transmogR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,13 +47,13 @@
 <span>  alt_col <span class="op">=</span> <span class="st">"ALT"</span>,</span>
 <span>  mcol <span class="op">=</span> <span class="st">"transcript_id"</span>,</span>
 <span>  <span class="va">...</span>,</span>
-<span>  intersection_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  intersection_lab <span class="op">=</span> <span class="st">"Intersection Size"</span>,</span>
-<span>  set_geom <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_bar</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span>,</span>
-<span>  set_expand <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>  set_counts <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  hjust_counts <span class="op">=</span> <span class="fl">1.1</span>,</span>
-<span>  set_lab <span class="op">=</span> <span class="st">"Set Size"</span>,</span>
+<span>  fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fill_scale <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_colour_discrete.html" class="external-link">scale_fill_discrete</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  expand_sets <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  hj_sets <span class="op">=</span> <span class="fl">1.1</span>,</span>
+<span>  expand_intersect <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  vj_intersect <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span>,</span>
+<span>  label_size <span class="op">=</span> <span class="fl">3.5</span>,</span>
 <span>  <span class="va">title</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -79,36 +79,36 @@
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Passed to <a href="https://krassowski.github.io/complex-upset/reference/upset.html" class="external-link">ComplexUpset::upset</a></p></dd>
+<dd><p>Passed to <a href="https://rdrr.io/pkg/SimpleUpset/man/simpleUpSet.html" class="external-link">SimpleUpset::simpleUpSet</a></p></dd>
 
 
-<dt id="arg-intersection-args">intersection_args<a class="anchor" aria-label="anchor" href="#arg-intersection-args"></a></dt>
-<dd><p>See <a href="https://krassowski.github.io/complex-upset/reference/intersection_size.html" class="external-link">ComplexUpset::intersection_size</a> for possible
-values</p></dd>
+<dt id="arg-fill">fill<a class="anchor" aria-label="anchor" href="#arg-fill"></a></dt>
+<dd><p>Optional column in gr used to fill intersections and sets</p></dd>
 
 
-<dt id="arg-intersection-lab">intersection_lab<a class="anchor" aria-label="anchor" href="#arg-intersection-lab"></a></dt>
-<dd><p>Y-axis label for the intersection panel</p></dd>
+<dt id="arg-fill-scale">fill_scale<a class="anchor" aria-label="anchor" href="#arg-fill-scale"></a></dt>
+<dd><p>Discrete ggplot2 scale for filling bars. Ignored if
+<code>fill = NULL</code></p></dd>
 
 
-<dt id="arg-set-geom">set_geom<a class="anchor" aria-label="anchor" href="#arg-set-geom"></a></dt>
-<dd><p>Passed to <a href="https://krassowski.github.io/complex-upset/reference/upset_set_size.html" class="external-link">ComplexUpset::upset_set_size</a></p></dd>
+<dt id="arg-expand-sets">expand_sets<a class="anchor" aria-label="anchor" href="#arg-expand-sets"></a></dt>
+<dd><p>Expand the set-size x-axis by this amount</p></dd>
 
 
-<dt id="arg-set-expand">set_expand<a class="anchor" aria-label="anchor" href="#arg-set-expand"></a></dt>
-<dd><p>Expand the set-size axis by this amount</p></dd>
+<dt id="arg-hj-sets">hj_sets<a class="anchor" aria-label="anchor" href="#arg-hj-sets"></a></dt>
+<dd><p>Horizontal adjustment of set size labels</p></dd>
 
 
-<dt id="arg-set-counts">set_counts<a class="anchor" aria-label="anchor" href="#arg-set-counts"></a></dt>
-<dd><p>logical(1) Show counts on set sizes</p></dd>
+<dt id="arg-expand-intersect">expand_intersect<a class="anchor" aria-label="anchor" href="#arg-expand-intersect"></a></dt>
+<dd><p>Expand the intersection y-axis by this amount</p></dd>
 
 
-<dt id="arg-hjust-counts">hjust_counts<a class="anchor" aria-label="anchor" href="#arg-hjust-counts"></a></dt>
-<dd><p>Horizontal adjustment of counts, if being shown</p></dd>
+<dt id="arg-vj-intersect">vj_intersect<a class="anchor" aria-label="anchor" href="#arg-vj-intersect"></a></dt>
+<dd><p>Vertical adjustment of intersection size labels</p></dd>
 
 
-<dt id="arg-set-lab">set_lab<a class="anchor" aria-label="anchor" href="#arg-set-lab"></a></dt>
-<dd><p>X-axis label for the set-sizes panel</p></dd>
+<dt id="arg-label-size">label_size<a class="anchor" aria-label="anchor" href="#arg-label-size"></a></dt>
+<dd><p>Control the size of both intersection and sit size labels</p></dd>
 
 
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
@@ -128,13 +128,14 @@ a given column</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><a href="https://krassowski.github.io/complex-upset/reference/upset.html" class="external-link">ComplexUpset::upset</a></p></div>
+    <div class="dont-index"><p><a href="https://rdrr.io/pkg/SimpleUpset/man/simpleUpSet.html" class="external-link">SimpleUpset::simpleUpSet</a></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">VariantAnnotation</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">gtf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/GFFFile-class.html" class="external-link">import.gff</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/gencode.v44.subset.gtf.gz"</span>, package <span class="op">=</span> <span class="st">"transmogR"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    feature.type <span class="op">=</span> <span class="st">"exon"</span></span></span>
@@ -143,7 +144,11 @@ a given column</p>
 <span class="r-in"><span><span class="va">var</span> <span class="op">&lt;-</span> <span class="fu">rowRanges</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/VariantAnnotation/man/readVcf-methods.html" class="external-link">readVcf</a></span><span class="op">(</span><span class="va">vcf</span>, param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/VariantAnnotation/man/ScanVcfParam-class.html" class="external-link">ScanVcfParam</a></span><span class="op">(</span>fixed <span class="op">=</span> <span class="st">"ALT"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">upsetVarByCol</span><span class="op">(</span><span class="va">gtf</span>, <span class="va">var</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="upsetVarByCol-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">upsetVarByCol</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">gtf</span>, <span class="va">var</span>, fill <span class="op">=</span> <span class="st">"transcript_type"</span>,</span></span>
+<span class="r-in"><span>  fill_scale <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="upsetVarByCol-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -157,7 +162,7 @@ a given column</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
 </div>
 
     </footer></div>
