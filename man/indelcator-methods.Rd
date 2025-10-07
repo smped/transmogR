@@ -50,7 +50,7 @@ internally}
 
 \item{verbose}{logical(1) Print all messages}
 
-\item{names}{passed to \link[BSgenome:getSeq-methods]{BSgenome::getSeq} when x is a BSgenome object}
+\item{names}{passed to \code{BSgenome::getSeq()} when x is a BSgenome object}
 }
 \value{
 A DNAStringSet or XString object (See Details)

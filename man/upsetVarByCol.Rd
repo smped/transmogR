@@ -10,13 +10,13 @@ upsetVarByCol(
   alt_col = "ALT",
   mcol = "transcript_id",
   ...,
-  intersection_args = list(),
-  intersection_lab = "Intersection Size",
-  set_geom = geom_bar(width = 0.6),
-  set_expand = 0.2,
-  set_counts = TRUE,
-  hjust_counts = 1.1,
-  set_lab = "Set Size",
+  fill = NULL,
+  fill_scale = scale_fill_discrete(),
+  expand_sets = 0.2,
+  hj_sets = 1.1,
+  expand_intersect = 0.1,
+  vj_intersect = -0.5,
+  label_size = 3.5,
   title
 )
 }
@@ -29,22 +29,22 @@ upsetVarByCol(
 
 \item{mcol}{The column within \code{gr} to summarise results by}
 
-\item{...}{Passed to \link[ComplexUpset:upset]{ComplexUpset::upset}}
+\item{...}{Passed to \link[SimpleUpset:simpleUpSet]{SimpleUpset::simpleUpSet}}
 
-\item{intersection_args}{See \link[ComplexUpset:intersection_size]{ComplexUpset::intersection_size} for possible
-values}
+\item{fill}{Optional column in gr used to fill intersections and sets}
 
-\item{intersection_lab}{Y-axis label for the intersection panel}
+\item{fill_scale}{Discrete ggplot2 scale for filling bars. Ignored if
+\code{fill = NULL}}
 
-\item{set_geom}{Passed to \link[ComplexUpset:upset_set_size]{ComplexUpset::upset_set_size}}
+\item{expand_sets}{Expand the set-size x-axis by this amount}
 
-\item{set_expand}{Expand the set-size axis by this amount}
+\item{hj_sets}{Horizontal adjustment of set size labels}
 
-\item{set_counts}{logical(1) Show counts on set sizes}
+\item{expand_intersect}{Expand the intersection y-axis by this amount}
 
-\item{hjust_counts}{Horizontal adjustment of counts, if being shown}
+\item{vj_intersect}{Vertical adjustment of intersection size labels}
 
-\item{set_lab}{X-axis label for the set-sizes panel}
+\item{label_size}{Control the size of both intersection and sit size labels}
 
 \item{title}{Summary title to show above the intersection panel. Can be
 hidden by setting to NULL}
@@ -63,6 +63,7 @@ a given column
 \examples{
 library(rtracklayer)
 library(VariantAnnotation)
+library(ggplot2)
 gtf <- import.gff(
     system.file("extdata/gencode.v44.subset.gtf.gz", package = "transmogR"),
     feature.type = "exon"
@@ -70,10 +71,13 @@ gtf <- import.gff(
 vcf <- system.file("extdata/1000GP_subset.vcf.gz", package = "transmogR")
 var <- rowRanges(readVcf(vcf, param = ScanVcfParam(fixed = "ALT")))
 upsetVarByCol(gtf, var)
-
+upsetVarByCol(
+  gtf, var, fill = "transcript_type",
+  fill_scale = scale_fill_brewer(palette = "Set1")
+)
 
 
 }
 \seealso{
-\link[ComplexUpset:upset]{ComplexUpset::upset}
+\link[SimpleUpset:simpleUpSet]{SimpleUpset::simpleUpSet}
 }
