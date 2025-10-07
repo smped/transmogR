@@ -14,3 +14,7 @@
 # transmogR 1.3.8
 
 * Added `shiftByVar()` to produce shifted co-ordinates which match those after incorporation of variants 
+
+# transmogR 1.4.2
+
+* Swichted to SimpleUpset instead of ComplexUpset
