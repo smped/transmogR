@@ -29,7 +29,7 @@
 #' @param mc.cores Number of cores to use when calling [parallel::mclapply]
 #' internally
 #' @param verbose logical(1) Print all messages
-#' @param names passed to [BSgenome::getSeq] when x is a BSgenome object
+#' @param names passed to `BSgenome::getSeq()` when x is a BSgenome object
 #' @param ... Passed to [parallel::mclapply]
 #'
 #' @seealso [transmogrify()] [genomogrify()]
