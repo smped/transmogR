@@ -132,7 +132,7 @@ setMethod(
 #'
 #' @import Biostrings
 #' @import GenomicRanges
-#' @importFrom GenomeInfoDb seqnames seqinfo seqlevelsInUse
+#' @importFrom Seqinfo seqnames seqinfo seqlevelsInUse
 #' @importFrom S4Vectors splitAsList mcols mcols<-
 #' @importFrom IRanges width Views start end width<-
 #' @importFrom parallel mclapply

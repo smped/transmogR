@@ -21,7 +21,7 @@
 #' @param ... Not used
 #'
 #' @examples
-#' library(GenomeInfoDb)
+#' library(Seqinfo)
 #' sq <- Seqinfo(
 #'     seqnames = "chrY", seqlengths = 59373566, genome = "hg19_only_chrY"
 #' )
@@ -42,7 +42,7 @@
 #' @rdname parY-methods
 setGeneric("parY", function(x, ...) standardGeneric("parY"))
 #' @import GenomicRanges
-#' @importFrom GenomeInfoDb seqnames
+#' @importFrom Seqinfo seqnames
 #' @rdname parY-methods
 #' @aliases parY-methods
 setMethod(
@@ -72,7 +72,7 @@ setMethod(
     }
 )
 #' @import GenomicRanges
-#' @importFrom GenomeInfoDb genome<-
+#' @importFrom Seqinfo genome<-
 #' @rdname parY-methods
 #' @aliases parY-methods
 setMethod(
