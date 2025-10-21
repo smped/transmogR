@@ -79,6 +79,10 @@ test_that("C parsing is correct",{
     od <- .Call("calc_boot_row_vals", f_boot, length(nm_true), 10L)
     expect_true(all.equal(c(623.060848059843, 1813.5696136543), od))
 
+    expect_equal(
+        overdispFromBoots(f, 10L, .ids = nm_true), overdispFromBoots(f, 10L)
+    )
+
 })
 
 test_that("C errors correctly when parsing transcript ids", {

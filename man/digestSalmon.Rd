@@ -2,6 +2,7 @@
 % Please edit documentation in R/digestSalmon.R
 \name{digestSalmon}
 \alias{digestSalmon}
+\alias{overdispFromBoots}
 \title{Parse the output from salmon}
 \usage{
 digestSalmon(
@@ -14,6 +15,8 @@ digestSalmon(
   max_boot = Inf,
   ...
 )
+
+overdispFromBoots(paths, n_boot, .ids)
 }
 \arguments{
 \item{paths}{Vector of file paths to directories containing salmon results}
@@ -38,6 +41,11 @@ zero will ignore all bootstraps and the scaledCounts assay will not be
 included in the returned object}
 
 \item{...}{Not used}
+
+\item{n_boot}{The number of bootstraps}
+
+\item{.ids}{Vector of transcript IDs which match the bootstrap values. Will
+be parsed from paths if not provided, although this adds time}
 }
 \value{
 A SummarizedExperiment object containing assays for counts and
@@ -47,9 +55,13 @@ rowData in the returned object will also include transcript-lengths along
 with the overdispersion estimates used to return the scaled counts.
 TPM, effectiveLength and length can be returned as additional assays by
 specifying one or more of these in the extra_assays argument
+
+\code{overdispFromBoots} returns a numeric vector
 }
 \description{
 Parse transcript counts and additional data from salmon
+
+Calculate the overdispersions from a set of paths without parsing any counts
 }
 \details{
 This function is based heavily on \code{\link[edgeR:catchSalmon]{edgeR::catchSalmon()}} however, there are
@@ -72,6 +84,11 @@ for smaller datasets, digestSalmon may be slower that the edgeR function.
 
 The SummarizedExperiment object returned may also contain multiple assays,
 as described elsewhere on this page
+
+This follows the methods of Baldoni, et al. (2024).
+Dividing out quantification uncertainty allows efficient assessment of
+differential transcript expression with edgeR. Nucleic Acids Research, 52(3),
+e13. https://doi.org/10.1093/nar/gkad1167
 }
 \examples{
 ## Provide the path to the parent directories which contains each
@@ -79,5 +96,8 @@ as described elsewhere on this page
 ex_path <- system.file("extdata/salmon_test", package = "transmogR")
 se <- digestSalmon(ex_path, extra_assays = "TPM", verbose = FALSE)
 se
+
+ex_path <- system.file("extdata/salmon_test", package = "transmogR")
+overdispFromBoots(ex_path, 10)
 
 }

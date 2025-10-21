@@ -160,7 +160,7 @@ digestSalmon <- function(
     md <- list(resampleType = boot_types)
     if (n_boot > 0) {
         if (verbose) message("Estimating overdispersions...")
-        final_od <- .overdispFromBoots(paths, n_boot, .ids = ids)
+        final_od <- overdispFromBoots(paths, n_boot, .ids = ids)
         if (verbose) message("done")
         assays$scaledCounts <- counts / final_od
         rowDF$overdispersion <- final_od
@@ -193,12 +193,31 @@ digestSalmon <- function(
 
 }
 
-
+#' @title Calculate overdispersions from bootstrap files
+#' @description
+#' Calculate the overdispersions from a set of paths without parsing any counts
+#' @details
+#' This follows the methods of Baldoni, et al. (2024).
+#' Dividing out quantification uncertainty allows efficient assessment of
+#' differential transcript expression with edgeR. Nucleic Acids Research, 52(3),
+#' e13. https://doi.org/10.1093/nar/gkad1167
+#'
+#' @param paths Vector of file paths to directories containing salmon results
+#' @param n_boot The number of bootstraps
+#' @param .ids Vector of transcript IDs which match the bootstrap values. Will
+#' be parsed from paths if not provided, although this adds time
+#' @return `overdispFromBoots` returns a numeric vector
+#'
+#' @examples
+#' ex_path <- system.file("extdata/salmon_test", package = "transmogR")
+#' overdispFromBoots(ex_path, 10)
+#'
 #' @useDynLib transmogR, .registration = TRUE
 #' @importFrom matrixStats rowMeans2 rowSums2
 #' @importFrom stats setNames median qf
-#' @keywords internal
-.overdispFromBoots <- function(paths, n_boot, .ids) {
+#' @export
+#' @rdname digestSalmon
+overdispFromBoots <- function(paths, n_boot, .ids) {
 
     suf <- file.path("aux_info", "bootstrap", "bootstraps.gz")
     boot_files <- vapply(paths, file.path, character(1), suf)
@@ -215,6 +234,7 @@ digestSalmon <- function(
     init_sum_ti <- setNames(rep_len(0, n_ids), .ids)
 
     ## Try a more computationally efficient approach
+    n_boot <- as.integer(n_boot)
     sums_ti <- lapply(
         seq_along(paths),
         \(i){
@@ -225,8 +245,6 @@ digestSalmon <- function(
             out <- init_sum_ti
             out[trans_ids] <- sum_ti
             out
-            # names(sum_ti) <- trans_ids
-            # sum_ti[.ids]
         }
     )
 
