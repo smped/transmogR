@@ -206,6 +206,14 @@ digestSalmon <- function(
     id_files <- gsub("bootstraps.gz$", "names.tsv.gz", boot_files)
     if (!all(file.exists(id_files))) stop("Missing names.tsv.gz files")
 
+    if (missing(.ids)) {
+        ## Load all from boot files. This will add quite some time
+        .ids <- lapply(id_files, \(f) .Call("parse_trans_names", f))
+        .ids <- unique(unlist(.ids))
+    }
+    n_ids <- length(.ids)
+    init_sum_ti <- setNames(rep_len(0, n_ids), .ids)
+
     ## Try a more computationally efficient approach
     sums_ti <- lapply(
         seq_along(paths),
@@ -214,8 +222,11 @@ digestSalmon <- function(
             n <- length(trans_ids)
             f <- boot_files[[i]]
             sum_ti <- .Call("calc_boot_row_vals", f, n, n_boot)
-            names(sum_ti) <- trans_ids
-            sum_ti[.ids]
+            out <- init_sum_ti
+            out[trans_ids] <- sum_ti
+            out
+            # names(sum_ti) <- trans_ids
+            # sum_ti[.ids]
         }
     )
 
