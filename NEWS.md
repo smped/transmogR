@@ -15,7 +15,6 @@
 ## New Features
 
 - Added `shiftByVar()` to produce shifted coordinates which match those after incorporation of variants
-- Added `cleanVariants()` to identify and resolve overlapping variants
 
 # Changes in version 1.3.1
 
