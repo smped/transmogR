@@ -676,9 +676,9 @@ subset(sj, transcript_name == "DDX11L17-201")
 
 ## Session info
 
-    ## R version 4.5.1 (2025-06-13)
+    ## R version 4.6.0 (2026-04-24)
     ## Platform: x86_64-pc-linux-gnu
-    ## Running under: Ubuntu 24.04.3 LTS
+    ## Running under: Ubuntu 24.04.4 LTS
     ## 
     ## Matrix products: default
     ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -700,51 +700,52 @@ subset(sj, transcript_name == "DDX11L17-201")
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] BSgenome.Hsapiens.UCSC.hg38_1.4.5 BSgenome_1.77.2                  
-    ##  [3] BiocIO_1.19.0                     GenomeInfoDb_1.45.12             
-    ##  [5] GenomicFeatures_1.61.6            AnnotationDbi_1.71.2             
-    ##  [7] transmogR_1.5.2                   extraChIPs_1.13.3                
-    ##  [9] tibble_3.3.0                      ggside_0.4.0                     
-    ## [11] ggplot2_4.0.0                     BiocParallel_1.43.4              
-    ## [13] rtracklayer_1.69.1                VariantAnnotation_1.55.2         
-    ## [15] Rsamtools_2.25.3                  Biostrings_2.77.2                
-    ## [17] XVector_0.49.1                    SummarizedExperiment_1.39.2      
-    ## [19] Biobase_2.69.1                    GenomicRanges_1.61.5             
-    ## [21] IRanges_2.43.5                    S4Vectors_0.47.4                 
-    ## [23] Seqinfo_0.99.2                    MatrixGenerics_1.21.0            
-    ## [25] matrixStats_1.5.0                 BiocGenerics_0.55.4              
-    ## [27] generics_0.1.4                    BiocStyle_2.37.1                 
+    ##  [1] BSgenome.Hsapiens.UCSC.hg38_1.4.5 BSgenome_1.80.0                  
+    ##  [3] BiocIO_1.22.0                     GenomeInfoDb_1.48.0              
+    ##  [5] GenomicFeatures_1.64.0            AnnotationDbi_1.74.0             
+    ##  [7] transmogR_1.9.1                   extraChIPs_1.16.1                
+    ##  [9] tibble_3.3.1                      ggside_0.4.1                     
+    ## [11] ggplot2_4.0.3                     BiocParallel_1.46.0              
+    ## [13] rtracklayer_1.72.0                VariantAnnotation_1.58.0         
+    ## [15] Rsamtools_2.28.0                  Biostrings_2.80.1                
+    ## [17] XVector_0.52.0                    SummarizedExperiment_1.42.0      
+    ## [19] Biobase_2.72.0                    GenomicRanges_1.64.0             
+    ## [21] IRanges_2.46.0                    S4Vectors_0.50.1                 
+    ## [23] Seqinfo_1.2.0                     MatrixGenerics_1.24.0            
+    ## [25] matrixStats_1.5.0                 BiocGenerics_0.58.1              
+    ## [27] generics_0.1.4                    BiocStyle_2.40.0                 
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] DBI_1.2.3                bitops_1.0-9             SimpleUpset_0.1.2       
-    ##  [4] rlang_1.1.6              magrittr_2.0.4           compiler_4.5.1          
-    ##  [7] RSQLite_2.4.3            png_0.1-8                systemfonts_1.3.1       
-    ## [10] vctrs_0.6.5              stringr_1.5.2            pkgconfig_2.0.3         
-    ## [13] crayon_1.5.3             fastmap_1.2.0            labeling_0.4.3          
-    ## [16] rmarkdown_2.30           UCSC.utils_1.5.0         ragg_1.5.0              
-    ## [19] purrr_1.1.0              bit_4.6.0                xfun_0.53               
-    ## [22] cachem_1.1.0             jsonlite_2.0.0           blob_1.2.4              
-    ## [25] DelayedArray_0.35.3      parallel_4.5.1           R6_2.6.1                
-    ## [28] bslib_0.9.0              stringi_1.8.7            RColorBrewer_1.1-3      
-    ## [31] limma_3.65.6             jquerylib_0.1.4          Rcpp_1.1.0              
-    ## [34] bookdown_0.45            knitr_1.50               Matrix_1.7-4            
-    ## [37] tidyselect_1.2.1         abind_1.4-8              yaml_2.3.10             
-    ## [40] codetools_0.2-20         curl_7.0.0               lattice_0.22-7          
-    ## [43] InteractionSet_1.37.1    withr_3.0.2              KEGGREST_1.49.2         
-    ## [46] S7_0.2.0                 csaw_1.43.1              evaluate_1.0.5          
-    ## [49] desc_1.4.3               pillar_1.11.1            BiocManager_1.30.26     
-    ## [52] RCurl_1.98-1.17          scales_1.4.0             glue_1.8.0              
-    ## [55] metapod_1.17.0           tools_4.5.1              data.table_1.17.8       
-    ## [58] locfit_1.5-9.12          GenomicAlignments_1.45.4 forcats_1.0.1           
-    ## [61] fs_1.6.6                 XML_3.99-0.19            grid_4.5.1              
-    ## [64] tidyr_1.3.1              edgeR_4.7.6              patchwork_1.3.2         
-    ## [67] restfulr_0.0.16          cli_3.6.5                textshaping_1.0.4       
-    ## [70] S4Arrays_1.9.1           dplyr_1.1.4              gtable_0.3.6            
-    ## [73] sass_0.4.10              digest_0.6.37            SparseArray_1.9.1       
-    ## [76] ggrepel_0.9.6            rjson_0.2.23             htmlwidgets_1.6.4       
-    ## [79] farver_2.1.2             memoise_2.0.1            htmltools_0.5.8.1       
-    ## [82] pkgdown_2.1.3.9000       lifecycle_1.0.4          httr_1.4.7              
-    ## [85] statmod_1.5.1            bit64_4.6.0-1
+    ##  [1] DBI_1.3.0                bitops_1.0-9             SimpleUpset_0.1.4       
+    ##  [4] rlang_1.2.0              magrittr_2.0.5           otel_0.2.0              
+    ##  [7] compiler_4.6.0           RSQLite_3.53.2           png_0.1-9               
+    ## [10] systemfonts_1.3.2        vctrs_0.7.3              stringr_1.6.0           
+    ## [13] pkgconfig_2.0.3          crayon_1.5.3             fastmap_1.2.0           
+    ## [16] labeling_0.4.3           rmarkdown_2.31           UCSC.utils_1.8.0        
+    ## [19] ragg_1.5.2               purrr_1.2.2              bit_4.6.0               
+    ## [22] xfun_0.59                cachem_1.1.0             cigarillo_1.2.0         
+    ## [25] jsonlite_2.0.0           blob_1.3.0               DelayedArray_0.38.2     
+    ## [28] parallel_4.6.0           R6_2.6.1                 stringi_1.8.7           
+    ## [31] bslib_0.11.0             RColorBrewer_1.1-3       limma_3.68.4            
+    ## [34] jquerylib_0.1.4          Rcpp_1.1.1-1.1           bookdown_0.47           
+    ## [37] knitr_1.51               Matrix_1.7-5             tidyselect_1.2.1        
+    ## [40] abind_1.4-8              yaml_2.3.12              codetools_0.2-20        
+    ## [43] curl_7.1.0               lattice_0.22-9           InteractionSet_1.40.0   
+    ## [46] withr_3.0.3              KEGGREST_1.52.2          S7_0.2.2                
+    ## [49] csaw_1.46.0              evaluate_1.0.5           desc_1.4.3              
+    ## [52] pillar_1.11.1            BiocManager_1.30.27      RCurl_1.98-1.19         
+    ## [55] scales_1.4.0             glue_1.8.1               metapod_1.20.0          
+    ## [58] tools_4.6.0              data.table_1.18.4        locfit_1.5-9.12         
+    ## [61] GenomicAlignments_1.48.0 forcats_1.0.1            fs_2.1.0                
+    ## [64] XML_3.99-0.23            grid_4.6.0               tidyr_1.3.2             
+    ## [67] edgeR_4.10.1             patchwork_1.3.2          restfulr_0.0.17         
+    ## [70] cli_3.6.6                textshaping_1.0.5        S4Arrays_1.12.0         
+    ## [73] dplyr_1.2.1              gtable_0.3.6             sass_0.4.10             
+    ## [76] digest_0.6.39            SparseArray_1.12.2       ggrepel_0.9.8           
+    ## [79] rjson_0.2.23             htmlwidgets_1.6.4        farver_2.1.2            
+    ## [82] memoise_2.0.1            htmltools_0.5.9          pkgdown_2.2.0           
+    ## [85] lifecycle_1.0.5          httr_1.4.8               statmod_1.5.2           
+    ## [88] bit64_4.8.2
 
 ## References
 
