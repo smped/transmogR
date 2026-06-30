@@ -62,7 +62,7 @@ Modify one or more sequences to include Insertions or Deletions
 This is a lower-level function relied on by both \code{\link[=transmogrify]{transmogrify()}} and
 \code{\link[=genomogrify]{genomogrify()}}.
 
-Takes an \link[Biostrings:XString-class]{Biostrings::XString} or \link[Biostrings:XStringSet-class]{Biostrings::XStringSet} object and
+Takes an \link[Biostrings:XString]{Biostrings::XString} or \link[Biostrings:XStringSet]{Biostrings::XStringSet} object and
 modifies the sequence to incorporate InDels.
 The expected types of data determine the behaviour, with the following
 expectations describing how the function will incorporate data\tabular{llll}{

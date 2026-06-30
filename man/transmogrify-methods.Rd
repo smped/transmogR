@@ -115,7 +115,7 @@ Deletions respectively}
 \item{mc.cores}{Number of cores to be used when multi-threading via
 \link[parallel:mclapply]{parallel::mclapply}}
 
-\item{which}{GRanges object passed to \link[VariantAnnotation:ScanVcfParam-class]{VariantAnnotation::ScanVcfParam} if
+\item{which}{GRanges object passed to \link[VariantAnnotation:ScanVcfParam]{VariantAnnotation::ScanVcfParam} if
 using a VCF directly}
 }
 \value{
