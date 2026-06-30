@@ -22,7 +22,7 @@ cleanVariants(var, ...)
 }
 \arguments{
 \item{var}{GRanges object containing the variants, or a
-\link[VariantAnnotation:VcfFile-class]{VariantAnnotation::VcfFile}}
+\link[VariantAnnotation:VcfFile]{VariantAnnotation::VcfFile}}
 
 \item{...}{Not used}
 
@@ -35,7 +35,7 @@ by the scale of change to the genome ('longest', 'shortest')}
 \item{ref_col, alt_col}{Column names corresponding to the reference and
 alternate alleles}
 
-\item{which}{Passed to \link[VariantAnnotation:ScanVcfParam-class]{VariantAnnotation::ScanVcfParam} if working with a
+\item{which}{Passed to \link[VariantAnnotation:ScanVcfParam]{VariantAnnotation::ScanVcfParam} if working with a
 VcfFile}
 }
 \value{

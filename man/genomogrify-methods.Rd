@@ -75,7 +75,7 @@ genomogrify(x, var, ...)
 \item{x}{A DNAStringSet or BSgenome}
 
 \item{var}{GRanges object containing the variants, or a
-\link[VariantAnnotation:VcfFile-class]{VariantAnnotation::VcfFile}}
+\link[VariantAnnotation:VcfFile]{VariantAnnotation::VcfFile}}
 
 \item{...}{Passed to \link[parallel:mclapply]{parallel::mclapply}}
 
@@ -100,7 +100,7 @@ Deletions respectively}
 
 \item{names}{Sequence names to be mogrified}
 
-\item{which}{GRanges object passed to \link[VariantAnnotation:ScanVcfParam-class]{VariantAnnotation::ScanVcfParam} if
+\item{which}{GRanges object passed to \link[VariantAnnotation:ScanVcfParam]{VariantAnnotation::ScanVcfParam} if
 using a VCF directly}
 }
 \value{

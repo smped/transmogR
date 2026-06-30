@@ -157,6 +157,7 @@ setMethod(
         gr <- subset(GRanges(sq), seqnames %in% seq2_mod)
         grl <- splitAsList(gr, seqlevelsInUse(gr))
 
+        deletion <- insertion <- indel <- NULL # Avoiding R CMD check issues
         indels <- cleanVariants(indels, ol_vars, alt_col = alt_col)
         indels$deletion <- width(indels) > nchar(mcols(indels)[[alt_col]])
         indels$insertion <- width(indels) < nchar(mcols(indels)[[alt_col]])
