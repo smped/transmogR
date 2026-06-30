@@ -703,7 +703,7 @@ subset(sj, transcript_name == "DDX11L17-201")
     ##  [1] BSgenome.Hsapiens.UCSC.hg38_1.4.5 BSgenome_1.80.0                  
     ##  [3] BiocIO_1.22.0                     GenomeInfoDb_1.48.0              
     ##  [5] GenomicFeatures_1.64.0            AnnotationDbi_1.74.0             
-    ##  [7] transmogR_1.9.1                   extraChIPs_1.16.1                
+    ##  [7] transmogR_1.8.1                   extraChIPs_1.16.1                
     ##  [9] tibble_3.3.1                      ggside_0.4.1                     
     ## [11] ggplot2_4.0.3                     BiocParallel_1.46.0              
     ## [13] rtracklayer_1.72.0                VariantAnnotation_1.58.0         

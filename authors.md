@@ -11,13 +11,13 @@ Source:
 [`DESCRIPTION`](https://github.com/smped/transmogR/blob/gh-actions/DESCRIPTION)
 
 Pederson S (2026). *transmogR: Modify a set of reference sequences using
-a set of variants*. R package version 1.9.1,
+a set of variants*. R package version 1.8.1,
 <https://github.com/smped/transmogR>.
 
     @Manual{,
       title = {transmogR: Modify a set of reference sequences using a set of variants},
       author = {Stevie Pederson},
       year = {2026},
-      note = {R package version 1.9.1},
+      note = {R package version 1.8.1},
       url = {https://github.com/smped/transmogR},
     }
