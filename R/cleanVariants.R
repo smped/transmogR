@@ -65,8 +65,8 @@ setMethod(
     function(
         var, ol_vars = "fail", ref_col = "REF", alt_col = "ALT", ...
     ){
-        var <- .checkAlts(var, alt_col, ref_col, ol_vars)
-        .checkOverlapVars(var, ol_vars)
+        var <- .checkOverlapVars(var, ol_vars)
+        .checkAlts(var, alt_col, ref_col)
     }
 )
 #' @importClassesFrom VariantAnnotation VcfFile
