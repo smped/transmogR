@@ -198,11 +198,11 @@ trByExon <- splitAsList(exons, exons$transcript_id)
 # Check the sequences
 seq
 #> DNAStringSet object of length 1:
-#>     width seq                                               names               
+#>     width sequence                                          names               
 #> [1]    10 ACGTAAATGG                                        chr1
 extractTranscriptSeqs(seq, trByExon)
 #> DNAStringSet object of length 1:
-#>     width seq                                               names               
+#>     width sequence                                          names               
 #> [1]     6 CATCGT                                            trans1
 
 # Define some variants
@@ -214,7 +214,7 @@ var$ALT <- c("A", "GGG")
 transmogrify(seq, var, exons, var_tags = TRUE)
 #> 1 transcripts found with indels
 #> DNAStringSet object of length 1:
-#>     width seq                                               names               
+#>     width sequence                                          names               
 #> [1]     8 CCCCTCTT                                          trans1_si
 
 ```

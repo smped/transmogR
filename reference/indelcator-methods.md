@@ -120,13 +120,13 @@ var <- GRanges("seq1:1")
 var$ALT <- "AAA"
 seq
 #> DNAStringSet object of length 1:
-#>     width seq                                               names               
+#>     width sequence                                          names               
 #> [1]     9 AATCTGCGC                                         seq1
 indelcator(seq, var)
 #> Updating seq1; Original length: 9
 #> ; Updated length: 11
 #> DNAStringSet object of length 1:
-#>     width seq                                               names               
+#>     width sequence                                          names               
 #> [1]    11 AAAATCTGCGC                                       seq1
 
 ## To modify a single transcript
@@ -141,9 +141,9 @@ library(GenomicFeatures)
 ex <- GRanges(c("seq1:1-3:+", "seq1:7-9:+"))
 orig <- extractTranscriptSeqs(seq, GRangesList(tx1 = ex))[["tx1"]]
 orig
-#> 6-letter DNAString object
-#> seq: AATCGC
+#> 6-letter DNAString object:
+#> AATCGC
 indelcator(orig, var, exons = ex)
-#> 8-letter DNAString object
-#> seq: AAAATCGC
+#> 8-letter DNAString object:
+#> AAAATCGC
 ```

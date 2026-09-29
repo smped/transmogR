@@ -76,10 +76,10 @@ snps
 #>   seqinfo: 1 sequence from an unspecified genome; no seqlengths
 seq
 #> DNAStringSet object of length 1:
-#>     width seq                                               names               
+#>     width sequence                                          names               
 #> [1]     4 AAGC                                              chr1
 owl(seq, snps)
 #> DNAStringSet object of length 1:
-#>     width seq                                               names               
+#>     width sequence                                          names               
 #> [1]     4 AGGC                                              chr1
 ```

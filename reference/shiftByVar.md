@@ -79,6 +79,6 @@ new_gr
 ## The seqlengths will have been adjusted to account for all variants
 seqinfo(new_gr)
 #> Seqinfo object with 1 sequence from an unspecified genome:
-#>   seqnames seqlengths isCircular genome
-#>   seq1             12         NA   <NA>
+#>   seqnames seqnames seqlengths isCircular genome
+#>   1            seq1         12         NA   <NA>
 ```

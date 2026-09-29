@@ -158,7 +158,7 @@ var <- GRanges(c("chr1:1", "chr1:3", "chr2:1-3"))
 var$ALT <- c("C", "GG", "A")
 dna
 #> DNAStringSet object of length 2:
-#>     width seq                                               names               
+#>     width sequence                                          names               
 #> [1]     4 ACGT                                              chr1
 #> [2]     5 AATTT                                             chr2
 genomogrify(dna, var)
@@ -167,7 +167,7 @@ genomogrify(dna, var)
 #> Updating chr2; Original length: 5
 #> ; Updated length: 3
 #> DNAStringSet object of length 2:
-#>     width seq                                               names               
+#>     width sequence                                          names               
 #> [1]     5 CCGGT                                             chr1
 #> [2]     3 ATT                                               chr2
 genomogrify(dna, var, tag = "mod")
@@ -176,7 +176,7 @@ genomogrify(dna, var, tag = "mod")
 #> Updating chr2; Original length: 5
 #> ; Updated length: 3
 #> DNAStringSet object of length 2:
-#>     width seq                                               names               
+#>     width sequence                                          names               
 #> [1]     5 CCGGT                                             chr1_mod
 #> [2]     3 ATT                                               chr2_mod
 genomogrify(dna, var, var_tags = TRUE)
@@ -185,7 +185,7 @@ genomogrify(dna, var, var_tags = TRUE)
 #> Updating chr2; Original length: 5
 #> ; Updated length: 3
 #> DNAStringSet object of length 2:
-#>     width seq                                               names               
+#>     width sequence                                          names               
 #> [1]     5 CCGGT                                             chr1_si
 #> [2]     3 ATT                                               chr2_d
 genomogrify(dna, var, mask = GRanges("chr2:1-5"), var_tags = TRUE)
@@ -193,7 +193,7 @@ genomogrify(dna, var, mask = GRanges("chr2:1-5"), var_tags = TRUE)
 #> Updating chr1; Original length: 4
 #> ; Updated length: 5
 #> DNAStringSet object of length 2:
-#>     width seq                                               names               
+#>     width sequence                                          names               
 #> [1]     5 CCGGT                                             chr1_si
 #> [2]     5 NNNNN                                             chr2
 

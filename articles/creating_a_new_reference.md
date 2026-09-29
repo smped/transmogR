@@ -84,7 +84,7 @@ chr1
 ```
 
     ## DNAStringSet object of length 1:
-    ##         width seq                                           names               
+    ##         width sequence                                      names               
     ## [1] 248956422 NNNNNNNNNNNNNNNNNNNNN...NNNNNNNNNNNNNNNNNNNNN chr1
 
 Given this represents the complete reference genome, we can also setup a
@@ -99,8 +99,8 @@ sq
 ```
 
     ## Seqinfo object with 1 sequence from GRCh38 genome:
-    ##   seqnames seqlengths isCircular genome
-    ##   chr1      248956422         NA GRCh38
+    ##   seqnames seqnames seqlengths isCircular genome
+    ##   1            chr1  248956422         NA GRCh38
 
 A small set of variants from the 1000 Genomes Project[^1] has been
 provided with the package in VCF format.
@@ -299,7 +299,7 @@ trans_mod
 ```
 
     ## DNAStringSet object of length 112:
-    ##       width seq                                             names               
+    ##       width sequence                                        names               
     ##   [1]  1947 ACCCTCCTTGAGACAGCCCTCC...TAAACAATACACACGTGTTAAA ENST00000326734.2...
     ##   [2]  1702 CACACCGTGAGCTGCTGAGACG...GTGCAGGGCACAGGTGGGCGCC ENST00000357876.6
     ##   [3]  1358 AATCAGAACTCGCGGTGGGGGC...ATAAAATTAATGAGAATGATCT ENST00000412115.2...
@@ -344,7 +344,7 @@ chr1_mod
 ```
 
     ## DNAStringSet object of length 1:
-    ##         width seq                                           names               
+    ##         width sequence                                      names               
     ## [1] 248956362 NNNNNNNNNNNNNNNNNNNNN...NNNNNNNNNNNNNNNNNNNNN chr1
 
 The new reference genome can be exported to fasta format using
@@ -392,7 +392,7 @@ ref_trans
 ```
 
     ## DNAStringSet object of length 112:
-    ##       width seq                                             names               
+    ##       width sequence                                        names               
     ##   [1]  1947 ACCCTCCTTGAGACAGCCCTCC...TAAACAATACACACGTGTTAAA ENST00000326734.2
     ##   [2]  1702 CACACCGTGAGCTGCTGAGACG...GTGCAGGGCACAGGTGGGCGCC ENST00000357876.6
     ##   [3]  1358 AATCAGAACTCGCGGTGGGGGC...ATAAAATTAATGAGAATGATCT ENST00000412115.2
@@ -430,8 +430,8 @@ seqinfo(new_exons)
 ```
 
     ## Seqinfo object with 1 sequence from GRCh38 genome:
-    ##   seqnames seqlengths isCircular genome
-    ##   chr1      248956362         NA GRCh38
+    ##   seqnames seqnames seqlengths isCircular genome
+    ##   1            chr1  248956362         NA GRCh38
 
 ``` r
 
@@ -439,8 +439,8 @@ seqinfo(chr1_mod)
 ```
 
     ## Seqinfo object with 1 sequence from an unspecified genome:
-    ##   seqnames seqlengths isCircular genome
-    ##   chr1      248956362         NA   <NA>
+    ##   seqnames seqnames seqlengths isCircular genome
+    ##   1            chr1  248956362         NA   <NA>
 
 This enables simple extraction of transcript sequences using the
 capabilities of `GenomicFeatures`
@@ -676,7 +676,7 @@ subset(sj, transcript_name == "DDX11L17-201")
 
 ## Session info
 
-    ## R version 4.6.0 (2026-04-24)
+    ## R version 4.6.1 (2026-06-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -700,52 +700,52 @@ subset(sj, transcript_name == "DDX11L17-201")
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] BSgenome.Hsapiens.UCSC.hg38_1.4.5 BSgenome_1.80.0                  
-    ##  [3] BiocIO_1.22.0                     GenomeInfoDb_1.48.0              
-    ##  [5] GenomicFeatures_1.64.0            AnnotationDbi_1.74.0             
-    ##  [7] transmogR_1.8.1                   extraChIPs_1.16.1                
+    ##  [1] BSgenome.Hsapiens.UCSC.hg38_1.4.5 BSgenome_1.81.1                  
+    ##  [3] BiocIO_1.23.3                     GenomeInfoDb_1.49.1              
+    ##  [5] GenomicFeatures_1.65.0            AnnotationDbi_1.75.2             
+    ##  [7] transmogR_1.9.1                   extraChIPs_1.17.4                
     ##  [9] tibble_3.3.1                      ggside_0.4.1                     
-    ## [11] ggplot2_4.0.3                     BiocParallel_1.46.0              
-    ## [13] rtracklayer_1.72.0                VariantAnnotation_1.58.0         
-    ## [15] Rsamtools_2.28.0                  Biostrings_2.80.1                
-    ## [17] XVector_0.52.0                    SummarizedExperiment_1.42.0      
-    ## [19] Biobase_2.72.0                    GenomicRanges_1.64.0             
-    ## [21] IRanges_2.46.0                    S4Vectors_0.50.1                 
-    ## [23] Seqinfo_1.2.0                     MatrixGenerics_1.24.0            
-    ## [25] matrixStats_1.5.0                 BiocGenerics_0.58.1              
-    ## [27] generics_0.1.4                    BiocStyle_2.40.0                 
+    ## [11] ggplot2_4.0.3                     BiocParallel_1.47.0              
+    ## [13] rtracklayer_1.73.0                VariantAnnotation_1.59.4         
+    ## [15] Rsamtools_2.29.0                  Biostrings_2.81.9                
+    ## [17] XVector_0.53.0                    SummarizedExperiment_1.43.0      
+    ## [19] Biobase_2.73.2                    GenomicRanges_1.65.4             
+    ## [21] IRanges_2.47.5                    S4Vectors_0.51.10                
+    ## [23] Seqinfo_1.3.2                     MatrixGenerics_1.25.0            
+    ## [25] matrixStats_1.5.0                 BiocGenerics_0.59.12             
+    ## [27] generics_0.1.4                    BiocStyle_2.41.0                 
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] DBI_1.3.0                bitops_1.0-9             SimpleUpset_0.1.4       
-    ##  [4] rlang_1.2.0              magrittr_2.0.5           otel_0.2.0              
-    ##  [7] compiler_4.6.0           RSQLite_3.53.2           png_0.1-9               
+    ##  [1] DBI_1.3.0                bitops_1.1-0             SimpleUpset_0.1.6       
+    ##  [4] rlang_1.3.0              magrittr_2.0.5           otel_0.2.0              
+    ##  [7] compiler_4.6.1           RSQLite_3.53.3           png_0.1-9               
     ## [10] systemfonts_1.3.2        vctrs_0.7.3              stringr_1.6.0           
     ## [13] pkgconfig_2.0.3          crayon_1.5.3             fastmap_1.2.0           
-    ## [16] labeling_0.4.3           rmarkdown_2.31           UCSC.utils_1.8.0        
+    ## [16] labeling_0.4.3           rmarkdown_2.32           UCSC.utils_1.9.0        
     ## [19] ragg_1.5.2               purrr_1.2.2              bit_4.6.0               
-    ## [22] xfun_0.59                cachem_1.1.0             cigarillo_1.2.0         
-    ## [25] jsonlite_2.0.0           blob_1.3.0               DelayedArray_0.38.2     
-    ## [28] parallel_4.6.0           R6_2.6.1                 stringi_1.8.7           
-    ## [31] bslib_0.11.0             RColorBrewer_1.1-3       limma_3.68.4            
-    ## [34] jquerylib_0.1.4          Rcpp_1.1.1-1.1           bookdown_0.47           
-    ## [37] knitr_1.51               Matrix_1.7-5             tidyselect_1.2.1        
-    ## [40] abind_1.4-8              yaml_2.3.12              codetools_0.2-20        
-    ## [43] curl_7.1.0               lattice_0.22-9           InteractionSet_1.40.0   
-    ## [46] withr_3.0.3              KEGGREST_1.52.2          S7_0.2.2                
-    ## [49] csaw_1.46.0              evaluate_1.0.5           desc_1.4.3              
-    ## [52] pillar_1.11.1            BiocManager_1.30.27      RCurl_1.98-1.19         
-    ## [55] scales_1.4.0             glue_1.8.1               metapod_1.20.0          
-    ## [58] tools_4.6.0              data.table_1.18.4        locfit_1.5-9.12         
-    ## [61] GenomicAlignments_1.48.0 forcats_1.0.1            fs_2.1.0                
-    ## [64] XML_3.99-0.23            grid_4.6.0               tidyr_1.3.2             
-    ## [67] edgeR_4.10.1             patchwork_1.3.2          restfulr_0.0.17         
-    ## [70] cli_3.6.6                textshaping_1.0.5        S4Arrays_1.12.0         
-    ## [73] dplyr_1.2.1              gtable_0.3.6             sass_0.4.10             
-    ## [76] digest_0.6.39            SparseArray_1.12.2       ggrepel_0.9.8           
-    ## [79] rjson_0.2.23             htmlwidgets_1.6.4        farver_2.1.2            
-    ## [82] memoise_2.0.1            htmltools_0.5.9          pkgdown_2.2.0           
-    ## [85] lifecycle_1.0.5          httr_1.4.8               statmod_1.5.2           
-    ## [88] bit64_4.8.2
+    ## [22] xfun_0.61                cachem_1.1.0             cigarillo_1.3.1         
+    ## [25] jsonlite_2.0.0           blob_1.3.0               DelayedArray_0.39.7     
+    ## [28] parallel_4.6.1           R6_2.6.1                 stringi_1.8.9           
+    ## [31] bslib_0.12.0             RColorBrewer_1.1-3       limma_3.99.0            
+    ## [34] jquerylib_0.1.4          Rcpp_1.1.2               bookdown_0.48           
+    ## [37] knitr_1.52               BiocBaseUtils_1.15.1     Matrix_1.7-6            
+    ## [40] tidyselect_1.2.1         abind_1.4-8              yaml_2.3.12             
+    ## [43] codetools_0.2-20         curl_8.0.0               lattice_0.23-1          
+    ## [46] InteractionSet_1.41.0    withr_3.0.3              KEGGREST_1.53.6         
+    ## [49] S7_0.2.2                 csaw_1.47.1              evaluate_1.0.5          
+    ## [52] desc_1.4.3               pillar_1.11.1            BiocManager_1.30.27     
+    ## [55] RCurl_1.98-1.20          scales_1.4.0             glue_1.8.1              
+    ## [58] metapod_1.21.0           tools_4.6.1              data.table_1.18.6.1     
+    ## [61] locfit_1.5-9.12          GenomicAlignments_1.49.2 forcats_1.0.1           
+    ## [64] fs_2.1.0                 XML_3.99-0.25            grid_4.6.1              
+    ## [67] tidyr_1.3.2              edgeR_4.99.6             patchwork_1.3.2         
+    ## [70] restfulr_0.0.17          cli_3.6.6                textshaping_1.0.5       
+    ## [73] S4Arrays_1.13.1          dplyr_1.2.1              gtable_0.3.6            
+    ## [76] sass_0.4.10              digest_0.6.39            SparseArray_1.13.3      
+    ## [79] ggrepel_0.9.8            rjson_0.2.23             htmlwidgets_1.6.4       
+    ## [82] farver_2.1.2             memoise_2.0.1            htmltools_0.5.9         
+    ## [85] pkgdown_2.2.1            lifecycle_1.0.5          httr_1.4.9              
+    ## [88] statmod_1.5.2            bit64_4.8.6
 
 ## References
 

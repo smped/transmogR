@@ -22,6 +22,9 @@
   [`shiftByVar()`](https://smped.github.io/transmogR/reference/shiftByVar.md)
   to produce shifted coordinates which match those after incorporation
   of variants
+- Added
+  [`cleanVariants()`](https://smped.github.io/transmogR/reference/cleanVariants-methods.md)
+  to identify and resolve overlapping variants
 
 ## Changes in version 1.3.1
 
