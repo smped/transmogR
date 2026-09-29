@@ -55,7 +55,8 @@ setMethod(
         y <- "Y"
         if (hasChr) y <- "chrY"
         sq <- as.data.frame(x)
-        len <- sq[y, "seqlengths"]
+        # len <- sq[y, "seqlengths"]
+        len <- subset(sq, seqnames == y)$seqlengths
         par_df <- data.frame(
             build = c("hg19", "hg38", "chm13v2.0"),
             length = c(59373566, 57227415, 62460029),
